@@ -9,6 +9,8 @@ class Entity{
 
         int pos_x;
         int pos_y;
+
+        virtual void tick();
 };
 class Mine: public Entity {
     public:
@@ -22,6 +24,7 @@ class Tank: public Entity{
         void request_backwards();
         int is_reverse();
         int is_reloading();
+        int get_ammo();
 
     private:
         int ammo;
@@ -32,6 +35,7 @@ class Tank: public Entity{
 class Wall:public Entity{
     public:
         explicit Wall(int pos_x,int pos_y);
+        void hit();
 };
 class Shell: public Entity{
     public:

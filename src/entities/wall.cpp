@@ -9,4 +9,7 @@ public:
     {
         this->health = 2;
     }
+    void hit(){
+        this->health -=1;
+    }
 };
