@@ -25,6 +25,7 @@ class Tank: public Entity{
         int is_reverse();
         int is_reloading();
         int get_ammo();
+        void tick() override;
 
     private:
         int ammo;
@@ -41,7 +42,7 @@ class Shell: public Entity{
     public:
         explicit Shell(int owner,int pos_x,int pos_y);
         int get_owner();
-
+        void tick() override;
     private:
         int owner;
 };
