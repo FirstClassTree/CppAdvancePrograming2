@@ -1,5 +1,5 @@
 #include "game_env.hpp"
 
-class GameManager{
 
-};
+GameManager::GameManager(){}
+void GameManager::tick(){}
