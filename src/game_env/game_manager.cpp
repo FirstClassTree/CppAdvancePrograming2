@@ -1,6 +1,31 @@
 #include "game_env.hpp"
 
-GameManager::GameManager() {}
+GameManager::GameManager() {
+    this->game_state.status = GameStatus::Idle;
+    this->game_state.winner = -1;
+}
+
+int GameManager::check_victory(){
+    int p1 = this->game_players[0]->tank_list.size();
+    int p2 = this->game_players[1]->tank_list.size();
+    if(p1 ==p2 && p1 ==0){
+        this->game_state.status = GameStatus::Tie;
+        return 1;
+    }
+    if(p1 == 0){
+        this->game_state.status = GameStatus::Winner;
+        this->game_state.winner = 2;
+        return 1;
+    }
+    if(p2 == 0){
+        this->game_state.status = GameStatus::Winner;
+        this->game_state.winner = 1;
+        return 1;
+    }
+    //TODO test when ammo is empty.
+    return 0;
+
+}
 
 void GameManager::subscribe_entity(Entity *e)
 {
@@ -30,7 +55,7 @@ void GameManager::tick()
     }
     for (int i = this->game_players.size() - 1; i >= 0; --i)
     {
-        Player* current = this->game_players[i];
+        Player *current = this->game_players[i];
         for (Tank *tank : current->tank_list)
         {
             // do tank actions here
@@ -109,8 +134,8 @@ int GameManager::load_game(const std::string &filename)
     bool has_errors = false;
     game_players.resize(2);
 
-    Player* p1 = new Player(1);
-    Player* p2 = new Player(2);
+    Player *p1 = new Player(1);
+    Player *p2 = new Player(2);
     game_players.push_back(p1);
     game_players.push_back(p2);
 
@@ -182,17 +207,19 @@ int GameManager::load_game(const std::string &filename)
             }
             case ' ':
             default:
+                has_errors = true;
+                error_log << "Invalid character '" << c << "' at (" << x << "," << y << "). Treated as empty.\n";
                 break;
             }
         }
-    }
-    std::string extra;
-    int line_num = board_h;
-    while (std::getline(file, extra))
-    {
-        has_errors = true;
-        error_log << "Extra line beyond declared height at row " << line_num++ << ". Ignoring.\n";
-    }
+        std::string extra;
+        int line_num = board_h;
+        while (std::getline(file, extra))
+        {
+            has_errors = true;
+            error_log << "Extra line beyond declared height at row " << line_num++ << ". Ignoring.\n";
+        }
 
-    return 0;
+        return 0;
+    }
 }

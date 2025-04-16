@@ -44,6 +44,7 @@ private:
     int board_w;
     int board_h;
     int turn_index = 0;
+    GameState game_state;
     vector<Entity*> game_entities;
     vector<Shell*> game_shells;
     vector<vector<Tile>> game_board;

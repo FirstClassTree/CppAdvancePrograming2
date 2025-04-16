@@ -13,6 +13,7 @@ class Entity{
         virtual Action colide(Entity* e);
         virtual EntityType get_type() const;
         virtual void update_pos(int x,int y);
+        virtual Pos get_pos();
 
 };
 class LivingEntity: public Entity{

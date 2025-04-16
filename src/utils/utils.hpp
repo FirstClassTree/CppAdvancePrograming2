@@ -1,6 +1,9 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
 
+#include <vector>
+#include <math.h>
+
 enum class Direction {
     U,
     UR,
@@ -10,19 +13,38 @@ enum class Direction {
     DL,
     L,
     UL,
+    None,
+};
+enum class GameStatus{
+    Idle,
+    Running,
+    Winner,
+    Tie
+};
+struct GameState{
+    GameStatus status;
+    int winner;
 };
 enum class ActionType{
     Move,
     Shoot,
     Stay,
     Hit,
-    None
+    None,
+    RotateR1,
+    RotateR2,
+    RotateL1,
+    RotateL2,
 };
 class Logger{};
 struct Action{
     ActionType type;
     int x =0;
     int y =0;
+};
+struct Pos {
+    int x;
+    int y;
 };
 struct Tile {
     Entity* ground = nullptr;
@@ -31,4 +53,7 @@ struct Tile {
 };
 Action get_none_action();
 Action get_hit_action();
+std::pair<int, int> get_direction_delta(Direction dir);
+Direction get_direction_between(Pos from, Pos to);
+int wrap_pos(int v,int max);
 #endif
