@@ -6,3 +6,6 @@ Entity::Entity(int pos_x,int pos_y){
     this->pos_y = pos_y;
 }
 
+Action Entity::colide(){
+    
+}
