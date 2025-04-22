@@ -5,13 +5,14 @@
 #include <vector>
 #include <math.h>
 #include <entities.hpp>
+#include <set>
 
 using namespace std;
 Action chase_enemy(Tank* self, Tank* target, const vector<vector<Tile>>& board);
 Action not_so_smart_move();
-vector<Entity*> scan_proximity();
-vector<Entity*> scan_directions();
-vector<Entity*> on_line_of_sight();
+Action is_targeted(Tank* self,const vector<Shell*>& shells);
+Action rotate_toward(Direction from, Direction to);
+bool on_line_of_sight(LivingEntity* self,LivingEntity* target);
 struct DFSAction{
     Direction dir;
     int value;
