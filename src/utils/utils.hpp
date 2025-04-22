@@ -35,6 +35,7 @@ enum class ActionType{
     RotateR2,
     RotateL1,
     RotateL2,
+    Reverse,
 };
 class Logger{};
 struct Action{

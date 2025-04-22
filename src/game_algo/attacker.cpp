@@ -1,12 +1,27 @@
 #include <game_algo.hpp>
 
-Action not_so_smart_move(Tank *self, Tank *target)
+Action not_so_smart_move(Tank *self, Tank *target, const vector<Shell *> &shells,int w, int h, const vector<vector<Tile>> &board)
 {
+    Action targeted = is_targeted(self,shells,w,h);
+    if(targeted.type != ActionType::None){
+        return targeted;
+    }
+    if(!self->is_reloading()){
+        if(on_line_of_sight(self,target)){
+            return Action{ActionType::Shoot};
+        } else {
+            Action rot = rotate_toward(self->entity_dir,target->entity_dir);
+            if(rot.type != ActionType::None){
+                return rot;
+            }
+        }
+    }
+    return chase_enemy(self,target,board);
 }
 Action is_targeted(Tank *self, const vector<Shell *> &shells, int w, int h)
 {
     const auto danger_tiles = get_shell_danger_zones(shells, w, h);
-    bool near_danger[3][3];
+    bool near_danger[3][3] = {{false}};
     for(int i=0;i<3;i++){
         for(int j=0;j<3;j++){
             if(danger_tiles.count({self->pos_x-1+i,self->pos_y-1+j})){
@@ -20,12 +35,13 @@ Action is_targeted(Tank *self, const vector<Shell *> &shells, int w, int h)
     if(near_danger[1][1]){
         for(int i=0;i<3;i++){
             for(int j=0;j<3;j++){
-                if(!near_danger[i][j] &! (i==1 && j==1)){
+                if(!near_danger[i][j] && !(i==1 && j==1)){
                     return Action{ActionType::Move,self->pos_x-1+i,self->pos_y-1+j};
                 }
             }
         }
     }
+    return Action{ActionType::None};
 }
 
 bool on_line_of_sight(LivingEntity *self, LivingEntity *target)
