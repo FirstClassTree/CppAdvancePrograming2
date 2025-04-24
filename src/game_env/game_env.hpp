@@ -49,6 +49,7 @@ private:
     int board_h;
     int turn_index = 0;
     int no_ammo_index = 0;
+    int entity_index = 0;
     Logger logger;
     GameState game_state;
     vector<Entity *> game_entities;

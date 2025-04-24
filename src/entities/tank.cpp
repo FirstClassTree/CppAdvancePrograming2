@@ -19,10 +19,11 @@ Tank* Tank::closest_target(std::vector<Tank*> others){
     return target;
 }
 int Tank::is_reloading(){
-    return this->reload_state ==0;
+    return this->reload_state ==0 ? 0 : 1;
 }
 void Tank::shoot(){
-    this->reload_state == 4;
+    this->reload_state = 4;
+    this->ammo--;
 }
 int Tank::get_ammo(){
     return this->ammo;

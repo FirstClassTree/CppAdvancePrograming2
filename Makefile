@@ -1,6 +1,6 @@
 # === CONFIG ===
 CXX := g++
-CXXFLAGS := -std=c++20 -Wall -Wextra -O2 -g -MMD -MP -Isrc -Isrc/entities -Isrc/game_env -Isrc/game_algo -Isrc/utils
+CXXFLAGS := -std=c++20 -Wall -Wextra -O0 -g -MMD -MP -Isrc -Isrc/entities -Isrc/game_env -Isrc/game_algo -Isrc/utils
 LDFLAGS := 
 
 # List all source files

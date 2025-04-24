@@ -7,3 +7,7 @@ void Logger::log(std::string line){
 void Logger::log_action(Action action,int player_id){
     std::cout << "Player " << player_id << " did action: " << action_to_string(action) << std::endl;
 }
+
+void Logger::log_collision(int e1, int e2){
+    std::cout << "Entity: " << e1 << " collided with: " << e2 << std::endl;
+}

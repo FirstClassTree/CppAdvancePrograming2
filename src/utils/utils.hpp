@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <typeinfo>
 
 class Entity;
 class Shell;
@@ -62,6 +63,7 @@ class Logger{
     explicit Logger();
     void log(std::string line);
     void log_action(Action action,int player_id);
+    void log_collision(int e1, int e2);
 };
 
 std::string game_status_to_string(GameStatus status);

@@ -77,16 +77,18 @@ int GameManager::game_loop()
     while (this->check_victory() == 0)
     {
         this->tick();
-        std::cout << this->turn_index <<endl;
+        std::cout << this->turn_index << endl;
     }
     return 0;
 }
 void GameManager::subscribe_entity(Entity *e)
 {
+    e->id = this->entity_index++;
     this->game_entities.push_back(e);
 }
 void GameManager::subscribe_shell(Shell *e)
 {
+    e->id = this->entity_index++;
     this->game_shells.push_back(e);
 }
 int GameManager::tick()
@@ -125,10 +127,15 @@ int GameManager::tick()
             vector<Tank *> potentials = this->collect_game_tanks(tank);
             Tank *target = tank->closest_target(potentials);
             Action action = not_so_smart_move(tank, target, this->game_shells, this->board_w, this->board_h, this->get_board());
-            if (this->check_legal_move(action, tank))
+            Entity *collided = this->test_collision(tank, action);
+            if (this->check_legal_move(action, tank) && !(collided && collided->get_type() != EntityType::Wall))
             {
                 this->apply_action(tank, action);
-                this->logger.log_action(action,current->id);
+                this->logger.log_action(action, current->id);
+            }
+            else
+            {
+                this->logger.log("Illigal action!");
             }
         }
     }
@@ -143,6 +150,10 @@ vector<vector<Tile>> GameManager::get_board()
 
 int GameManager::check_legal_move(Action action, Tank *commiter)
 {
+    if(action.type != ActionType::Reverse){
+        commiter->reset_reverse();
+    }
+
     switch (action.type)
     {
     case ActionType::Move:
@@ -159,9 +170,21 @@ int GameManager::check_legal_move(Action action, Tank *commiter)
         }
         return 1;
     }
+    case ActionType::Reverse:
+    {
+        if (commiter->is_reverse() == 1)
+        {
+            return 0;
+        }
+        else
+        {
+            commiter->request_backwards();
+            return 1;
+        }
+    }
     case ActionType::Shoot:
     {
-        if (commiter->is_reloading())
+        if (commiter->is_reloading() && commiter->get_ammo() != 0)
         {
             return 0;
         }
@@ -176,9 +199,9 @@ Entity *test_tiles(vector<Tile *> tiles, LivingEntity *self)
 {
     for (Tile *tile : tiles)
     {
-        if (tile->actor && tile->actor != self)
+        if (tile->actor && tile->actor->id != self->id)
             return tile->actor;
-        if (tile->projectile && tile->projectile != self)
+        if (tile->projectile && tile->projectile->id != self->id)
             return tile->projectile;
         if (tile->ground)
             return tile->ground;
@@ -187,6 +210,9 @@ Entity *test_tiles(vector<Tile *> tiles, LivingEntity *self)
 }
 Entity *GameManager::test_collision(LivingEntity *self, Action action)
 {
+    if(action.type != ActionType::Move){
+        return nullptr;
+    }
     int x = wrap_pos(action.x, board_w);
     int y = wrap_pos(action.y, board_h);
 
@@ -217,8 +243,16 @@ Entity *GameManager::test_collision(LivingEntity *self, Action action)
     default:
         break;
     }
-
-    return test_tiles(tiles_to_check, self);
+    Entity *e = test_tiles(tiles_to_check, self);
+    if (!e)
+    {
+        return nullptr;
+    }
+    if(e == self){
+        return nullptr;
+    }
+    this->logger.log_collision(self->id, e->id);
+    return e;
 }
 void GameManager::apply_action(Entity *e, Action action)
 {
@@ -227,6 +261,48 @@ void GameManager::apply_action(Entity *e, Action action)
     {
         e->update_pos(action.x, action.y);
         return;
+    }
+    if (action.type == ActionType::Reverse)
+    {
+        if (type == EntityType::Tank)
+        {
+            Tank *tank = dynamic_cast<Tank *>(e);
+            pair<int, int> dir_d = get_direction_delta(tank->entity_dir);
+            tank->update_pos(tank->pos_x - dir_d.first, tank->pos_y - dir_d.second);
+        }
+        return;
+    }
+    if (action.type == ActionType::RotateL1)
+    {
+        Tank *tank = dynamic_cast<Tank *>(e);
+        int dir_int = static_cast<int>(tank->entity_dir);
+        int new_dir_int = (dir_int - 1) % 8;
+        Direction new_dir = static_cast<Direction>(new_dir_int);
+        tank->entity_dir = new_dir;
+    }
+    if (action.type == ActionType::RotateL2)
+    {
+        Tank *tank = dynamic_cast<Tank *>(e);
+        int dir_int = static_cast<int>(tank->entity_dir);
+        int new_dir_int = (dir_int - 2) % 8;
+        Direction new_dir = static_cast<Direction>(new_dir_int);
+        tank->entity_dir = new_dir;
+    }
+    if (action.type == ActionType::RotateR1)
+    {
+        Tank *tank = dynamic_cast<Tank *>(e);
+        int dir_int = static_cast<int>(tank->entity_dir);
+        int new_dir_int = (dir_int + 1) % 8;
+        Direction new_dir = static_cast<Direction>(new_dir_int);
+        tank->entity_dir = new_dir;
+    }
+    if (action.type == ActionType::RotateR2)
+    {
+        Tank *tank = dynamic_cast<Tank *>(e);
+        int dir_int = static_cast<int>(tank->entity_dir);
+        int new_dir_int = (dir_int + 2) % 8;
+        Direction new_dir = static_cast<Direction>(new_dir_int);
+        tank->entity_dir = new_dir;
     }
     if (action.type == ActionType::Shoot)
     {
@@ -308,16 +384,20 @@ int GameManager::load_game(const std::string &filename)
     int y = 0;
     while (std::getline(file, line))
     {
-        if (y >= board_h) {
+        if (y >= board_h)
+        {
             has_errors = true;
             error_log << "Extra line beyond declared height at row " << y << ". Ignoring.\n";
             continue;
         }
-        if (line.size() < board_w) {
+        if (line.size() < board_w)
+        {
             has_errors = true;
             error_log << "Line " << y << " too short. Padding with spaces.\n";
             line += std::string(board_w - line.size(), ' ');
-        } else if (line.size() > board_w) {
+        }
+        else if (line.size() > board_w)
+        {
             has_errors = true;
             error_log << "Line " << y << " too long. Trimming to board width.\n";
             line = line.substr(0, board_w);
@@ -331,14 +411,14 @@ int GameManager::load_game(const std::string &filename)
             case '#':
             {
                 Wall *wall = new Wall(x, y);
-                game_entities.push_back(wall);
+                this->subscribe_entity(wall);
                 game_board[y][x].ground = wall;
                 break;
             }
             case '@':
             {
                 Mine *mine = new Mine(x, y);
-                game_entities.push_back(mine);
+                this->subscribe_entity(mine);
                 game_board[y][x].ground = mine;
                 break;
             }
@@ -348,7 +428,7 @@ int GameManager::load_game(const std::string &filename)
                 Direction dir = (c - '0') == 1 ? Direction::L : Direction::R;
                 Tank *tank = new Tank(x, y, dir);
                 // tank->set_owner(c - '0'); // store 1 or 2
-                game_entities.push_back(tank);
+                this->subscribe_entity(tank);
                 game_board[y][x].actor = tank;
 
                 if (game_players[c - '1']->tank_list.size() == 1)

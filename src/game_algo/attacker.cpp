@@ -1,48 +1,71 @@
 #include "game_algo.hpp"
 
-Action not_so_smart_move(Tank *self, Tank *target, const vector<Shell *> &shells,int w, int h, const vector<vector<Tile>> &board)
+Action not_so_smart_move(Tank *self, Tank *target, const vector<Shell *> &shells, int w, int h, const vector<vector<Tile>> &board)
 {
-    Action targeted = is_targeted(self,shells,w,h);
-    if(targeted.type != ActionType::None){
+    Action targeted = is_targeted(self, shells, w, h);
+    if (targeted.type != ActionType::None)
+    {
         return targeted;
     }
-    if(!self->is_reloading()){
-        if(on_line_of_sight(self,target)){
+    if (!self->is_reloading())
+    {
+        if (on_line_of_sight(self, target))
+        {
             return Action{ActionType::Shoot};
-        } else {
-            Action rot = rotate_toward(self->entity_dir,target->entity_dir);
-            if(rot.type != ActionType::None){
-                return rot;
-            } else {
-                if(!self->is_reverse()){
-                    return Action{ActionType::Reverse};
-                } else {
-                    return Action{ActionType::RotateL1};
+        }
+        else
+        {
+            Direction target_dir = get_direction_between(self->get_pos(), target->get_pos());
+            if (target_dir != Direction::None)
+            {
+                Action rot = rotate_toward(self->entity_dir, target_dir);
+                if (rot.type != ActionType::None)
+                {
+                    return rot;
+                }
+                else
+                {
+                    if (!self->is_reverse())
+                    {
+                        return Action{ActionType::Reverse};
+                    }
+                    else
+                    {
+                        return Action{ActionType::RotateL1};
+                    }
                 }
             }
         }
     }
-    return chase_enemy(self,target,board);
+    return chase_enemy(self, target, board);
 }
 Action is_targeted(Tank *self, const vector<Shell *> &shells, int w, int h)
 {
     const auto danger_tiles = get_shell_danger_zones(shells, w, h);
     bool near_danger[3][3] = {{false}};
-    for(int i=0;i<3;i++){
-        for(int j=0;j<3;j++){
-            if(danger_tiles.count({self->pos_x-1+i,self->pos_y-1+j})){
+    for (int i = 0; i < 3; i++)
+    {
+        for (int j = 0; j < 3; j++)
+        {
+            if (danger_tiles.count({self->pos_x - 1 + i, self->pos_y - 1 + j}))
+            {
                 near_danger[i][j] = true;
             }
         }
     }
-    if(!near_danger[1][1]){
+    if (!near_danger[1][1])
+    {
         return Action{ActionType::None};
     }
-    if(near_danger[1][1]){
-        for(int i=0;i<3;i++){
-            for(int j=0;j<3;j++){
-                if(!near_danger[i][j] && !(i==1 && j==1)){
-                    return Action{ActionType::Move,self->pos_x-1+i,self->pos_y-1+j};
+    if (near_danger[1][1])
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                if (!near_danger[i][j] && !(i == 1 && j == 1))
+                {
+                    return Action{ActionType::Move, self->pos_x - 1 + i, self->pos_y - 1 + j};
                 }
             }
         }
@@ -70,7 +93,7 @@ Action rotate_toward(Direction from, Direction to)
     int diff_pos = mod8(ti - fi);
     int diff_neg = mod8(fi - ti);
     if (diff_pos == 0)
-        return Action{ActionType::Reverse};
+        return Action{ActionType::None};
 
     if (diff_pos < diff_neg)
     {
@@ -107,8 +130,8 @@ set<pair<int, int>> get_shell_danger_zones(const vector<Shell *> &shells, int w,
 
         for (int i = 1; i <= 2; ++i)
         {
-            pos.x = wrap_pos(pos.x + dx*i, w);
-            pos.y = wrap_pos(pos.y + dy*i, h);
+            pos.x = wrap_pos(pos.x + dx * i, w);
+            pos.y = wrap_pos(pos.y + dy * i, h);
             danger.insert({pos.x, pos.y});
         }
     }

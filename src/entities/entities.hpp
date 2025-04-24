@@ -4,7 +4,6 @@
 #include "utils.hpp"
 #include <vector>
 #include <math.h>
-
 enum class EntityType
 {
     Wall,
@@ -20,6 +19,7 @@ public:
 
     int pos_x;
     int pos_y;
+    int id;
 
     virtual Action colide(Entity *e) = 0;
     virtual EntityType get_type() const = 0;
@@ -64,10 +64,9 @@ public:
     Pos get_pos() override;
 
 private:
-    int ammo;
-    int reload_state;
-    Direction tank_direction;
-    int reverse_state;
+    int ammo=16;
+    int reload_state=0;
+    int reverse_state=0;
 };
 class Wall : public Entity
 {
