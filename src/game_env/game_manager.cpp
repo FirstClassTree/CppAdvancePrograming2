@@ -77,6 +77,7 @@ int GameManager::game_loop()
     while (this->check_victory() == 0)
     {
         this->tick();
+        std::cout << this->turn_index <<endl;
     }
     return 0;
 }
@@ -127,13 +128,16 @@ int GameManager::tick()
             if (this->check_legal_move(action, tank))
             {
                 this->apply_action(tank, action);
+                this->logger.log_action(action,current->id);
             }
         }
     }
-
+    this->turn_index++;
+    std::this_thread::sleep_for(std::chrono::seconds(1));
     return 0;
 }
-vector<vector<Tile>> GameManager::get_board(){
+vector<vector<Tile>> GameManager::get_board()
+{
     return this->game_board;
 }
 
@@ -141,7 +145,8 @@ int GameManager::check_legal_move(Action action, Tank *commiter)
 {
     switch (action.type)
     {
-    case ActionType::Move:{
+    case ActionType::Move:
+    {
         Tile tile = this->game_board[action.x][action.y];
         pair<int, int> dir_move = get_direction_delta(commiter->entity_dir);
         if (!(commiter->pos_x + dir_move.first == action.x && commiter->pos_y + dir_move.second == action.y))
@@ -152,13 +157,16 @@ int GameManager::check_legal_move(Action action, Tank *commiter)
         {
             return 0;
         }
-        return 1;}
-    case ActionType::Shoot:{
+        return 1;
+    }
+    case ActionType::Shoot:
+    {
         if (commiter->is_reloading())
         {
             return 0;
         }
-        return 1;}
+        return 1;
+    }
     default:
         return 1;
     }
@@ -280,7 +288,6 @@ void GameManager::print_result()
 int GameManager::load_game(const std::string &filename)
 {
     bool has_errors = false;
-    game_players.resize(2);
 
     Player *p1 = new Player(1);
     Player *p2 = new Player(2);
@@ -295,30 +302,25 @@ int GameManager::load_game(const std::string &filename)
         return -1;
     }
     file >> board_w >> board_h;
-    file.ignore();
+    file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     game_board.resize(board_h, vector<Tile>(board_w));
-    for (int y = 0; y < board_h; ++y)
+    std::string line;
+    int y = 0;
+    while (std::getline(file, line))
     {
-        std::string line;
-        if (!std::getline(file, line))
-        {
-            // Line missing — fill with spaces
+        if (y >= board_h) {
             has_errors = true;
-            error_log << "Missing line at row " << y << ", filling with spaces.\n";
-            line = std::string(board_w, ' ');
+            error_log << "Extra line beyond declared height at row " << y << ". Ignoring.\n";
+            continue;
         }
-
-        if (line.size() > static_cast<long long unsigned int>(board_w))
-        {
+        if (line.size() < board_w) {
             has_errors = true;
-            error_log << "Line " << y << " too long, trimming extra characters.\n";
-            line = line.substr(0, board_w);
-        }
-        else if (line.size() < static_cast<long long unsigned int>(board_w))
-        {
-            has_errors = true;
-            error_log << "Line " << y << " too short, padding with spaces.\n";
+            error_log << "Line " << y << " too short. Padding with spaces.\n";
             line += std::string(board_w - line.size(), ' ');
+        } else if (line.size() > board_w) {
+            has_errors = true;
+            error_log << "Line " << y << " too long. Trimming to board width.\n";
+            line = line.substr(0, board_w);
         }
 
         for (int x = 0; x < std::min((int)line.size(), board_w); ++x)
@@ -344,7 +346,7 @@ int GameManager::load_game(const std::string &filename)
             case '2':
             {
                 Direction dir = (c - '0') == 1 ? Direction::L : Direction::R;
-                Tank *tank = new Tank(x, y,dir);
+                Tank *tank = new Tank(x, y, dir);
                 // tank->set_owner(c - '0'); // store 1 or 2
                 game_entities.push_back(tank);
                 game_board[y][x].actor = tank;
@@ -355,21 +357,21 @@ int GameManager::load_game(const std::string &filename)
                 break;
             }
             case ' ':
+                break;
             default:
                 has_errors = true;
                 error_log << "Invalid character '" << c << "' at (" << x << "," << y << "). Treated as empty.\n";
                 break;
             }
         }
-        std::string extra;
-        int line_num = board_h;
-        while (std::getline(file, extra))
-        {
-            has_errors = true;
-            error_log << "Extra line beyond declared height at row " << line_num++ << ". Ignoring.\n";
-        }
-
-        return 0;
+        y++;
     }
-    return 1;
+    while (y < board_h)
+    {
+        has_errors = true;
+        error_log << "Missing line at row " << y << ", filling with spaces.\n";
+        line = std::string(board_w, ' ');
+        y++;
+    }
+    return 0;
 }

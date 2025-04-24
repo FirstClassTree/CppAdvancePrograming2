@@ -10,6 +10,55 @@ std::string game_status_to_string(GameStatus status){
     }
 }
 
+std::string action_to_string(Action action){
+    std::string line = "";
+    switch(action.type){
+        case ActionType::Move:{
+            line = "Action: Move, Position: (" + std::to_string(action.x) +","+std::to_string(action.y) + ")";  
+            break;
+        }
+        case ActionType::Shoot:{
+            line = "Action: Shoot";
+            break;
+        }
+        case ActionType::None:{
+            line = "Action: None";
+            break;
+        }
+        case ActionType::Hit:{
+            line = "Action: Hit";
+            break;
+        }
+        case ActionType::Reverse:{
+            line = "Action: Reverse";
+            break;
+        }
+        case ActionType::RotateL1:{
+            line = "Action: Rotate L1";
+            break;
+        }
+        case ActionType::RotateL2:{
+            line = "Action: Rotate L2";
+            break;
+        }
+        case ActionType::RotateR1:{
+            line = "Action: Rotate R1";
+            break;
+        }
+        case ActionType::RotateR2:{
+            line = "Action: Rotate R2";
+            break;
+        }
+        case ActionType::Stay:{
+            line = "Action: Stay";
+            break;
+        }
+        default:
+            line = "???";
+    }
+    return line;
+}
+
 std::pair<int, int> get_direction_delta(Direction dir)
 {
     switch (dir)

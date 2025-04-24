@@ -4,13 +4,15 @@
 #include <vector>
 #include "entities.hpp"
 #include "utils.hpp"
-
+#include <limits>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
 #include <algorithm>
 #include "game_algo.hpp"
+#include <chrono>
+#include <thread>
+
 
 using namespace std;
 
@@ -47,6 +49,7 @@ private:
     int board_h;
     int turn_index = 0;
     int no_ammo_index = 0;
+    Logger logger;
     GameState game_state;
     vector<Entity *> game_entities;
     vector<Shell *> game_shells;
