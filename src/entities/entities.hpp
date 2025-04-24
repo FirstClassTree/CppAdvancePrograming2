@@ -2,6 +2,13 @@
 #define ENTITIES_HPP
 
 #include "utils.hpp"
+#include <vector>
+#include <math.h>
+
+
+enum class EntityType{
+    Wall,Tank,Mine,Shell
+};
 
 class Entity{
     public:
@@ -36,8 +43,11 @@ class Tank: public LivingEntity{
         void shoot();
         void request_backwards();
         int is_reverse();
+        void reset_reverse();
         int is_reloading();
         int get_ammo();
+        void tick();
+        Tank* closest_target(std::vector<Tank*> others);
         Action colide(Entity* e) override;
 
     private:
@@ -45,7 +55,6 @@ class Tank: public LivingEntity{
         int reload_state;
         Direction tank_direction;
         int reverse_state;
-        Action colide(Entity* e) override;
 };
 class Wall:public Entity{
     public:
@@ -64,9 +73,4 @@ class Shell: public LivingEntity{
         int owner;
         int speed;
 };
-
-enum class EntityType{
-    Wall,Tank,Mine,Shell
-};
-
 #endif

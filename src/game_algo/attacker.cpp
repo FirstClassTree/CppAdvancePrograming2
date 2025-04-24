@@ -1,4 +1,4 @@
-#include <game_algo.hpp>
+#include "game_algo.hpp"
 
 Action not_so_smart_move(Tank *self, Tank *target, const vector<Shell *> &shells,int w, int h, const vector<vector<Tile>> &board)
 {
@@ -13,6 +13,12 @@ Action not_so_smart_move(Tank *self, Tank *target, const vector<Shell *> &shells
             Action rot = rotate_toward(self->entity_dir,target->entity_dir);
             if(rot.type != ActionType::None){
                 return rot;
+            } else {
+                if(!self->is_reverse()){
+                    return Action{ActionType::Reverse};
+                } else {
+                    return Action{ActionType::RotateL1};
+                }
             }
         }
     }
@@ -64,7 +70,7 @@ Action rotate_toward(Direction from, Direction to)
     int diff_pos = mod8(ti - fi);
     int diff_neg = mod8(fi - ti);
     if (diff_pos == 0)
-        return get_none_action();
+        return Action{ActionType::Reverse};
 
     if (diff_pos < diff_neg)
     {

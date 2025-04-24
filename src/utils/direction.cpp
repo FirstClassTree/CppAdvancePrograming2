@@ -1,5 +1,7 @@
 #include "utils.hpp"
 
+
+
 std::pair<int, int> get_direction_delta(Direction dir)
 {
     switch (dir)

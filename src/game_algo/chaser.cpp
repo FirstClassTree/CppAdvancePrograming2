@@ -1,4 +1,35 @@
-#include <game_algo.hpp>
+#include "game_algo.hpp"
+
+int find_depth(int w, int h,
+    vector<vector<bool>> &visited,
+    int x, int y,
+    int limiter,
+    int goal_x, int goal_y)
+{
+
+if (visited[y][x])
+return limiter;
+
+if (x == goal_x && y == goal_y)
+return 1;
+
+visited[y][x] = true;
+
+int min_val = limiter;
+vector<std::pair<int, int>> directions = {
+{0, -1}, {0, 1}, {-1, 0}, {1, 0}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+
+for (auto [dx, dy] : directions)
+{
+int depth = find_depth(w, h, visited, wrap_pos(x + dx, w), wrap_pos(y + dy, h), limiter, goal_x, goal_y);
+min_val = std::min(min_val, 1 + depth);
+}
+
+visited[y][x] = false;
+return min_val;
+}
+
+
 
 Action chase_enemy(Tank *self, Tank *target, const vector<vector<Tile>> &board)
 {
@@ -57,33 +88,4 @@ Action chase_enemy(Tank *self, Tank *target, const vector<vector<Tile>> &board)
     result.x = wrap_pos(self_pos.x + delta_dir.first, w);
     result.y = wrap_pos(self_pos.y + delta_dir.second, h);
     return result;
-}
-
-int find_depth(int w, int h,
-               vector<vector<bool>> &visited,
-               int x, int y,
-               int limiter,
-               int goal_x, int goal_y)
-{
-
-    if (visited[y][x])
-        return limiter;
-
-    if (x == goal_x && y == goal_y)
-        return 1;
-
-    visited[y][x] = true;
-
-    int min_val = limiter;
-    vector<std::pair<int, int>> directions = {
-        {0, -1}, {0, 1}, {-1, 0}, {1, 0}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
-
-    for (auto [dx, dy] : directions)
-    {
-        int depth = find_depth(w, h, visited, wrap_pos(x + dx, w), wrap_pos(y + dy, h), limiter, goal_x, goal_y);
-        min_val = std::min(min_val, 1 + depth);
-    }
-
-    visited[y][x] = false;
-    return min_val;
 }

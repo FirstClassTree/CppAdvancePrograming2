@@ -1,5 +1,46 @@
 #include "entities.hpp"
 
+Tank* Tank::closest_target(std::vector<Tank*> others){
+    double range = INT_MAX;
+    Tank* target;
+
+    for(Tank* tank : others){
+        double distance = sqrt(pow((this->pos_x-tank->pos_x),2)+pow((this->pos_y-tank->pos_y),2));
+        if(distance < range){
+            range= distance;
+            target = tank;
+        }
+    }
+    return target;
+}
+int Tank::is_reloading(){
+    return this->reload_state ==0;
+}
+void Tank::shoot(){
+    this->reload_state == 4;
+}
+int Tank::get_ammo(){
+    return this->ammo;
+}
+void Tank::tick(){
+    if(this->reload_state !=0){
+        this->reload_state--;
+    }
+}
+int Tank::is_reverse(){
+    return this->reverse_state == 3 ? 1 : 0;
+}
+
+void Tank::request_backwards(){
+    if(this->reverse_state !=3){
+        this->reverse_state++;
+    }
+}
+
+void Tank::reset_reverse(){
+    this->reverse_state = 0;
+}
+
 Action Tank::colide(Entity* e){
     EntityType type = e->get_type();
     if(type == EntityType::Mine){

@@ -3,7 +3,10 @@
 
 #include <vector>
 #include <math.h>
+#include <string>
 
+class Entity;
+class Shell;
 enum class Direction {
     U,
     UR,
@@ -21,6 +24,8 @@ enum class GameStatus{
     Winner,
     Tie
 };
+
+std::string game_status_to_string(GameStatus status);
 struct GameState{
     GameStatus status;
     int winner;
