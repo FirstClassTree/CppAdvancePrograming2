@@ -26,9 +26,12 @@ $(TARGET): $(OBJS)
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-clean:
-	del /q $(subst /,\,$(OBJS) $(DEPS)) tanks_game.exe 2>nul || exit 0
+clean-win:
+	del /q $(subst /,\,$(OBJS) $(DEPS)) 2>nul || exit 0
 
+clean:
+	rm -f $(OBJS) $(DEPS)
+	
 run: all
 	./$(TARGET) $(ARGS)
 

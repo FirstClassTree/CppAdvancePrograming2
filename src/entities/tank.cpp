@@ -1,5 +1,10 @@
 #include "entities.hpp"
 
+Tank::Tank(int x, int y,Direction dir) : LivingEntity(x, y, dir) {
+}
+EntityType Tank::get_type() const {
+    return EntityType::Tank;
+}
 Tank* Tank::closest_target(std::vector<Tank*> others){
     double range = INT_MAX;
     Tank* target;
@@ -52,4 +57,15 @@ Action Tank::colide(Entity* e){
     } else if(type == EntityType::Tank){
         return get_hit_action();
     }
+}
+Action Tank::declare_move(){
+    return Action{ActionType::None};
+}
+
+void Tank::update_pos(int x, int y){
+    this->pos_x=x;
+    this->pos_y=y;
+}
+Pos Tank::get_pos(){
+    return Pos{this->pos_x,this->pos_y};
 }

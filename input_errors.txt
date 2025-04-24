@@ -1,0 +1,7 @@
+Extra line beyond declared height at row 8. Ignoring.
+Extra line beyond declared height at row 9. Ignoring.
+Extra line beyond declared height at row 10. Ignoring.
+Extra line beyond declared height at row 11. Ignoring.
+Extra line beyond declared height at row 12. Ignoring.
+Extra line beyond declared height at row 13. Ignoring.
+Extra line beyond declared height at row 14. Ignoring.

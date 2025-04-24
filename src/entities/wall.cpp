@@ -8,6 +8,14 @@ Wall::Wall(int pos_x, int pos_y) : Entity(pos_x, pos_y)
 void Wall::hit(){
     this->health -=1;
 }
+EntityType Wall::get_type() const {
+    return EntityType::Wall;
+}
+void Wall::update_pos(int x, int y){
+}
+Pos Wall::get_pos(){
+    return Pos{this->pos_x,this->pos_y};
+}
 
 Action Wall::colide(Entity* e){
     EntityType type = e->get_type();

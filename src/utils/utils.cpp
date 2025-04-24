@@ -1,6 +1,14 @@
 #include "utils.hpp"
 
-
+std::string game_status_to_string(GameStatus status){
+    switch(status){
+        case GameStatus::Idle: return "Idle";
+        case GameStatus::Running: return "Running";
+        case GameStatus::Tie: return "Tie";
+        case GameStatus::Winner: return "Winner";
+        default: return "unknown";
+    }
+}
 
 std::pair<int, int> get_direction_delta(Direction dir)
 {
@@ -26,7 +34,7 @@ std::pair<int, int> get_direction_delta(Direction dir)
     return {0, 0}; // fallback
 }
 
-int wrap(int v, int max)
+int wrap_pos(int v, int max)
 {
     return (v % max + max) % max;
 }
@@ -57,4 +65,19 @@ Direction get_direction_between(Pos from, Pos to)
         return Direction::UR;
 
     return Direction::None;
+}
+
+Action get_none_action(){
+    Action a;
+    a.type = ActionType::None;
+    a.x = 0;
+    a.y = 0;
+    return a;
+}
+Action get_hit_action(){
+    Action a;
+    a.type = ActionType::Hit;
+    a.x = 0;
+    a.y = 0;
+    return a;
 }

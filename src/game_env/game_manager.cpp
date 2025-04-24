@@ -133,6 +133,10 @@ int GameManager::tick()
 
     return 0;
 }
+vector<vector<Tile>> GameManager::get_board(){
+    return this->game_board;
+}
+
 int GameManager::check_legal_move(Action action, Tank *commiter)
 {
     switch (action.type)
@@ -339,7 +343,8 @@ int GameManager::load_game(const std::string &filename)
             case '1':
             case '2':
             {
-                Tank *tank = new Tank(x, y);
+                Direction dir = (c - '0') == 1 ? Direction::L : Direction::R;
+                Tank *tank = new Tank(x, y,dir);
                 // tank->set_owner(c - '0'); // store 1 or 2
                 game_entities.push_back(tank);
                 game_board[y][x].actor = tank;
