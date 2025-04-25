@@ -74,11 +74,11 @@ vector<Tank *> GameManager::collect_game_tanks(Tank *ignore)
 }
 int GameManager::game_loop()
 {
-    while (this->check_victory() == 0)
+    do
     {
         this->tick();
         std::cout << this->turn_index << endl;
-    }
+    }while (this->check_victory() == 0);
     return 0;
 }
 void GameManager::subscribe_entity(Entity *e)
@@ -111,6 +111,7 @@ int GameManager::tick()
                 else
                 {
                     this->apply_action(collided, collided_result);
+                    this->apply_action(shell, action);
                 }
             }
             else
@@ -125,6 +126,10 @@ int GameManager::tick()
         for (Tank *tank : current->tank_list)
         {
             vector<Tank *> potentials = this->collect_game_tanks(tank);
+            if(potentials.size() == 0){
+                std::cout << "no targets" << endl;
+                return 1;
+            }
             Tank *target = tank->closest_target(potentials);
             Action action = not_so_smart_move(tank, target, this->game_shells, this->board_w, this->board_h, this->get_board());
             Entity *collided = this->test_collision(tank, action);
@@ -150,7 +155,8 @@ vector<vector<Tile>> GameManager::get_board()
 
 int GameManager::check_legal_move(Action action, Tank *commiter)
 {
-    if(action.type != ActionType::Reverse){
+    if (action.type != ActionType::Reverse)
+    {
         commiter->reset_reverse();
     }
 
@@ -210,7 +216,8 @@ Entity *test_tiles(vector<Tile *> tiles, LivingEntity *self)
 }
 Entity *GameManager::test_collision(LivingEntity *self, Action action)
 {
-    if(action.type != ActionType::Move){
+    if (action.type != ActionType::Move)
+    {
         return nullptr;
     }
     int x = wrap_pos(action.x, board_w);
@@ -248,7 +255,8 @@ Entity *GameManager::test_collision(LivingEntity *self, Action action)
     {
         return nullptr;
     }
-    if(e == self){
+    if (e == self)
+    {
         return nullptr;
     }
     this->logger.log_collision(self->id, e->id);
@@ -310,6 +318,7 @@ void GameManager::apply_action(Entity *e, Action action)
         {
             Shell *new_shell = new Shell(-1, e->pos_x, e->pos_y, tank->entity_dir); // TODO add owner
             this->subscribe_shell(new_shell);
+            tank->shoot();
             return;
         }
         return;
@@ -324,11 +333,15 @@ void GameManager::apply_action(Entity *e, Action action)
     }
     if (action.type == ActionType::Hit)
     {
+        std::cout << "HIT!" << std::endl;
         if (type == EntityType::Shell)
         {
             auto it = std::find(game_shells.begin(), game_shells.end(), e);
             if (it != game_shells.end())
+            {
+                this->logger.log_death(it[0]->id);
                 game_shells.erase(it);
+            }
             return;
         }
         if (type == EntityType::Wall)
@@ -340,14 +353,32 @@ void GameManager::apply_action(Entity *e, Action action)
                 {
                     auto it = std::find(game_entities.begin(), game_entities.end(), e);
                     if (it != game_entities.end())
+                    {
+                        this->logger.log_death(it[0]->id);
                         game_entities.erase(it);
+                    }
+                    return;
+                }
+            }
+        }
+        if (type == EntityType::Tank)
+        {
+            for(Player* player : this->game_players){
+                auto it = std::find(player->tank_list.begin(), player->tank_list.end(), e);
+                if (it != player->tank_list.end())
+                {
+                    this->logger.log_death(it[0]->id);
+                    player->tank_list.erase(it);
                     return;
                 }
             }
         }
         auto it = std::find(game_entities.begin(), game_entities.end(), e);
         if (it != game_entities.end())
+        {
+            this->logger.log_death(it[0]->id);
             game_entities.erase(it);
+        }
         return;
     }
 }
@@ -431,8 +462,16 @@ int GameManager::load_game(const std::string &filename)
                 this->subscribe_entity(tank);
                 game_board[y][x].actor = tank;
 
-                if (game_players[c - '1']->tank_list.size() == 1)
-                    break;
+                if (dir == Direction::L)
+                {
+                    if (game_players[0]->tank_list.size() == 1)
+                        break;
+                }
+                else
+                {
+                    if (game_players[1]->tank_list.size() == 1)
+                        break;
+                }
                 game_players[c - '1']->tank_list.push_back(tank);
                 break;
             }

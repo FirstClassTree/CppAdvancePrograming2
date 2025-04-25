@@ -11,3 +11,6 @@ void Logger::log_action(Action action,int player_id){
 void Logger::log_collision(int e1, int e2){
     std::cout << "Entity: " << e1 << " collided with: " << e2 << std::endl;
 }
+void Logger::log_death(int id){
+    std::cout << "Entity: " << id << "died!"<< std::endl;
+}

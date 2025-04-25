@@ -37,7 +37,7 @@ Action not_so_smart_move(Tank *self, Tank *target, const vector<Shell *> &shells
             }
         }
     }
-    return chase_enemy(self, target, board);
+    return chase_enemy_bfs(self, target, board);
 }
 Action is_targeted(Tank *self, const vector<Shell *> &shells, int w, int h)
 {

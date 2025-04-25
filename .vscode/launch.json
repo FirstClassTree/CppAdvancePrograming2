@@ -6,7 +6,9 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/tanks_game.exe",
-      "args": ["C:\\Users\\LiorBuch\\Documents\\GitHub\\CppAdvancePrograming\\data\\board.txt"],
+      "args": [
+        "C:\\Users\\LiorBuch\\Documents\\GitHub\\CppAdvancePrograming\\data\\board.txt"
+      ],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -14,8 +16,31 @@
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
-        { "description": "Enable pretty-printing", "text": "-enable-pretty-printing", "ignoreFailures": true }
-      ],
+        {
+          "description": "Enable pretty-printing",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
+    },
+    {
+      "name": "C/C++ Runner: Debug Session",
+      "type": "cppdbg",
+      "request": "launch",
+      "args": [],
+      "stopAtEntry": false,
+      "externalConsole": true,
+      "cwd": "c:/Users/LiorBuch/Documents/GitHub/CppAdvancePrograming/src/game_env",
+      "program": "c:/Users/LiorBuch/Documents/GitHub/CppAdvancePrograming/src/game_env/build/Debug/outDebug",
+      "MIMode": "gdb",
+      "miDebuggerPath": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ]
     }
   ]
 }
