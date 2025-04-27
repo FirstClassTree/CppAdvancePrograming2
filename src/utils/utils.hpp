@@ -65,6 +65,7 @@ class Logger{
     void log_action(Action action,int player_id);
     void log_collision(int e1, int e2);
     void log_death(int id);
+    void log_result(GameState state);
 };
 
 std::string game_status_to_string(GameStatus status);

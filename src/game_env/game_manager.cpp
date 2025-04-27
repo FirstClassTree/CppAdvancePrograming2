@@ -140,12 +140,17 @@ int GameManager::tick()
             }
             else
             {
-                this->logger.log("Illigal action!");
+                this->logger.log("Illigal action made by: Player"+current->id);
             }
         }
     }
     this->turn_index++;
-    std::this_thread::sleep_for(std::chrono::seconds(1));
+    //std::this_thread::sleep_for(std::chrono::seconds(1));
+    if(turn_index== 10000){
+        this->logger.log("Game did not end after 10,000 turns, terminating game with draw.");
+        this->game_state.status = GameStatus::Tie;
+        return 1;
+    }
     return 0;
 }
 vector<vector<Tile>> GameManager::get_board()
@@ -316,7 +321,7 @@ void GameManager::apply_action(Entity *e, Action action)
     {
         if (Tank *tank = dynamic_cast<Tank *>(e))
         {
-            Shell *new_shell = new Shell(-1, e->pos_x, e->pos_y, tank->entity_dir); // TODO add owner
+            Shell *new_shell = new Shell(e->pos_x, e->pos_y, tank->entity_dir); // TODO add owner
             this->subscribe_shell(new_shell);
             tank->shoot();
             return;
@@ -390,6 +395,7 @@ void GameManager::print_result()
     {
         std::cout << "Winner: " << this->game_state.winner << "\n";
     }
+    this->logger.log_result(this->game_state);
 }
 
 int GameManager::load_game(const std::string &filename)

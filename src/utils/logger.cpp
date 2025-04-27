@@ -2,15 +2,28 @@
 
 Logger::Logger(){}
 void Logger::log(std::string line){
-    std::cout << line << std::endl;
+    std::ofstream file("game_output.txt");
+    file << line << std::endl;
 }
 void Logger::log_action(Action action,int player_id){
-    std::cout << "Player " << player_id << " did action: " << action_to_string(action) << std::endl;
+    std::ofstream file("game_output.txt");
+    file << "Player " << player_id << " did action: " << action_to_string(action) << std::endl;
 }
 
 void Logger::log_collision(int e1, int e2){
-    std::cout << "Entity: " << e1 << " collided with: " << e2 << std::endl;
+    std::ofstream file("game_output.txt");
+    file << "Entity: " << e1 << " collided with: " << e2 << std::endl;
 }
 void Logger::log_death(int id){
-    std::cout << "Entity: " << id << "died!"<< std::endl;
+    std::ofstream file("game_output.txt");
+    file << "Entity: " << id << "died!"<< std::endl;
+}
+
+void Logger::log_result(GameState state){
+    std::ofstream file("game_output.txt");
+    file << "Game state: " << game_status_to_string(state.status) << "\n";
+    if (state.status == GameStatus::Winner)
+    {
+        file << "Winner: " << state.winner << "\n";
+    }
 }

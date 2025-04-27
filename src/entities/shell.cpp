@@ -1,12 +1,7 @@
 #include "entities.hpp"
 
-Shell::Shell(int owner,int pos_x,int pos_y,Direction dir):LivingEntity(pos_x,pos_y,dir){
-    this->owner = owner;
+Shell::Shell(int pos_x,int pos_y,Direction dir):LivingEntity(pos_x,pos_y,dir){
     this->speed = 2;
-}
-
-int Shell::get_owner(){
-    return this->owner;
 }
 Action Shell::declare_move(){
     std::pair<int,int> dir_d = get_direction_delta(this->entity_dir);

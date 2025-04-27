@@ -83,8 +83,7 @@ public:
 class Shell : public LivingEntity
 {
 public:
-    explicit Shell(int owner, int pos_x, int pos_y, Direction dir);
-    int get_owner();
+    explicit Shell(int pos_x, int pos_y, Direction dir);
     Action colide(Entity *e) override;
     void update_pos(int x, int y) override;
     Pos get_pos() override;
@@ -92,7 +91,6 @@ public:
     Action declare_move() override;
 
 private:
-    int owner;
     int speed;
 };
 #endif
