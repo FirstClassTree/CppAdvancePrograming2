@@ -1,6 +1,6 @@
 #ifndef ENTITIES_HPP
 #define ENTITIES_HPP
-
+#include <climits>
 #include "utils.hpp"
 #include <vector>
 #include <math.h>

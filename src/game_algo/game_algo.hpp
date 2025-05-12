@@ -8,6 +8,7 @@
 #include <set>
 #include <queue>
 #include <algorithm>
+#include <climits>
 
 using namespace std;
 Action chase_enemy(Tank* self, Tank* target, const vector<vector<Tile>>& board);
