@@ -400,8 +400,6 @@ void GameManager::print_result()
 
 int GameManager::load_game(const std::string &filename)
 {
-    bool has_errors = false;
-
     Player *p1 = new Player(1);
     Player *p2 = new Player(2);
     game_players.push_back(p1);
@@ -423,19 +421,16 @@ int GameManager::load_game(const std::string &filename)
     {
         if (y >= board_h)
         {
-            has_errors = true;
             error_log << "Extra line beyond declared height at row " << y << ". Ignoring.\n";
             continue;
         }
-        if (line.size() < board_w)
+        if (static_cast<int>(line.size()) < board_w)
         {
-            has_errors = true;
             error_log << "Line " << y << " too short. Padding with spaces.\n";
             line += std::string(board_w - line.size(), ' ');
         }
-        else if (line.size() > board_w)
+        else if (static_cast<int>(line.size()) > board_w)
         {
-            has_errors = true;
             error_log << "Line " << y << " too long. Trimming to board width.\n";
             line = line.substr(0, board_w);
         }
@@ -484,7 +479,6 @@ int GameManager::load_game(const std::string &filename)
             case ' ':
                 break;
             default:
-                has_errors = true;
                 error_log << "Invalid character '" << c << "' at (" << x << "," << y << "). Treated as empty.\n";
                 break;
             }
@@ -493,7 +487,6 @@ int GameManager::load_game(const std::string &filename)
     }
     while (y < board_h)
     {
-        has_errors = true;
         error_log << "Missing line at row " << y << ", filling with spaces.\n";
         line = std::string(board_w, ' ');
         y++;

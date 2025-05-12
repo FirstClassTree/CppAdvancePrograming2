@@ -12,6 +12,8 @@ EntityType Wall::get_type() const {
     return EntityType::Wall;
 }
 void Wall::update_pos(int x, int y){
+    this->pos_x=x;
+    this->pos_y=y;
 }
 Pos Wall::get_pos(){
     return Pos{this->pos_x,this->pos_y};
@@ -20,12 +22,13 @@ Pos Wall::get_pos(){
 Action Wall::colide(Entity* e){
     EntityType type = e->get_type();
     if(type == EntityType::Mine){
-        //raise error
+        return get_none_action();
     } else if(type == EntityType::Shell){
         return get_none_action();
     } else if(type == EntityType::Wall){
-        //raise error
+        return get_none_action();
     } else if(type == EntityType::Tank){
         return get_hit_action();
     }
+    return get_none_action();
 }

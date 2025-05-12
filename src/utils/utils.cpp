@@ -79,6 +79,8 @@ std::pair<int, int> get_direction_delta(Direction dir)
         return {-1, 0};
     case Direction::UL:
         return {-1, -1};
+    case Direction::None:
+        return {0,0};
     }
     return {0, 0}; // fallback
 }

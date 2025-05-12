@@ -58,6 +58,7 @@ Action Tank::colide(Entity* e){
     } else if(type == EntityType::Tank){
         return get_hit_action();
     }
+    return get_none_action();
 }
 Action Tank::declare_move(){
     return Action{ActionType::None};

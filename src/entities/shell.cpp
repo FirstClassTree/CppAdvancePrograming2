@@ -29,4 +29,5 @@ Action Shell::colide(Entity* e){
     } else if(type == EntityType::Tank){
         return get_hit_action();
     }
+    return get_none_action();
 }
