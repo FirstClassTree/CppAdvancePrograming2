@@ -1,4 +1,6 @@
 #include "../../common/GameManager.h"
+#include "entities/Wall.h"
+#include "utils/Tile.h"
 
 int extractIntValue(const std::string &line, const std::string &key) {
   std::regex pattern("^\\s*" + key + "\\s*=\\s*(\\d+)\\s*$");
@@ -10,14 +12,27 @@ int extractIntValue(const std::string &line, const std::string &key) {
   }
 }
 
-GameManager::GameManager() {}
+GameManager::GameManager() { this->player_factory = GamePlayerFactory(); }
+
+void GameManager::subscribe_tank(std::shared_ptr<Tank> tank) {
+  this->subscribe_entity(tank);
+  this->game_tanks.push_back(tank);
+}
+void GameManager::subscribe_entity(std::shared_ptr<Entity> entity) {
+  this->game_entities.push_back(entity);
+}
+void GameManager::subscribe_shell(std::shared_ptr<Shell> shell) {
+  this->subscribe_entity(shell);
+  this->game_shells.push_back(shell);
+}
 
 Map GameManager::get_map() {
-  if (!map) {
+
+  if (!this->map) {
     // For a test, it might be better to throw or assert
     throw std::runtime_error("GameManager::map is null in get_map()!");
   }
-  return *map;
+  return *this->map;
 }
 
 int GameManager::load_map(const std::string &map_path) {
@@ -33,7 +48,6 @@ int GameManager::load_map(const std::string &map_path) {
             << map_path << "\"" << std::endl; // DEBUG
   std::string line;
 
-    
   std::getline(map_file, line);
   std::string name = line;
   std::getline(map_file, line);
@@ -44,26 +58,31 @@ int GameManager::load_map(const std::string &map_path) {
   int rows = extractIntValue(line, "Rows");
   std::getline(map_file, line);
   int cols = extractIntValue(line, "Cols");
-  std::vector<std::vector<char>> map(rows, std::vector<char>(cols, ' '));
+  std::vector<std::vector<Tile>> map(
+      rows, std::vector<Tile>(cols, Tile(0, 0, nullptr, nullptr, nullptr)));
   int row_idx = 0;
   while (std::getline(map_file, line)) {
-    int line_size = static_cast<int>(line.size());
-    if (row_idx > cols) {
-      // TODO: log error for extra line. this will just pass
+    if (row_idx >= rows) {
+      std::cerr << "[GameManager::load_map] Warning: Map file has more rows "
+                   "than specified. Ignoring extra rows."
+                << std::endl;
+      break;
     }
-    if (line_size < rows) {
-      // TODO: log error for line length. this will trim.
-      line += std::string(rows - line.size(), ' ');
-    } else if (line_size > rows) {
-      // TODO: log error for line length. this will trim to spesified length.
-      line = line.substr(0, rows);
-    }
-    for (int i = 0; i < std::min(line_size, rows); i++) {
-      char c = line[i];
+
+    for (int i = 0; i < cols; i++) {
+      map[row_idx][i].x = row_idx;
+      map[row_idx][i].y = i;
+
+      char c = ' ';
+      if (i < static_cast<int>(line.size())) {
+        c = line[i];
+      }
+
       switch (c) {
       case '#': {
-        // TODO: add wall init.
-        map[row_idx][i] = '#';
+        auto wall = std::make_shared<Wall>(row_idx, i);
+        this->subscribe_entity(wall);
+        map[row_idx][i].ground = wall;
         break;
       }
       case '1':
@@ -75,10 +94,30 @@ int GameManager::load_map(const std::string &map_path) {
       case '7':
       case '8':
       case '9': {
-        // Store player position for later initialization
         int player_num = c - '0';
-        // player_positions[player_num] = {row_idx, i};
-        map[row_idx][i] = c;
+        auto tank = std::make_shared<Tank>(row_idx, i, Direction::U,
+                                           player_num); // TODO: fix direction
+        
+        this->subscribe_tank(tank);
+        map[row_idx][i].actor = tank;
+        bool player_exists = false;
+        for (const auto &player_ptr : this->players) {
+          if (player_ptr) {
+            if (const GamePlayer *gp =
+                    dynamic_cast<const GamePlayer *>(player_ptr.get())) {
+              if (gp->get_id() == player_num) {
+                player_exists = true;
+                break;
+              }
+            }
+          }
+        }
+
+        if (!player_exists) {
+          auto new_player = this->player_factory.create(player_num, row_idx, i,
+                                                        max_steps, num_shells);
+          this->players.emplace_back(std::move(new_player));
+        }
         break;
       }
       case ' ':
@@ -90,9 +129,16 @@ int GameManager::load_map(const std::string &map_path) {
     }
     row_idx++;
   }
-  while (row_idx < rows) {
-    // TODO: log error for missing line.
-    ++row_idx;
+  if (row_idx < rows) {
+    std::cerr << "[GameManager::load_map] Warning: Map file has fewer rows "
+                 "than specified. Remaining rows will be empty."
+              << std::endl;
+    for (int r = row_idx; r < rows; ++r) {
+      for (int c_col = 0; c_col < cols; ++c_col) {
+        map[r][c_col].x = r;
+        map[r][c_col].y = c_col;
+      }
+    }
   }
 
   this->map =
