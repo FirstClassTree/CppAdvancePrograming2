@@ -1,0 +1,10 @@
+Map Symbol
+MaxSteps=2000
+NumShells=200
+Rows= 5
+Cols= 5
+#####
+#123#
+#456#
+#789#
+#####
