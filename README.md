@@ -39,11 +39,10 @@ This project is a C++ application (Tank Game) built using CMake.
 
 ## Running the Application
 
-(Example - Please update with your actual executable details)
+
 ```bash
-./build/src/YourGameExecutable # Or path/to/your/executable
+./build/tanks_game # Or path/to/your/executable
 ```
-*Please update this section with the actual name and path of your main executable and any command-line arguments it might require.*
 
 ## Running Tests
 
@@ -51,7 +50,7 @@ Tests are managed with CTest and Google Test. After building the project:
 
 1.  **Navigate to the build directory (if not already there):**
     ```bash
-    cd /path/to/your/project/build
+    cd build # Assuming 'build' is a subdirectory of the project root
     ```
 
 2.  **Run the tests using CTest:**

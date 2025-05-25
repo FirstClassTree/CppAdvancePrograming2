@@ -10,3 +10,5 @@ add_subdirectory(src)
 # Enable testing
 enable_testing()
 add_subdirectory(tests)
+
+add_executable(tanks_game src/main.cpp)
