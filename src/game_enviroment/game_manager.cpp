@@ -33,7 +33,7 @@ int GameManager::load_map(const std::string &map_path) {
             << map_path << "\"" << std::endl; // DEBUG
   std::string line;
 
-  // read the map for the max steps
+    
   std::getline(map_file, line);
   std::string name = line;
   std::getline(map_file, line);

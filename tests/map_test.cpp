@@ -8,13 +8,11 @@ TEST(MapTest, TestMapInitialization) {
 
   std::filesystem::path current_test_file_path = __FILE__;
   std::filesystem::path project_root_path =
-      current_test_file_path.parent_path()
-          .parent_path();
+      current_test_file_path.parent_path().parent_path();
   std::filesystem::path map_file_path =
-      project_root_path / "files" / "test_map_1.txt";
+      project_root_path / "files" / "tests" / "maps" / "test_map_1.txt";
 
-  int result =
-      game_manager.load_map(map_file_path.string());
+  int result = game_manager.load_map(map_file_path.string());
   EXPECT_EQ(result, 0);
   Map map = game_manager.get_map();
 
@@ -35,10 +33,9 @@ TEST(MapTest, TestSymbolDetection) {
   GameManager game_manager;
   std::filesystem::path current_test_file_path = __FILE__;
   std::filesystem::path project_root_path =
-      current_test_file_path.parent_path()
-          .parent_path();
+      current_test_file_path.parent_path().parent_path();
   std::filesystem::path map_file_path =
-      project_root_path / "files" / "test_map_symbol.txt";
+      project_root_path / "files" / "tests" / "maps" / "test_map_symbol.txt";
   int result = game_manager.load_map(map_file_path.string());
   EXPECT_EQ(result, 0);
   Map map = game_manager.get_map();
