@@ -1,3 +1,6 @@
+![C/C++ CI](https://github.com/FirstClassTree/CppAdvancePrograming2/actions/workflows/test.yml/badge.svg)
+
+
 # C++AdvancePrograming 2
 
 This project is a C++ application (Tank Game) built using CMake.
