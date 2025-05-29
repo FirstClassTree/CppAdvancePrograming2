@@ -1,0 +1,8 @@
+Broken map
+MaxSteps=3000
+NumShells=15
+Cols=10
+#####
+# 1 #
+#  2#
+#####
