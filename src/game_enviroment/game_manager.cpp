@@ -145,3 +145,71 @@ int GameManager::load_map(const std::string &map_path) {
       std::make_unique<Map>(name, max_steps, num_shells, cols, rows, map);
   return 0;
 }
+
+
+
+// int GameManager::load_map(const std::string& map_path) {
+//   std::ifstream map_file;
+//   if (!open_map_file(map_path, map_file)) return -1;
+
+//   std::string name;
+//   int max_steps, num_shells, rows, cols;
+//   if (!parse_metadata(map_file, name, max_steps, num_shells, rows, cols)) return -1;
+
+//   auto map = init_empty_map(rows, cols);
+
+//   std::string line;
+//   int row_idx = 0;
+//   while (std::getline(map_file, line) && row_idx < rows) {
+//     parse_map_row(line, row_idx, cols, map);
+//     ++row_idx;
+//   }
+
+//   if (row_idx < rows) fill_remaining_rows(row_idx, rows, cols, map);
+
+//   this->map = std::make_unique<Map>(name, max_steps, num_shells, cols, rows, map);
+//   return 0;
+// }
+
+
+
+
+
+
+// bool open_map_file(const std::string& path ,std::ifstream& file){
+
+
+// }
+
+
+// bool parse_metadata(std::ifstream& file, std::string& name, int& max_steps, int& num_shells, int& rows, int& cols){
+
+
+// }
+
+// std::vector<std::vector<Tile>> init_empty_map(int rows, int cols){
+
+// }
+
+// void parse_map_row(const std::string& line, int row_idx, int cols, std::vector<std::vector<Tile>>& map){
+
+// }
+
+// void create_or_update_player(int player_num, int row, int col){
+
+
+// }
+
+// void GameManager::fill_remaining_rows(int start_row, int total_rows, int total_cols,
+//                                       std::vector<std::vector<Tile>>& map) {
+//   std::cerr << "[GameManager::load_map] Warning: Map file has fewer rows "
+//                "than specified. Remaining rows will be empty."
+//             << std::endl;
+
+//   for (int r = start_row; r < total_rows; ++r) {
+//     for (int c = 0; c < total_cols; ++c) {
+//       map[r][c].x = r;
+//       map[r][c].y = c;
+//     }
+//   }
+// }

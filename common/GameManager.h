@@ -35,5 +35,7 @@ private:
   std::vector<std::weak_ptr<Tank>> game_tanks;
   GamePlayerFactory player_factory;
 };
+void fill_remaining_rows(int start_row, int total_rows, int total_cols,
+                         std::vector<std::vector<Tile>>& map);
 
 #endif

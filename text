@@ -1,0 +1,117 @@
+.
+├── CMakeLists.txt
+├── README.md
+├── bonus.txt
+├── common
+│   ├── ActionRequest.h
+│   ├── BattleInfo.h
+│   ├── Direction.h
+│   ├── Entity.h
+│   ├── EntityType.h
+│   ├── GameManager.h
+│   ├── GamePlayer.h
+│   ├── GamePlayerFactory.h
+│   ├── IJson.h
+│   ├── Map.h
+│   ├── MoveableEntity.h
+│   ├── Player.h
+│   ├── PlayerFactory.h
+│   ├── Pos.h
+│   ├── SatelliteView.h
+│   ├── TankAlgorithm.h
+│   ├── TankAlgorithmFactory.h
+│   ├── entities
+│   │   ├── Mine.h
+│   │   ├── Shell.h
+│   │   ├── Tank.h
+│   │   └── Wall.h
+│   └── utils
+│       ├── GameWrapper.h
+│       └── Tile.h
+├── files
+│   └── tests
+│       ├── algorithm
+│       ├── json
+│       │   ├── rust_json_test.txt
+│       │   └── serialized_json_test.txt
+│       └── maps
+│           ├── test_map_1.txt
+│           ├── test_map_cols_overflow.txt
+│           ├── test_map_cols_undeflow.txt
+│           └── test_map_symbol.txt
+├── include
+│   └── json.hpp
+├── input_errors.txt
+├── src
+│   ├── CMakeLists.txt
+│   ├── entities
+│   │   ├── Entity.cpp
+│   │   ├── Mine.cpp
+│   │   ├── MoveableEntity.cpp
+│   │   ├── Shell.cpp
+│   │   ├── Tank.cpp
+│   │   └── Wall.cpp
+│   ├── game_enviroment
+│   │   ├── GamePlayer.cpp
+│   │   ├── GamePlayerFactory.cpp
+│   │   └── game_manager.cpp
+│   ├── main.cpp
+│   └── utils
+│       ├── map.cpp
+│       └── tile.cpp
+├── tanks-ui
+│   ├── README.md
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.cjs
+│   ├── public
+│   │   ├── tauri.svg
+│   │   └── vite.svg
+│   ├── src
+│   │   ├── App.tsx
+│   │   ├── api.ts
+│   │   ├── assets
+│   │   │   └── react.svg
+│   │   ├── components
+│   │   │   ├── game_board.tsx
+│   │   │   └── player.tsx
+│   │   ├── main.tsx
+│   │   └── vite-env.d.ts
+│   ├── src-tauri
+│   │   ├── Cargo.toml
+│   │   ├── build.rs
+│   │   ├── capabilities
+│   │   │   └── default.json
+│   │   ├── icons
+│   │   │   ├── 128x128.png
+│   │   │   ├── 128x128@2x.png
+│   │   │   ├── 32x32.png
+│   │   │   ├── Square107x107Logo.png
+│   │   │   ├── Square142x142Logo.png
+│   │   │   ├── Square150x150Logo.png
+│   │   │   ├── Square284x284Logo.png
+│   │   │   ├── Square30x30Logo.png
+│   │   │   ├── Square310x310Logo.png
+│   │   │   ├── Square44x44Logo.png
+│   │   │   ├── Square71x71Logo.png
+│   │   │   ├── Square89x89Logo.png
+│   │   │   ├── StoreLogo.png
+│   │   │   ├── icon.icns
+│   │   │   ├── icon.ico
+│   │   │   └── icon.png
+│   │   ├── src
+│   │   │   ├── lib.rs
+│   │   │   └── main.rs
+│   │   └── tauri.conf.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+├── tests
+│   ├── CMakeLists.txt
+│   ├── cmake_test.cpp
+│   ├── map_test.cpp
+│   └── test_json.cpp
+└── text
+
+23 directories, 91 files
