@@ -70,6 +70,33 @@ TEST(MapTest, ExtraRowsAndColsAreIgnored) {
   EXPECT_EQ(map.get_map()[0].size(), 10);
 }
 
+// Tests map parser correctly pads missing columns with empty tiles
+TEST(MapTest, MissingColumnsArePadded) {
+  GameManager game_manager;
+
+  std::filesystem::path current_test_file_path = __FILE__;
+  std::filesystem::path project_root_path = current_test_file_path.parent_path().parent_path();
+  std::filesystem::path map_file_path = project_root_path / "files" / "tests" / "maps" / "test_map_cols_underflow.txt";
+
+  int result = game_manager.load_map(map_file_path.string());
+  EXPECT_EQ(result, 0);
+
+  Map map = game_manager.get_map();
+  EXPECT_EQ(map.get_rows(), 4);
+  EXPECT_EQ(map.get_cols(), 10);
+
+  // Make sure rows are the correct size
+  for (const auto& row : map.get_map()) {
+    EXPECT_EQ(row.size(), 10);
+  }
+
+  // Check that tile [1][4] is empty (i.e., past the '3' character in the second row)
+  EXPECT_FALSE(map.get_map()[1][4].actor.lock());
+  EXPECT_FALSE(map.get_map()[1][4].ground.lock());
+}
+
+
+
 
 // checks if spaces around equal sign are parsed correctly:
 TEST(MapTest, ValidWhitespaceMapParsesCorrectly) {
