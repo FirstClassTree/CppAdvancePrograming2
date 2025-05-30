@@ -17,6 +17,10 @@ public:
   const std::vector<std::vector<Tile>> &get_map() const;
   void print_map() const;
 
+  int get_rows() const;
+  int get_cols() const;
+  int get_max_steps() const;
+
 private:
   std::vector<std::vector<Tile>> map;
   std::string name;
@@ -26,7 +30,6 @@ private:
   int height;
 };
 
-int get_rows() const;
-int get_cols() const;
-int get_max_steps() const;
+
+
 #endif
