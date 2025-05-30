@@ -29,6 +29,8 @@ This project is a C++ application (Tank Game) built using CMake.
     ```
     This command configures the project and generates the build files (e.g., Makefiles) in the `build` directory.
 
+
+
 3.  **Compile the project:**
     After CMake configuration is successful, run your build tool (e.g., Make).
     ```bash
@@ -65,6 +67,10 @@ Tests are managed with CTest and Google Test. After building the project:
     ctest -V
     ```
     This will execute all discovered tests (e.g., `runTests` which includes `MapTest`, etc.). Test results will be displayed in the terminal.
+
+
+    ** to run without memory leak check -DENABLE_ASAN=OFF
+
 
 ## Cleaning the Build
 

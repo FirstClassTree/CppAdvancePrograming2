@@ -19,6 +19,29 @@ target_link_libraries(runTests
     tanks_game_lib
 )
 
+
+# Optional: Disable AddressSanitizer with cmake -DENABLE_ASAN=OFF
+option(ENABLE_ASAN "Enable AddressSanitizer" ON)
+
+if (ENABLE_ASAN)
+    message(STATUS "AddressSanitizer ENABLED")
+
+    # Apply ASan flags with helpful defaults
+    target_compile_options(runTests PRIVATE
+        -fsanitize=address
+        -g
+        -O1
+        -fno-omit-frame-pointer  # for better stack traces
+    )
+    target_link_options(runTests PRIVATE
+        -fsanitize=address
+    )
+
+    # Optional: Set runtime environment variables for verbose ASan
+    set(ENV{ASAN_OPTIONS} "verbosity=1:abort_on_error=1")
+endif()
+
+
 # Register the tests
 include(GoogleTest)
 gtest_discover_tests(runTests)
