@@ -172,10 +172,6 @@ int GameManager::load_map(const std::string &map_path) {
 // }
 
 
-
-
-
-
 // bool open_map_file(const std::string& path ,std::ifstream& file){
 
 

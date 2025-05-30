@@ -26,4 +26,7 @@ private:
   int height;
 };
 
+int get_rows() const;
+int get_cols() const;
+int get_max_steps() const;
 #endif

@@ -44,3 +44,16 @@ std::string Map::serialize() {
   j["map"] = "placeholder"; // TODO: implement map serialization
   return j.dump();
 }
+
+
+int Map::get_rows() const {
+    return height;
+}
+
+int Map::get_cols() const {
+    return width;
+}
+
+int Map::get_max_steps() const {
+    return max_steps;
+}
