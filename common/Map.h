@@ -20,6 +20,8 @@ public:
   int get_rows() const;
   int get_cols() const;
   int get_max_steps() const;
+  int get_num_shells() const;
+
 
 private:
   std::vector<std::vector<Tile>> map;
