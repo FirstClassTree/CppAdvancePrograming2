@@ -1,6 +1,6 @@
 #include "../../common/GameManager.h"
-#include "entities/Wall.h"
-#include "utils/Tile.h"
+#include "../../common/entities/Wall.h"
+#include "../../common/utils/Tile.h"
 
 int extractIntValue(const std::string &line, const std::string &key) {
   std::regex pattern("^\\s*" + key + "\\s*=\\s*(\\d+)\\s*$");

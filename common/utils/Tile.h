@@ -4,7 +4,7 @@
 #include "../Entity.h"
 #include "../entities/Shell.h"
 #include "../entities/Tank.h"
-#include "IJson.h"
+#include "../IJson.h"
 
 class Tile : public IJson {
 public:

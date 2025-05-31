@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include "../include/json.hpp"
+
 using namespace nlohmann;
 TEST(JsonTest, TestParseJson) {
     json j;
