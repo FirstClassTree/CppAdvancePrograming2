@@ -1,0 +1,14 @@
+Small battlefield
+MaxSteps=2000
+NumShells=200
+Rows= 10
+##########
+#  1     #
+#        #
+#        #
+#  #  #  #
+#        #
+#        #
+#        #
+#     2  #
+##########

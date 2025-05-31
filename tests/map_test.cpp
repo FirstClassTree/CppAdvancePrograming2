@@ -49,3 +49,39 @@ TEST(MapTest, TestSymbolDetection) {
   EXPECT_EQ(map.get_map()[3][2].actor.lock()->get_id(), 8);
   EXPECT_EQ(map.get_map()[3][3].actor.lock()->get_id(), 9);
 }
+
+TEST(MapTest, TestMissingRowsData) {
+  GameManager game_manager;
+
+  std::filesystem::path current_test_file_path = __FILE__;
+  std::filesystem::path project_root_path =
+      current_test_file_path.parent_path().parent_path();
+  std::filesystem::path map_file_path = project_root_path / "files" / "tests" /
+                                        "maps" / "test_map_missing_rows.txt";
+
+  try {
+    int result = game_manager.load_map(map_file_path.string());
+    FAIL() << "Expected std::runtime_error to be thrown";
+  } catch (const std::runtime_error &e) {
+    EXPECT_STREQ(e.what(), "Invalid format for line: Cols= 10 expected: Rows");
+    SUCCEED();
+  }
+}
+
+TEST(MapTest, TestMissingColsData) {
+  GameManager game_manager;
+
+  std::filesystem::path current_test_file_path = __FILE__;
+  std::filesystem::path project_root_path =
+      current_test_file_path.parent_path().parent_path();
+  std::filesystem::path map_file_path = project_root_path / "files" / "tests" /
+                                        "maps" / "test_map_missing_cols.txt";
+
+  try {
+    int result = game_manager.load_map(map_file_path.string());
+    FAIL() << "Expected std::runtime_error to be thrown";
+  } catch (const std::runtime_error &e) {
+    EXPECT_STREQ(e.what(), "Invalid format for line: ########## expected: Cols");
+    SUCCEED();
+  }
+}
