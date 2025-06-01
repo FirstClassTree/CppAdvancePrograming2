@@ -1,5 +1,6 @@
 #include <iostream>
-#include <./common/GameManager.h>
+#include "../common/GameManager.h"
+
 
 int main(){
     std::cout << "Hello, World!" << std::endl;
