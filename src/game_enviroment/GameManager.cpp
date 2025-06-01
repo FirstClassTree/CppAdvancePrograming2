@@ -120,7 +120,6 @@ int extractIntValue(const std::string &line, const std::string &expected_key) {
 bool GameManager::parse_map_header(std::istream &in, std::string &name, int &max_steps,
                       int &num_shells, int &rows, int &cols) {
     std::string line;
-
     try {
         if (!std::getline(in, name)) throw std::runtime_error("Missing map name line");
         if (!std::getline(in, line)) throw std::runtime_error("Missing MaxSteps line");
