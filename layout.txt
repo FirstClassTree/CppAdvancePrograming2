@@ -1,0 +1,671 @@
+.
+├── CMakeLists.txt
+├── HW1_final_grades.xlsx
+├── README.md
+├── bonus.txt
+├── build
+│   ├── CMakeCache.txt
+│   ├── CMakeFiles
+│   │   ├── 3.22.1
+│   │   │   ├── CMakeCCompiler.cmake
+│   │   │   ├── CMakeCXXCompiler.cmake
+│   │   │   ├── CMakeDetermineCompilerABI_C.bin
+│   │   │   ├── CMakeDetermineCompilerABI_CXX.bin
+│   │   │   ├── CMakeSystem.cmake
+│   │   │   ├── CompilerIdC
+│   │   │   │   ├── CMakeCCompilerId.c
+│   │   │   │   ├── a.out
+│   │   │   │   └── tmp
+│   │   │   └── CompilerIdCXX
+│   │   │       ├── CMakeCXXCompilerId.cpp
+│   │   │       ├── a.out
+│   │   │       └── tmp
+│   │   ├── CMakeDirectoryInformation.cmake
+│   │   ├── CMakeOutput.log
+│   │   ├── CMakeTmp
+│   │   ├── Makefile.cmake
+│   │   ├── Makefile2
+│   │   ├── TargetDirectories.txt
+│   │   ├── VerifyGlobs.cmake
+│   │   ├── cmake.check_cache
+│   │   ├── cmake.verify_globs
+│   │   ├── progress.marks
+│   │   └── tanks_game.dir
+│   │       ├── DependInfo.cmake
+│   │       ├── build.make
+│   │       ├── cmake_clean.cmake
+│   │       ├── compiler_depend.internal
+│   │       ├── compiler_depend.make
+│   │       ├── compiler_depend.ts
+│   │       ├── depend.make
+│   │       ├── flags.make
+│   │       ├── link.txt
+│   │       ├── progress.make
+│   │       └── src
+│   │           ├── main.cpp.o
+│   │           └── main.cpp.o.d
+│   ├── CTestTestfile.cmake
+│   ├── Makefile
+│   ├── Testing
+│   │   └── Temporary
+│   │       ├── CTestCostData.txt
+│   │       ├── LastTest.log
+│   │       └── LastTestsFailed.log
+│   ├── _deps
+│   │   ├── googletest-build
+│   │   │   ├── CMakeFiles
+│   │   │   │   ├── CMakeDirectoryInformation.cmake
+│   │   │   │   └── progress.marks
+│   │   │   ├── CTestTestfile.cmake
+│   │   │   ├── Makefile
+│   │   │   ├── cmake_install.cmake
+│   │   │   ├── googlemock
+│   │   │   │   ├── CMakeFiles
+│   │   │   │   │   ├── CMakeDirectoryInformation.cmake
+│   │   │   │   │   ├── gmock.dir
+│   │   │   │   │   │   ├── DependInfo.cmake
+│   │   │   │   │   │   ├── build.make
+│   │   │   │   │   │   ├── cmake_clean.cmake
+│   │   │   │   │   │   ├── cmake_clean_target.cmake
+│   │   │   │   │   │   ├── compiler_depend.internal
+│   │   │   │   │   │   ├── compiler_depend.make
+│   │   │   │   │   │   ├── compiler_depend.ts
+│   │   │   │   │   │   ├── depend.make
+│   │   │   │   │   │   ├── flags.make
+│   │   │   │   │   │   ├── link.txt
+│   │   │   │   │   │   ├── progress.make
+│   │   │   │   │   │   └── src
+│   │   │   │   │   │       ├── gmock-all.cc.o
+│   │   │   │   │   │       └── gmock-all.cc.o.d
+│   │   │   │   │   ├── gmock_main.dir
+│   │   │   │   │   │   ├── DependInfo.cmake
+│   │   │   │   │   │   ├── build.make
+│   │   │   │   │   │   ├── cmake_clean.cmake
+│   │   │   │   │   │   ├── cmake_clean_target.cmake
+│   │   │   │   │   │   ├── compiler_depend.internal
+│   │   │   │   │   │   ├── compiler_depend.make
+│   │   │   │   │   │   ├── compiler_depend.ts
+│   │   │   │   │   │   ├── depend.make
+│   │   │   │   │   │   ├── flags.make
+│   │   │   │   │   │   ├── link.txt
+│   │   │   │   │   │   ├── progress.make
+│   │   │   │   │   │   └── src
+│   │   │   │   │   │       ├── gmock_main.cc.o
+│   │   │   │   │   │       └── gmock_main.cc.o.d
+│   │   │   │   │   └── progress.marks
+│   │   │   │   ├── CTestTestfile.cmake
+│   │   │   │   ├── Makefile
+│   │   │   │   └── cmake_install.cmake
+│   │   │   └── googletest
+│   │   │       ├── CMakeFiles
+│   │   │       │   ├── CMakeDirectoryInformation.cmake
+│   │   │       │   ├── Export
+│   │   │       │   │   └── lib
+│   │   │       │   │       └── cmake
+│   │   │       │   │           └── GTest
+│   │   │       │   │               ├── GTestTargets-noconfig.cmake
+│   │   │       │   │               └── GTestTargets.cmake
+│   │   │       │   ├── gtest.dir
+│   │   │       │   │   ├── DependInfo.cmake
+│   │   │       │   │   ├── build.make
+│   │   │       │   │   ├── cmake_clean.cmake
+│   │   │       │   │   ├── cmake_clean_target.cmake
+│   │   │       │   │   ├── compiler_depend.internal
+│   │   │       │   │   ├── compiler_depend.make
+│   │   │       │   │   ├── compiler_depend.ts
+│   │   │       │   │   ├── depend.make
+│   │   │       │   │   ├── flags.make
+│   │   │       │   │   ├── link.txt
+│   │   │       │   │   ├── progress.make
+│   │   │       │   │   └── src
+│   │   │       │   │       ├── gtest-all.cc.o
+│   │   │       │   │       └── gtest-all.cc.o.d
+│   │   │       │   ├── gtest_main.dir
+│   │   │       │   │   ├── DependInfo.cmake
+│   │   │       │   │   ├── build.make
+│   │   │       │   │   ├── cmake_clean.cmake
+│   │   │       │   │   ├── cmake_clean_target.cmake
+│   │   │       │   │   ├── compiler_depend.internal
+│   │   │       │   │   ├── compiler_depend.make
+│   │   │       │   │   ├── compiler_depend.ts
+│   │   │       │   │   ├── depend.make
+│   │   │       │   │   ├── flags.make
+│   │   │       │   │   ├── link.txt
+│   │   │       │   │   ├── progress.make
+│   │   │       │   │   └── src
+│   │   │       │   │       ├── gtest_main.cc.o
+│   │   │       │   │       └── gtest_main.cc.o.d
+│   │   │       │   └── progress.marks
+│   │   │       ├── CTestTestfile.cmake
+│   │   │       ├── Makefile
+│   │   │       ├── cmake_install.cmake
+│   │   │       └── generated
+│   │   │           ├── GTestConfig.cmake
+│   │   │           ├── GTestConfigVersion.cmake
+│   │   │           ├── gmock.pc
+│   │   │           ├── gmock_main.pc
+│   │   │           ├── gtest.pc
+│   │   │           └── gtest_main.pc
+│   │   ├── googletest-src
+│   │   │   ├── BUILD.bazel
+│   │   │   ├── CMakeLists.txt
+│   │   │   ├── CONTRIBUTING.md
+│   │   │   ├── CONTRIBUTORS
+│   │   │   ├── LICENSE
+│   │   │   ├── MODULE.bazel
+│   │   │   ├── README.md
+│   │   │   ├── WORKSPACE
+│   │   │   ├── WORKSPACE.bzlmod
+│   │   │   ├── ci
+│   │   │   │   ├── linux-presubmit.sh
+│   │   │   │   ├── macos-presubmit.sh
+│   │   │   │   └── windows-presubmit.bat
+│   │   │   ├── docs
+│   │   │   │   ├── _config.yml
+│   │   │   │   ├── _data
+│   │   │   │   │   └── navigation.yml
+│   │   │   │   ├── _layouts
+│   │   │   │   │   └── default.html
+│   │   │   │   ├── _sass
+│   │   │   │   │   └── main.scss
+│   │   │   │   ├── advanced.md
+│   │   │   │   ├── assets
+│   │   │   │   │   └── css
+│   │   │   │   │       └── style.scss
+│   │   │   │   ├── community_created_documentation.md
+│   │   │   │   ├── faq.md
+│   │   │   │   ├── gmock_cheat_sheet.md
+│   │   │   │   ├── gmock_cook_book.md
+│   │   │   │   ├── gmock_faq.md
+│   │   │   │   ├── gmock_for_dummies.md
+│   │   │   │   ├── index.md
+│   │   │   │   ├── pkgconfig.md
+│   │   │   │   ├── platforms.md
+│   │   │   │   ├── primer.md
+│   │   │   │   ├── quickstart-bazel.md
+│   │   │   │   ├── quickstart-cmake.md
+│   │   │   │   ├── reference
+│   │   │   │   │   ├── actions.md
+│   │   │   │   │   ├── assertions.md
+│   │   │   │   │   ├── matchers.md
+│   │   │   │   │   ├── mocking.md
+│   │   │   │   │   └── testing.md
+│   │   │   │   └── samples.md
+│   │   │   ├── fake_fuchsia_sdk.bzl
+│   │   │   ├── googlemock
+│   │   │   │   ├── CMakeLists.txt
+│   │   │   │   ├── README.md
+│   │   │   │   ├── cmake
+│   │   │   │   │   ├── gmock.pc.in
+│   │   │   │   │   └── gmock_main.pc.in
+│   │   │   │   ├── docs
+│   │   │   │   │   └── README.md
+│   │   │   │   ├── include
+│   │   │   │   │   └── gmock
+│   │   │   │   │       ├── gmock-actions.h
+│   │   │   │   │       ├── gmock-cardinalities.h
+│   │   │   │   │       ├── gmock-function-mocker.h
+│   │   │   │   │       ├── gmock-matchers.h
+│   │   │   │   │       ├── gmock-more-actions.h
+│   │   │   │   │       ├── gmock-more-matchers.h
+│   │   │   │   │       ├── gmock-nice-strict.h
+│   │   │   │   │       ├── gmock-spec-builders.h
+│   │   │   │   │       ├── gmock.h
+│   │   │   │   │       └── internal
+│   │   │   │   │           ├── custom
+│   │   │   │   │           │   ├── README.md
+│   │   │   │   │           │   ├── gmock-generated-actions.h
+│   │   │   │   │           │   ├── gmock-matchers.h
+│   │   │   │   │           │   └── gmock-port.h
+│   │   │   │   │           ├── gmock-internal-utils.h
+│   │   │   │   │           ├── gmock-port.h
+│   │   │   │   │           └── gmock-pp.h
+│   │   │   │   ├── src
+│   │   │   │   │   ├── gmock-all.cc
+│   │   │   │   │   ├── gmock-cardinalities.cc
+│   │   │   │   │   ├── gmock-internal-utils.cc
+│   │   │   │   │   ├── gmock-matchers.cc
+│   │   │   │   │   ├── gmock-spec-builders.cc
+│   │   │   │   │   ├── gmock.cc
+│   │   │   │   │   └── gmock_main.cc
+│   │   │   │   └── test
+│   │   │   │       ├── BUILD.bazel
+│   │   │   │       ├── gmock-actions_test.cc
+│   │   │   │       ├── gmock-cardinalities_test.cc
+│   │   │   │       ├── gmock-function-mocker_test.cc
+│   │   │   │       ├── gmock-internal-utils_test.cc
+│   │   │   │       ├── gmock-matchers-arithmetic_test.cc
+│   │   │   │       ├── gmock-matchers-comparisons_test.cc
+│   │   │   │       ├── gmock-matchers-containers_test.cc
+│   │   │   │       ├── gmock-matchers-misc_test.cc
+│   │   │   │       ├── gmock-matchers_test.h
+│   │   │   │       ├── gmock-more-actions_test.cc
+│   │   │   │       ├── gmock-nice-strict_test.cc
+│   │   │   │       ├── gmock-port_test.cc
+│   │   │   │       ├── gmock-pp-string_test.cc
+│   │   │   │       ├── gmock-pp_test.cc
+│   │   │   │       ├── gmock-spec-builders_test.cc
+│   │   │   │       ├── gmock_all_test.cc
+│   │   │   │       ├── gmock_ex_test.cc
+│   │   │   │       ├── gmock_leak_test.py
+│   │   │   │       ├── gmock_leak_test_.cc
+│   │   │   │       ├── gmock_link2_test.cc
+│   │   │   │       ├── gmock_link_test.cc
+│   │   │   │       ├── gmock_link_test.h
+│   │   │   │       ├── gmock_output_test.py
+│   │   │   │       ├── gmock_output_test_.cc
+│   │   │   │       ├── gmock_output_test_golden.txt
+│   │   │   │       ├── gmock_stress_test.cc
+│   │   │   │       ├── gmock_test.cc
+│   │   │   │       └── gmock_test_utils.py
+│   │   │   ├── googletest
+│   │   │   │   ├── CMakeLists.txt
+│   │   │   │   ├── README.md
+│   │   │   │   ├── cmake
+│   │   │   │   │   ├── Config.cmake.in
+│   │   │   │   │   ├── gtest.pc.in
+│   │   │   │   │   ├── gtest_main.pc.in
+│   │   │   │   │   ├── internal_utils.cmake
+│   │   │   │   │   └── libgtest.la.in
+│   │   │   │   ├── docs
+│   │   │   │   │   └── README.md
+│   │   │   │   ├── include
+│   │   │   │   │   └── gtest
+│   │   │   │   │       ├── gtest-assertion-result.h
+│   │   │   │   │       ├── gtest-death-test.h
+│   │   │   │   │       ├── gtest-matchers.h
+│   │   │   │   │       ├── gtest-message.h
+│   │   │   │   │       ├── gtest-param-test.h
+│   │   │   │   │       ├── gtest-printers.h
+│   │   │   │   │       ├── gtest-spi.h
+│   │   │   │   │       ├── gtest-test-part.h
+│   │   │   │   │       ├── gtest-typed-test.h
+│   │   │   │   │       ├── gtest.h
+│   │   │   │   │       ├── gtest_pred_impl.h
+│   │   │   │   │       ├── gtest_prod.h
+│   │   │   │   │       └── internal
+│   │   │   │   │           ├── custom
+│   │   │   │   │           │   ├── README.md
+│   │   │   │   │           │   ├── gtest-port.h
+│   │   │   │   │           │   ├── gtest-printers.h
+│   │   │   │   │           │   └── gtest.h
+│   │   │   │   │           ├── gtest-death-test-internal.h
+│   │   │   │   │           ├── gtest-filepath.h
+│   │   │   │   │           ├── gtest-internal.h
+│   │   │   │   │           ├── gtest-param-util.h
+│   │   │   │   │           ├── gtest-port-arch.h
+│   │   │   │   │           ├── gtest-port.h
+│   │   │   │   │           ├── gtest-string.h
+│   │   │   │   │           └── gtest-type-util.h
+│   │   │   │   ├── samples
+│   │   │   │   │   ├── prime_tables.h
+│   │   │   │   │   ├── sample1.cc
+│   │   │   │   │   ├── sample1.h
+│   │   │   │   │   ├── sample10_unittest.cc
+│   │   │   │   │   ├── sample1_unittest.cc
+│   │   │   │   │   ├── sample2.cc
+│   │   │   │   │   ├── sample2.h
+│   │   │   │   │   ├── sample2_unittest.cc
+│   │   │   │   │   ├── sample3-inl.h
+│   │   │   │   │   ├── sample3_unittest.cc
+│   │   │   │   │   ├── sample4.cc
+│   │   │   │   │   ├── sample4.h
+│   │   │   │   │   ├── sample4_unittest.cc
+│   │   │   │   │   ├── sample5_unittest.cc
+│   │   │   │   │   ├── sample6_unittest.cc
+│   │   │   │   │   ├── sample7_unittest.cc
+│   │   │   │   │   ├── sample8_unittest.cc
+│   │   │   │   │   └── sample9_unittest.cc
+│   │   │   │   ├── src
+│   │   │   │   │   ├── gtest-all.cc
+│   │   │   │   │   ├── gtest-assertion-result.cc
+│   │   │   │   │   ├── gtest-death-test.cc
+│   │   │   │   │   ├── gtest-filepath.cc
+│   │   │   │   │   ├── gtest-internal-inl.h
+│   │   │   │   │   ├── gtest-matchers.cc
+│   │   │   │   │   ├── gtest-port.cc
+│   │   │   │   │   ├── gtest-printers.cc
+│   │   │   │   │   ├── gtest-test-part.cc
+│   │   │   │   │   ├── gtest-typed-test.cc
+│   │   │   │   │   ├── gtest.cc
+│   │   │   │   │   └── gtest_main.cc
+│   │   │   │   └── test
+│   │   │   │       ├── BUILD.bazel
+│   │   │   │       ├── googletest-break-on-failure-unittest.py
+│   │   │   │       ├── googletest-break-on-failure-unittest_.cc
+│   │   │   │       ├── googletest-catch-exceptions-test.py
+│   │   │   │       ├── googletest-catch-exceptions-test_.cc
+│   │   │   │       ├── googletest-color-test.py
+│   │   │   │       ├── googletest-color-test_.cc
+│   │   │   │       ├── googletest-death-test-test.cc
+│   │   │   │       ├── googletest-death-test_ex_test.cc
+│   │   │   │       ├── googletest-env-var-test.py
+│   │   │   │       ├── googletest-env-var-test_.cc
+│   │   │   │       ├── googletest-fail-if-no-test-linked-test-with-disabled-test_.cc
+│   │   │   │       ├── googletest-fail-if-no-test-linked-test-with-enabled-test_.cc
+│   │   │   │       ├── googletest-fail-if-no-test-linked-test.py
+│   │   │   │       ├── googletest-failfast-unittest.py
+│   │   │   │       ├── googletest-failfast-unittest_.cc
+│   │   │   │       ├── googletest-filepath-test.cc
+│   │   │   │       ├── googletest-filter-unittest.py
+│   │   │   │       ├── googletest-filter-unittest_.cc
+│   │   │   │       ├── googletest-global-environment-unittest.py
+│   │   │   │       ├── googletest-global-environment-unittest_.cc
+│   │   │   │       ├── googletest-json-outfiles-test.py
+│   │   │   │       ├── googletest-json-output-unittest.py
+│   │   │   │       ├── googletest-list-tests-unittest.py
+│   │   │   │       ├── googletest-list-tests-unittest_.cc
+│   │   │   │       ├── googletest-listener-test.cc
+│   │   │   │       ├── googletest-message-test.cc
+│   │   │   │       ├── googletest-options-test.cc
+│   │   │   │       ├── googletest-output-test-golden-lin.txt
+│   │   │   │       ├── googletest-output-test.py
+│   │   │   │       ├── googletest-output-test_.cc
+│   │   │   │       ├── googletest-param-test-invalid-name1-test.py
+│   │   │   │       ├── googletest-param-test-invalid-name1-test_.cc
+│   │   │   │       ├── googletest-param-test-invalid-name2-test.py
+│   │   │   │       ├── googletest-param-test-invalid-name2-test_.cc
+│   │   │   │       ├── googletest-param-test-test.cc
+│   │   │   │       ├── googletest-param-test-test.h
+│   │   │   │       ├── googletest-param-test2-test.cc
+│   │   │   │       ├── googletest-port-test.cc
+│   │   │   │       ├── googletest-printers-test.cc
+│   │   │   │       ├── googletest-setuptestsuite-test.py
+│   │   │   │       ├── googletest-setuptestsuite-test_.cc
+│   │   │   │       ├── googletest-shuffle-test.py
+│   │   │   │       ├── googletest-shuffle-test_.cc
+│   │   │   │       ├── googletest-test-part-test.cc
+│   │   │   │       ├── googletest-throw-on-failure-test.py
+│   │   │   │       ├── googletest-throw-on-failure-test_.cc
+│   │   │   │       ├── googletest-uninitialized-test.py
+│   │   │   │       ├── googletest-uninitialized-test_.cc
+│   │   │   │       ├── gtest-typed-test2_test.cc
+│   │   │   │       ├── gtest-typed-test_test.cc
+│   │   │   │       ├── gtest-typed-test_test.h
+│   │   │   │       ├── gtest-unittest-api_test.cc
+│   │   │   │       ├── gtest_all_test.cc
+│   │   │   │       ├── gtest_assert_by_exception_test.cc
+│   │   │   │       ├── gtest_dirs_test.cc
+│   │   │   │       ├── gtest_environment_test.cc
+│   │   │   │       ├── gtest_help_test.py
+│   │   │   │       ├── gtest_help_test_.cc
+│   │   │   │       ├── gtest_json_test_utils.py
+│   │   │   │       ├── gtest_list_output_unittest.py
+│   │   │   │       ├── gtest_list_output_unittest_.cc
+│   │   │   │       ├── gtest_main_unittest.cc
+│   │   │   │       ├── gtest_no_test_unittest.cc
+│   │   │   │       ├── gtest_pred_impl_unittest.cc
+│   │   │   │       ├── gtest_premature_exit_test.cc
+│   │   │   │       ├── gtest_prod_test.cc
+│   │   │   │       ├── gtest_repeat_test.cc
+│   │   │   │       ├── gtest_skip_check_output_test.py
+│   │   │   │       ├── gtest_skip_environment_check_output_test.py
+│   │   │   │       ├── gtest_skip_in_environment_setup_test.cc
+│   │   │   │       ├── gtest_skip_test.cc
+│   │   │   │       ├── gtest_sole_header_test.cc
+│   │   │   │       ├── gtest_stress_test.cc
+│   │   │   │       ├── gtest_test_macro_stack_footprint_test.cc
+│   │   │   │       ├── gtest_test_utils.py
+│   │   │   │       ├── gtest_testbridge_test.py
+│   │   │   │       ├── gtest_testbridge_test_.cc
+│   │   │   │       ├── gtest_throw_on_failure_ex_test.cc
+│   │   │   │       ├── gtest_unittest.cc
+│   │   │   │       ├── gtest_xml_outfile1_test_.cc
+│   │   │   │       ├── gtest_xml_outfile2_test_.cc
+│   │   │   │       ├── gtest_xml_outfiles_test.py
+│   │   │   │       ├── gtest_xml_output_unittest.py
+│   │   │   │       ├── gtest_xml_output_unittest_.cc
+│   │   │   │       ├── gtest_xml_test_utils.py
+│   │   │   │       ├── production.cc
+│   │   │   │       └── production.h
+│   │   │   └── googletest_deps.bzl
+│   │   └── googletest-subbuild
+│   │       ├── CMakeCache.txt
+│   │       ├── CMakeFiles
+│   │       │   ├── 3.22.1
+│   │       │   │   └── CMakeSystem.cmake
+│   │       │   ├── CMakeDirectoryInformation.cmake
+│   │       │   ├── CMakeOutput.log
+│   │       │   ├── CMakeRuleHashes.txt
+│   │       │   ├── Makefile.cmake
+│   │       │   ├── Makefile2
+│   │       │   ├── TargetDirectories.txt
+│   │       │   ├── cmake.check_cache
+│   │       │   ├── googletest-populate-complete
+│   │       │   ├── googletest-populate.dir
+│   │       │   │   ├── DependInfo.cmake
+│   │       │   │   ├── Labels.json
+│   │       │   │   ├── Labels.txt
+│   │       │   │   ├── build.make
+│   │       │   │   ├── cmake_clean.cmake
+│   │       │   │   ├── compiler_depend.make
+│   │       │   │   ├── compiler_depend.ts
+│   │       │   │   └── progress.make
+│   │       │   └── progress.marks
+│   │       ├── CMakeLists.txt
+│   │       ├── Makefile
+│   │       ├── cmake_install.cmake
+│   │       └── googletest-populate-prefix
+│   │           ├── src
+│   │           │   ├── googletest-populate-stamp
+│   │           │   │   ├── download-googletest-populate.cmake
+│   │           │   │   ├── extract-googletest-populate.cmake
+│   │           │   │   ├── googletest-populate-build
+│   │           │   │   ├── googletest-populate-configure
+│   │           │   │   ├── googletest-populate-done
+│   │           │   │   ├── googletest-populate-download
+│   │           │   │   ├── googletest-populate-install
+│   │           │   │   ├── googletest-populate-mkdir
+│   │           │   │   ├── googletest-populate-patch
+│   │           │   │   ├── googletest-populate-test
+│   │           │   │   ├── googletest-populate-update
+│   │           │   │   ├── googletest-populate-urlinfo.txt
+│   │           │   │   └── verify-googletest-populate.cmake
+│   │           │   └── main.zip
+│   │           └── tmp
+│   │               ├── googletest-populate-cfgcmd.txt
+│   │               └── googletest-populate-cfgcmd.txt.in
+│   ├── bin
+│   ├── cmake_install.cmake
+│   ├── lib
+│   │   ├── libgmock.a
+│   │   ├── libgmock_main.a
+│   │   ├── libgtest.a
+│   │   └── libgtest_main.a
+│   ├── src
+│   │   ├── CMakeFiles
+│   │   │   ├── CMakeDirectoryInformation.cmake
+│   │   │   ├── progress.marks
+│   │   │   └── tanks_game_lib.dir
+│   │   │       ├── DependInfo.cmake
+│   │   │       ├── build.make
+│   │   │       ├── cmake_clean.cmake
+│   │   │       ├── cmake_clean_target.cmake
+│   │   │       ├── compiler_depend.internal
+│   │   │       ├── compiler_depend.make
+│   │   │       ├── compiler_depend.ts
+│   │   │       ├── depend.make
+│   │   │       ├── entities
+│   │   │       │   ├── Entity.cpp.o
+│   │   │       │   ├── Entity.cpp.o.d
+│   │   │       │   ├── Mine.cpp.o
+│   │   │       │   ├── Mine.cpp.o.d
+│   │   │       │   ├── MoveableEntity.cpp.o
+│   │   │       │   ├── MoveableEntity.cpp.o.d
+│   │   │       │   ├── Shell.cpp.o
+│   │   │       │   ├── Shell.cpp.o.d
+│   │   │       │   ├── Tank.cpp.o
+│   │   │       │   ├── Tank.cpp.o.d
+│   │   │       │   ├── Wall.cpp.o
+│   │   │       │   └── Wall.cpp.o.d
+│   │   │       ├── flags.make
+│   │   │       ├── game_enviroment
+│   │   │       │   ├── GamePlayer.cpp.o
+│   │   │       │   ├── GamePlayer.cpp.o.d
+│   │   │       │   ├── GamePlayerFactory.cpp.o
+│   │   │       │   ├── GamePlayerFactory.cpp.o.d
+│   │   │       │   ├── game_manager.cpp.o
+│   │   │       │   └── game_manager.cpp.o.d
+│   │   │       ├── link.txt
+│   │   │       ├── main.cpp.o
+│   │   │       ├── main.cpp.o.d
+│   │   │       ├── progress.make
+│   │   │       └── utils
+│   │   │           ├── map.cpp.o
+│   │   │           ├── map.cpp.o.d
+│   │   │           ├── tile.cpp.o
+│   │   │           └── tile.cpp.o.d
+│   │   ├── Makefile
+│   │   ├── cmake_install.cmake
+│   │   └── libtanks_game_lib.a
+│   ├── tanks_game
+│   └── tests
+│       ├── CMakeFiles
+│       │   ├── CMakeDirectoryInformation.cmake
+│       │   ├── progress.marks
+│       │   └── runTests.dir
+│       │       ├── DependInfo.cmake
+│       │       ├── build.make
+│       │       ├── cmake_clean.cmake
+│       │       ├── cmake_test.cpp.o
+│       │       ├── cmake_test.cpp.o.d
+│       │       ├── compiler_depend.internal
+│       │       ├── compiler_depend.make
+│       │       ├── compiler_depend.ts
+│       │       ├── depend.make
+│       │       ├── flags.make
+│       │       ├── link.txt
+│       │       ├── map_test.cpp.o
+│       │       ├── map_test.cpp.o.d
+│       │       ├── progress.make
+│       │       ├── test_json.cpp.o
+│       │       └── test_json.cpp.o.d
+│       ├── CTestTestfile.cmake
+│       ├── Makefile
+│       ├── Testing
+│       │   └── Temporary
+│       │       ├── CTestCostData.txt
+│       │       ├── LastTest.log
+│       │       ├── LastTest.log.tmp
+│       │       └── LastTestsFailed.log
+│       ├── cmake_install.cmake
+│       ├── runTests
+│       ├── runTests[1]_include.cmake
+│       └── runTests[1]_tests.cmake
+├── common
+│   ├── ActionRequest.h
+│   ├── BattleInfo.h
+│   ├── Direction.h
+│   ├── Entity.h
+│   ├── EntityType.h
+│   ├── GameManager.h
+│   ├── GamePlayer.h
+│   ├── GamePlayerFactory.h
+│   ├── IJson.h
+│   ├── Map.h
+│   ├── MoveableEntity.h
+│   ├── Player.h
+│   ├── PlayerFactory.h
+│   ├── Pos.h
+│   ├── SatelliteView.h
+│   ├── TankAlgorithm.h
+│   ├── TankAlgorithmFactory.h
+│   ├── entities
+│   │   ├── Mine.h
+│   │   ├── Shell.h
+│   │   ├── Tank.h
+│   │   └── Wall.h
+│   └── utils
+│       ├── GameWrapper.h
+│       └── Tile.h
+├── files
+│   └── tests
+│       ├── algorithm
+│       ├── json
+│       │   ├── rust_json_test.txt
+│       │   └── serialized_json_test.txt
+│       └── maps
+│           ├── missing_rows_map.txt
+│           ├── test_map_1.txt
+│           ├── test_map_cols_overflow.txt
+│           ├── test_map_cols_undeflow.txt
+│           ├── test_map_symbol.txt
+│           └── test_map_whitespace.txt
+├── include
+│   └── json.hpp
+├── input_errors.txt
+├── layout.txt
+├── layout.xt
+├── src
+│   ├── CMakeLists.txt
+│   ├── entities
+│   │   ├── Entity.cpp
+│   │   ├── Mine.cpp
+│   │   ├── MoveableEntity.cpp
+│   │   ├── Shell.cpp
+│   │   ├── Tank.cpp
+│   │   └── Wall.cpp
+│   ├── game_enviroment
+│   │   ├── GamePlayer.cpp
+│   │   ├── GamePlayerFactory.cpp
+│   │   └── game_manager.cpp
+│   ├── main.cpp
+│   └── utils
+│       ├── map.cpp
+│       └── tile.cpp
+├── tanks-ui
+│   ├── README.md
+│   ├── index.html
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.cjs
+│   ├── public
+│   │   ├── tauri.svg
+│   │   └── vite.svg
+│   ├── src
+│   │   ├── App.tsx
+│   │   ├── api.ts
+│   │   ├── assets
+│   │   │   └── react.svg
+│   │   ├── components
+│   │   │   ├── game_board.tsx
+│   │   │   └── player.tsx
+│   │   ├── main.tsx
+│   │   └── vite-env.d.ts
+│   ├── src-tauri
+│   │   ├── Cargo.toml
+│   │   ├── build.rs
+│   │   ├── capabilities
+│   │   │   └── default.json
+│   │   ├── icons
+│   │   │   ├── 128x128.png
+│   │   │   ├── 128x128@2x.png
+│   │   │   ├── 32x32.png
+│   │   │   ├── Square107x107Logo.png
+│   │   │   ├── Square142x142Logo.png
+│   │   │   ├── Square150x150Logo.png
+│   │   │   ├── Square284x284Logo.png
+│   │   │   ├── Square30x30Logo.png
+│   │   │   ├── Square310x310Logo.png
+│   │   │   ├── Square44x44Logo.png
+│   │   │   ├── Square71x71Logo.png
+│   │   │   ├── Square89x89Logo.png
+│   │   │   ├── StoreLogo.png
+│   │   │   ├── icon.icns
+│   │   │   ├── icon.ico
+│   │   │   └── icon.png
+│   │   ├── src
+│   │   │   ├── lib.rs
+│   │   │   └── main.rs
+│   │   └── tauri.conf.json
+│   ├── tsconfig.json
+│   ├── tsconfig.node.json
+│   └── vite.config.ts
+├── tests
+│   ├── CMakeLists.txt
+│   ├── cmake_test.cpp
+│   ├── map_test.cpp
+│   └── test_json.cpp
+└── text
+
+104 directories, 564 files

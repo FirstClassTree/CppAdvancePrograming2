@@ -60,6 +60,7 @@ int GameManager::load_map(const std::string &map_path) {
         ++row_idx;
     }
 
+    // May be unceearry:
     if (row_idx < rows)
         fill_remaining_rows(row_idx, rows, cols, map);
 
@@ -81,8 +82,6 @@ int GameManager::load_map(const std::string &map_path) {
     this->map = std::make_unique<Map>(name, max_steps, num_shells, cols, rows, map);
     return 0;
 }
-
-
 
 
 std::ifstream GameManager::open_map_file(const std::string &map_path) {
@@ -205,7 +204,6 @@ void GameManager::fill_remaining_rows(int start_row, int rows, int cols,
         for (int c = 0; c < cols; ++c) {
             map[r][c].x = r;
             map[r][c].y = c;
-            // All other fields are default-constructed (nullptr)
         }
     }
 }
