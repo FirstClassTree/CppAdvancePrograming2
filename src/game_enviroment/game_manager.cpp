@@ -35,11 +35,6 @@ Map GameManager::get_map() {
   return *this->map;
 }
 
-
-
-
-
-
 int GameManager::load_map(const std::string &map_path) {
     std::ifstream map_file = open_map_file(map_path);
     if (!map_file.is_open()) return -1;
@@ -104,11 +99,22 @@ std::ifstream GameManager::open_map_file(const std::string &map_path) {
 }
 
 // Utility: strip spaces around '=' and parse int
-int extractIntValue(const std::string &line, const std::string &key) {
+int extractIntValue(const std::string &line, const std::string &expected_key) {
     auto pos = line.find('=');
-    if (pos == std::string::npos) throw std::runtime_error("Missing '=' in: " + line);
+    if (pos == std::string::npos)
+        throw std::runtime_error("Missing '=' in: " + line);
+
+    // Extract and clean the key part
+    std::string key = line.substr(0, pos);
+    key.erase(std::remove_if(key.begin(), key.end(), ::isspace), key.end());
+
+    if (key != expected_key)
+        throw std::runtime_error("Expected key '" + expected_key + "', found '" + key + "'");
+
+    // Extract and clean the value part
     std::string value_str = line.substr(pos + 1);
     value_str.erase(std::remove_if(value_str.begin(), value_str.end(), ::isspace), value_str.end());
+
     return std::stoi(value_str);
 }
 
@@ -192,6 +198,7 @@ void GameManager::populate_map_row(const std::string &line, int row_idx, int col
         }
     }
 }
+
 void GameManager::fill_remaining_rows(int start_row, int rows, int cols,
                          std::vector<std::vector<Tile>> &map) {
     for (int r = start_row; r < rows; ++r) {
