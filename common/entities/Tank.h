@@ -18,7 +18,7 @@ public:
 
 private:
   std::unique_ptr<TankAlgorithm> ai;
-  static int global_tank_counter; // static counter shared by all Tanks for id
+  inline static int global_tank_counter = 0; // static counter shared by all Tanks for id
   int health;
   int player_owner;
   int tank_id;
