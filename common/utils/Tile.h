@@ -8,7 +8,7 @@
 
 class Tile : public IJson {
 public:
-// addded default ocnstructor
+// added default constructor
   Tile();
   Tile(int x, int y, std::shared_ptr<Entity> ground,
        std::shared_ptr<Tank> actor, std::shared_ptr<Shell> shell);
