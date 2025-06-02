@@ -114,27 +114,29 @@ std::unique_ptr<SatelliteView> GameManager::create_satellite_view(int player_id,
     }
     // Tanks
     for (const auto& tank : game_tanks) {
-        if (!tank || tank->get == 0) continue;
+        if (!tank || tank->get_health() == 0) continue;
             size_t x = tank->get_x();
             size_t y = tank->get_y();
             if (x < rows && y < cols) {
-                if (tank->get_player_id() == player_id && tank->get_tank_index() == tank_id) {
+                if (tank->get_id() == player_id && tank->get_tank_id() == tank_id) {
                     view[x][y] = '%';  // requesting tank
                 } else {
-                    view[x][y] = static_cast<char>('0' + tank->get_player_id());
+                    view[x][y] = static_cast<char>(tank->get_id());
                 }
             }
     }
 
 
-    // Shells (override if present)
+    // add Shells
     for (const auto& shell : game_shells) {
-        if (!shell || shell->is_destroyed()) continue;
-        auto [x, y] = shell->get_position();
+    if (!shell || shell->is_destroyed()) continue;
+        size_t x = shell->get_x();
+        size_t y = shell->get_y();
         if (x < rows && y < cols) {
             view[x][y] = '*';
-        }
     }
+}
+    // return the MySatelliteView
 
     return std::make_unique<MySatelliteView>(view);
 }

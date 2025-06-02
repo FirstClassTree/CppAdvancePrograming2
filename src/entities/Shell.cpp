@@ -6,7 +6,13 @@ Shell::Shell(int x, int y, Direction direction)
 
 Shell::~Shell() {}
 
+void Shell::destroy() {
+    destroyed = true;
+}
 
+bool Shell::is_destroyed() const {
+    return destroyed;
+}
 std::string Shell::serialize() {
   nlohmann::json j;
   j["type"] = "S";

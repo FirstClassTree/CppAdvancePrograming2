@@ -38,7 +38,7 @@ private:
   std::unique_ptr<Map> map;
   std::vector<std::unique_ptr<Player>> players;
   std::vector<std::shared_ptr<Entity>> game_entities;
-  std::vector<std::weak_ptr<Shell>> game_shells;
+  std::vector<std::shared_ptr<Shell>> game_shells;
   std::vector<std::shared_ptr<Tank>> game_tanks;
   GamePlayerFactory player_factory;
 
