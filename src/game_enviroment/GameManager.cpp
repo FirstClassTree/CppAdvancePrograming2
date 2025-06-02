@@ -35,6 +35,8 @@ Map GameManager::get_map() {
   return *this->map;
 }
 
+
+
 int GameManager::load_map(const std::string &map_path) {
     std::ifstream map_file = open_map_file(map_path);
     if (!map_file.is_open()) return -1;
@@ -82,6 +84,61 @@ int GameManager::load_map(const std::string &map_path) {
     this->map = std::make_unique<Map>(name, max_steps, num_shells, cols, rows, map);
     return 0;
 }
+
+#include "MySatelliteView.h"
+
+std::unique_ptr<SatelliteView> GameManager::create_satellite_view(int player_id, int tank_id) const {
+    size_t rows = this->map->get_rows();
+    size_t cols = this->map->get_cols();
+
+    // Init to empty spaces
+    std::vector<std::vector<char>> view(rows, std::vector<char>(cols, ' '));
+
+    // Add Walls and Mines
+    for (const auto& entity : game_entities) {
+        if (!entity) continue;
+        size_t x = entity->get_x();
+        size_t y = entity->get_y();
+        if (x < rows && y < cols) {
+            switch (entity->get_type()) {
+                case EntityType::WALL:
+                    view[x][y] = '#';
+                    break;
+                case EntityType::MINE:
+                    view[x][y] = '@';
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    // Tanks
+    for (const auto& tank : game_tanks) {
+        if (!tank || tank->get == 0) continue;
+            size_t x = tank->get_x();
+            size_t y = tank->get_y();
+            if (x < rows && y < cols) {
+                if (tank->get_player_id() == player_id && tank->get_tank_index() == tank_id) {
+                    view[x][y] = '%';  // requesting tank
+                } else {
+                    view[x][y] = static_cast<char>('0' + tank->get_player_id());
+                }
+            }
+    }
+
+
+    // Shells (override if present)
+    for (const auto& shell : game_shells) {
+        if (!shell || shell->is_destroyed()) continue;
+        auto [x, y] = shell->get_position();
+        if (x < rows && y < cols) {
+            view[x][y] = '*';
+        }
+    }
+
+    return std::make_unique<MySatelliteView>(view);
+}
+
 
 
 std::ifstream GameManager::open_map_file(const std::string &map_path) {

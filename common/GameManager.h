@@ -28,14 +28,22 @@ public:
   void subscribe_shell(std::shared_ptr<Shell> shell);
   void subscribe_entity(std::shared_ptr<Entity> entity);
   void subscribe_tank(std::shared_ptr<Tank> tank);
+
+  
+  std::unique_ptr<SatelliteView> create_satellite_view(int player_id, int tank_id) const;
+
+
   
 private:
   std::unique_ptr<Map> map;
   std::vector<std::unique_ptr<Player>> players;
   std::vector<std::shared_ptr<Entity>> game_entities;
   std::vector<std::weak_ptr<Shell>> game_shells;
-  std::vector<std::weak_ptr<Tank>> game_tanks;
+  std::vector<std::shared_ptr<Tank>> game_tanks;
   GamePlayerFactory player_factory;
+
+
+
 
 
 
@@ -53,6 +61,7 @@ private:
                                  std::vector<std::pair<int, std::pair<int, int>>> &player_spawn_points_out);
     static void fill_remaining_rows(int start_row, int rows, int cols,
                                     std::vector<std::vector<Tile>> &map);
+  
 };
 
 

@@ -15,6 +15,7 @@ public:
   void updateTankWithBattleInfo(TankAlgorithm &tank,
                                 SatelliteView &satellite_view) override;
   int get_id() const;
+  
 
 private:
   int id;

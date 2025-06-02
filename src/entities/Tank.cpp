@@ -2,11 +2,14 @@
 
 Tank::Tank(int x, int y, Direction direction, int player_owner)
     : MoveableEntity(x, y, 1, EntityType::TANK, direction),
-      player_owner(player_owner) {}
+      player_owner(player_owner),
+      tank_id(global_tank_counter++){}
 
 Tank::~Tank() {}
 
 int Tank::get_id() { return player_owner; }
+int Tank::get_health() {return health;}
+int Tank::get_tank_id(){return tank_id;}
 
 std::string Tank::serialize() {
   nlohmann::json j;
