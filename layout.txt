@@ -34,7 +34,6 @@
 │   │       ├── DependInfo.cmake
 │   │       ├── build.make
 │   │       ├── cmake_clean.cmake
-│   │       ├── compiler_depend.internal
 │   │       ├── compiler_depend.make
 │   │       ├── compiler_depend.ts
 │   │       ├── depend.make
@@ -67,7 +66,6 @@
 │   │   │   │   │   │   ├── build.make
 │   │   │   │   │   │   ├── cmake_clean.cmake
 │   │   │   │   │   │   ├── cmake_clean_target.cmake
-│   │   │   │   │   │   ├── compiler_depend.internal
 │   │   │   │   │   │   ├── compiler_depend.make
 │   │   │   │   │   │   ├── compiler_depend.ts
 │   │   │   │   │   │   ├── depend.make
@@ -82,7 +80,6 @@
 │   │   │   │   │   │   ├── build.make
 │   │   │   │   │   │   ├── cmake_clean.cmake
 │   │   │   │   │   │   ├── cmake_clean_target.cmake
-│   │   │   │   │   │   ├── compiler_depend.internal
 │   │   │   │   │   │   ├── compiler_depend.make
 │   │   │   │   │   │   ├── compiler_depend.ts
 │   │   │   │   │   │   ├── depend.make
@@ -110,7 +107,6 @@
 │   │   │       │   │   ├── build.make
 │   │   │       │   │   ├── cmake_clean.cmake
 │   │   │       │   │   ├── cmake_clean_target.cmake
-│   │   │       │   │   ├── compiler_depend.internal
 │   │   │       │   │   ├── compiler_depend.make
 │   │   │       │   │   ├── compiler_depend.ts
 │   │   │       │   │   ├── depend.make
@@ -125,7 +121,6 @@
 │   │   │       │   │   ├── build.make
 │   │   │       │   │   ├── cmake_clean.cmake
 │   │   │       │   │   ├── cmake_clean_target.cmake
-│   │   │       │   │   ├── compiler_depend.internal
 │   │   │       │   │   ├── compiler_depend.make
 │   │   │       │   │   ├── compiler_depend.ts
 │   │   │       │   │   ├── depend.make
@@ -478,10 +473,16 @@
 │   │   │   ├── progress.marks
 │   │   │   └── tanks_game_lib.dir
 │   │   │       ├── DependInfo.cmake
+│   │   │       ├── algorithms
+│   │   │       │   ├── ChaserTankAlgorithm.cpp.o
+│   │   │       │   ├── ChaserTankAlgorithm.cpp.o.d
+│   │   │       │   ├── MyTankAlgorithmFactory.cpp.o
+│   │   │       │   ├── MyTankAlgorithmFactory.cpp.o.d
+│   │   │       │   ├── SniperTankAlgorithm.cpp.o
+│   │   │       │   └── SniperTankAlgorithm.cpp.o.d
 │   │   │       ├── build.make
 │   │   │       ├── cmake_clean.cmake
 │   │   │       ├── cmake_clean_target.cmake
-│   │   │       ├── compiler_depend.internal
 │   │   │       ├── compiler_depend.make
 │   │   │       ├── compiler_depend.ts
 │   │   │       ├── depend.make
@@ -500,12 +501,12 @@
 │   │   │       │   └── Wall.cpp.o.d
 │   │   │       ├── flags.make
 │   │   │       ├── game_enviroment
+│   │   │       │   ├── GameManager.cpp.o
+│   │   │       │   ├── GameManager.cpp.o.d
 │   │   │       │   ├── GamePlayer.cpp.o
 │   │   │       │   ├── GamePlayer.cpp.o.d
 │   │   │       │   ├── GamePlayerFactory.cpp.o
-│   │   │       │   ├── GamePlayerFactory.cpp.o.d
-│   │   │       │   ├── game_manager.cpp.o
-│   │   │       │   └── game_manager.cpp.o.d
+│   │   │       │   └── GamePlayerFactory.cpp.o.d
 │   │   │       ├── link.txt
 │   │   │       ├── main.cpp.o
 │   │   │       ├── main.cpp.o.d
@@ -529,7 +530,6 @@
 │       │       ├── cmake_clean.cmake
 │       │       ├── cmake_test.cpp.o
 │       │       ├── cmake_test.cpp.o.d
-│       │       ├── compiler_depend.internal
 │       │       ├── compiler_depend.make
 │       │       ├── compiler_depend.ts
 │       │       ├── depend.make
@@ -570,6 +570,11 @@
 │   ├── SatelliteView.h
 │   ├── TankAlgorithm.h
 │   ├── TankAlgorithmFactory.h
+│   ├── algorithms
+│   │   ├── ChaserTankAlgorithm.h
+│   │   ├── MyTankAlgorithmFactory.h
+│   │   ├── SniperTankAlgorithm.h
+│   │   └── TankBattleInfo.h
 │   ├── entities
 │   │   ├── Mine.h
 │   │   ├── Shell.h
@@ -588,16 +593,21 @@
 │           ├── missing_rows_map.txt
 │           ├── test_map_1.txt
 │           ├── test_map_cols_overflow.txt
-│           ├── test_map_cols_undeflow.txt
+│           ├── test_map_cols_underflow.txt
 │           ├── test_map_symbol.txt
 │           └── test_map_whitespace.txt
 ├── include
 │   └── json.hpp
 ├── input_errors.txt
 ├── layout.txt
-├── layout.xt
 ├── src
 │   ├── CMakeLists.txt
+│   ├── MyPlayer.cpp
+│   ├── MyPlayerFactory.cpp
+│   ├── algorithms
+│   │   ├── ChaserTankAlgorithm.cpp
+│   │   ├── MyTankAlgorithmFactory.cpp
+│   │   └── SniperTankAlgorithm.cpp
 │   ├── entities
 │   │   ├── Entity.cpp
 │   │   ├── Mine.cpp
@@ -606,9 +616,9 @@
 │   │   ├── Tank.cpp
 │   │   └── Wall.cpp
 │   ├── game_enviroment
+│   │   ├── GameManager.cpp
 │   │   ├── GamePlayer.cpp
-│   │   ├── GamePlayerFactory.cpp
-│   │   └── game_manager.cpp
+│   │   └── GamePlayerFactory.cpp
 │   ├── main.cpp
 │   └── utils
 │       ├── map.cpp
@@ -661,11 +671,10 @@
 │   ├── tsconfig.json
 │   ├── tsconfig.node.json
 │   └── vite.config.ts
-├── tests
-│   ├── CMakeLists.txt
-│   ├── cmake_test.cpp
-│   ├── map_test.cpp
-│   └── test_json.cpp
-└── text
+└── tests
+    ├── CMakeLists.txt
+    ├── cmake_test.cpp
+    ├── map_test.cpp
+    └── test_json.cpp
 
-104 directories, 564 files
+107 directories, 570 files
