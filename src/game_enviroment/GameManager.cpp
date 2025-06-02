@@ -127,7 +127,7 @@ std::unique_ptr<SatelliteView> GameManager::create_satellite_view(int player_id,
     }
 
 
-    // add Shells
+    // add Shells if not destroyed
     for (const auto& shell : game_shells) {
     if (!shell || shell->is_destroyed()) continue;
         size_t x = shell->get_x();
@@ -135,6 +135,7 @@ std::unique_ptr<SatelliteView> GameManager::create_satellite_view(int player_id,
         if (x < rows && y < cols) {
             view[x][y] = '*';
     }
+
 }
     // return the MySatelliteView
 
