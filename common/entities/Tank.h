@@ -8,7 +8,7 @@ class Tank : public MoveableEntity {
 public:
   std::unique_ptr<TankAlgorithm> ai;
 
-  Tank(int x, int y, Direction direction, int player_owner,
+  Tank(int x, int y, Direction direction, int player_owner, int tank_id,
        std::unique_ptr<TankAlgorithm> ai);
   ~Tank();
 
@@ -26,7 +26,6 @@ private:
   int health;
   int player_owner;
   int tank_id;
-  static int global_tank_counter;
 };
 
 #endif
