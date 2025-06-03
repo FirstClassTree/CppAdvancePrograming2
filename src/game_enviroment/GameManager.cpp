@@ -125,8 +125,6 @@ std::unique_ptr<SatelliteView> GameManager::create_satellite_view(int player_id,
                 }
             }
     }
-
-
     // add Shells if not destroyed
     for (const auto& shell : game_shells) {
     if (!shell || shell->is_destroyed()) continue;
