@@ -1,4 +1,5 @@
 #include "../../common/GameManager.h"
+#include "MySatelliteView.h"
 #include "entities/Wall.h"
 #include "utils/Tile.h"
 
@@ -12,12 +13,29 @@
 //   }
 // }
 
-GameManager::GameManager() { this->player_factory = GamePlayerFactory(); }
+GameManager::GameManager() {
+  this->player_factory = GamePlayerFactory();
+  this->tank_algorithm_factory = MyTankAlgorithmFactory();
+}
 
 void GameManager::subscribe_tank(std::shared_ptr<Tank> tank) {
   this->subscribe_entity(tank);
   this->game_tanks.push_back(tank);
 }
+
+const std::vector<std::unique_ptr<Player>> &GameManager::get_players() const  {
+  return players;
+}
+
+const std::shared_ptr<Tank> GameManager::get_tank(int tankIndex,int playerIndex) const {
+  for (const auto &tank : game_tanks) {
+    if (tank->get_tank_id() == tankIndex && tank->get_owner_id() == playerIndex) {
+      return tank;
+    }
+  }
+  return nullptr;
+}
+
 void GameManager::subscribe_entity(std::shared_ptr<Entity> entity) {
   this->game_entities.push_back(entity);
 }
@@ -62,7 +80,8 @@ int GameManager::load_map(const std::string &map_path) {
       break;
     }
     populate_map_row(line, row_idx, cols, max_steps, num_shells, map, tanks_out,
-                     entities_out, player_spawn_points_out);
+                     entities_out, player_spawn_points_out,
+                     tank_algorithm_factory);
     ++row_idx;
   }
 
@@ -89,10 +108,26 @@ int GameManager::load_map(const std::string &map_path) {
 
   this->map =
       std::make_unique<Map>(name, max_steps, num_shells, cols, rows, map);
+
+  this->post_load_process();
   return 0;
 }
 
-#include "MySatelliteView.h"
+void GameManager::post_load_process() {
+  int tank_ids[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+
+  for (auto &tank : game_tanks) {
+    if (!tank)
+      continue;
+    tank_algorithm_factory.tank_x = tank->get_x();
+    tank_algorithm_factory.tank_y = tank->get_y();
+    tank->set_ai(tank_algorithm_factory.create(tank->get_owner_id(),
+                                               tank_ids[tank->get_owner_id()]));
+    tank->set_tank_id(tank_ids[tank->get_owner_id()]);
+    tank_ids[tank->get_owner_id()]++;
+    dynamic_cast<GamePlayer*>(this->players[tank->get_owner_id()].get())->tanks.push_back(tank);
+  }
+}
 
 std::unique_ptr<SatelliteView>
 GameManager::create_satellite_view(int player_id, int tank_id) const {
@@ -238,7 +273,8 @@ void GameManager::populate_map_row(
     int num_shells, std::vector<std::vector<Tile>> &map,
     std::vector<std::shared_ptr<Tank>> &tanks_out,
     std::vector<std::shared_ptr<Entity>> &entities_out,
-    std::vector<std::pair<int, std::pair<int, int>>> &player_spawn_points_out) {
+    std::vector<std::pair<int, std::pair<int, int>>> &player_spawn_points_out,
+    MyTankAlgorithmFactory &tank_algorithm_factory) {
   for (int col = 0; col < cols; ++col) {
     Tile &tile = map[row_idx][col];
 
@@ -268,7 +304,8 @@ void GameManager::populate_map_row(
     case '9': {
       int player_num = c - '0';
       Direction dir = (player_num == 1 ? Direction::L : Direction::R);
-      auto tank = std::make_shared<Tank>(row_idx, col, dir, player_num);
+      auto tank =
+          std::make_shared<Tank>(row_idx, col, dir, player_num, -1, nullptr);
       tile.actor = tank;
       tanks_out.push_back(tank);
       player_spawn_points_out.emplace_back(player_num,

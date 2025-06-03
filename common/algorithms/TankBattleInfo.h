@@ -3,23 +3,21 @@
 
 #include "../BattleInfo.h"
 #include "../Direction.h"
-class TankBattleInfo : public BattleInfo{
+#include <vector>
+class TankBattleInfo : public BattleInfo {
 public:
-    TankBattleInfo(int ammo,int tank_x,int tank_y,Direction tank_direction);
-    ~TankBattleInfo();
+  TankBattleInfo(int ammo, std::vector<std::vector<char>> view);
+  ~TankBattleInfo();
 
-    int get_ammo();
-    int get_tank_x();
-    int get_tank_y();
-    Direction get_tank_direction();
-
+  int get_ammo();
+  int get_tank_x();
+  int get_tank_y();
+  std::vector<std::vector<char>> get_view();
 
 private:
-    int player_id;
-    int ammo;
-    int tank_x;
-    int tank_y;
-    Direction tank_direction;
+  int player_id;
+  int ammo;
+  std::vector<std::vector<char>> view;
 };
 
 #endif

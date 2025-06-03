@@ -1,15 +1,15 @@
-Tanks uuid map
+Tanks owner id map
 MaxSteps=2000
 NumShells=200
 Rows= 10
 Cols= 10
 ##########
 #1      2#
-#        #
-#        #
-#        #
-#        #
-#        #
-#        #
 #1      2#
+#1      2#
+#        #
+#        #
+#        #
+#        #
+#        #
 ##########
