@@ -1,5 +1,8 @@
 #include "entities/Tank.h"
 
+// static id counter for unique tank identification
+int Tank::global_tank_counter = 0;
+
 Tank::Tank(int x, int y, Direction direction, int player_owner)
     : MoveableEntity(x, y, 1, EntityType::TANK, direction),
       player_owner(player_owner),
