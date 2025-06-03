@@ -23,13 +23,15 @@ void GameManager::subscribe_tank(std::shared_ptr<Tank> tank) {
   this->game_tanks.push_back(tank);
 }
 
-const std::vector<std::unique_ptr<Player>> &GameManager::get_players() const  {
+const std::vector<std::unique_ptr<Player>> &GameManager::get_players() const {
   return players;
 }
 
-const std::shared_ptr<Tank> GameManager::get_tank(int tankIndex,int playerIndex) const {
+const std::shared_ptr<Tank> GameManager::get_tank(int tankIndex,
+                                                  int playerIndex) const {
   for (const auto &tank : game_tanks) {
-    if (tank->get_tank_id() == tankIndex && tank->get_owner_id() == playerIndex) {
+    if (tank->get_tank_id() == tankIndex &&
+        tank->get_owner_id() == playerIndex) {
       return tank;
     }
   }
@@ -116,16 +118,56 @@ int GameManager::load_map(const std::string &map_path) {
 void GameManager::post_load_process() {
   int tank_ids[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-  for (auto &tank : game_tanks) {
-    if (!tank)
+  for (auto &tank_sp : game_tanks) { // tank_sp is std::shared_ptr<Tank>
+    if (!tank_sp) {
       continue;
-    tank_algorithm_factory.tank_x = tank->get_x();
-    tank_algorithm_factory.tank_y = tank->get_y();
-    tank->set_ai(tank_algorithm_factory.create(tank->get_owner_id(),
-                                               tank_ids[tank->get_owner_id()]));
-    tank->set_tank_id(tank_ids[tank->get_owner_id()]);
-    tank_ids[tank->get_owner_id()]++;
-    dynamic_cast<GamePlayer*>(this->players[tank->get_owner_id()].get())->tanks.push_back(tank);
+    }
+
+    tank_algorithm_factory.tank_x = tank_sp->get_x();
+    tank_algorithm_factory.tank_y = tank_sp->get_y();
+
+    int owner_id = tank_sp->get_owner_id();
+    // Ensure owner_id is within bounds for tank_ids array.
+    // Player IDs from map parsing are typically 1-9.
+    // If owner_id can be 0 or >=10, this needs more robust handling.
+    // For now, assuming valid owner_id (e.g. 1-9) based on map format.
+    if (owner_id < 0 || owner_id >= 10) {
+      std::cerr << "Error: Tank has invalid owner_id " << owner_id
+                << " in post_load_process. Skipping tank association.\n";
+      continue; // Skip this tank if owner_id is out of bounds for tank_ids
+    }
+
+    int current_tank_id_for_owner = tank_ids[owner_id];
+
+    tank_sp->set_ai(
+        tank_algorithm_factory.create(owner_id, current_tank_id_for_owner));
+    tank_sp->set_tank_id(current_tank_id_for_owner);
+    tank_ids[owner_id]++;
+
+    GamePlayer *target_player = nullptr;
+    for (const auto &player_up :
+         this->players) { // player_up is std::unique_ptr<Player>
+      if (player_up) {    // Check unique_ptr is not null
+        GamePlayer *gp = dynamic_cast<GamePlayer *>(player_up.get());
+        if (gp && gp->get_id() == owner_id) {
+          target_player = gp;
+          break;
+        }
+      }
+    }
+
+    if (target_player) {
+      // GamePlayer::tanks is std::vector<std::weak_ptr<Tank>>
+      // tank_sp is std::shared_ptr<Tank>
+      // Implicit conversion from shared_ptr to weak_ptr is fine.
+      target_player->tanks.push_back(tank_sp);
+    } else {
+      std::cerr << "Error: Player with ID " << owner_id
+                << " not found for tank (ID " << current_tank_id_for_owner
+                << ") in post_load_process.\n";
+      // This could be a critical error depending on game logic.
+      // Consider if an exception should be thrown or if logging is sufficient.
+    }
   }
 }
 
