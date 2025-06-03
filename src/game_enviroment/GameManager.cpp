@@ -179,8 +179,25 @@ void GameManager::post_load_process() {
 
 std::unique_ptr<SatelliteView>
 GameManager::create_satellite_view(int player_id, int tank_id) const {
+  if (!this->map) {
+    std::cerr
+        << "Error: GameManager::create_satellite_view called with null map."
+        << std::endl;
+    throw std::runtime_error(
+        "GameManager: Map is not loaded, cannot create satellite view.");
+  }
+
   size_t rows = this->map->get_rows();
   size_t cols = this->map->get_cols();
+
+  if (rows == 0 || cols == 0) {
+    std::cerr << "Error: GameManager::create_satellite_view called for map "
+                 "with zero dimensions (rows="
+              << rows << ", cols=" << cols << ")." << std::endl;
+    throw std::runtime_error(
+        "GameManager: Map has zero dimensions, cannot create satellite view.");
+  }
+
 
   // Init to empty spaces
   std::vector<std::vector<char>> view(rows, std::vector<char>(cols, ' '));
@@ -214,7 +231,7 @@ GameManager::create_satellite_view(int player_id, int tank_id) const {
       if (tank->get_owner_id() == player_id && tank->get_tank_id() == tank_id) {
         view[x][y] = '%'; // requesting tank
       } else {
-        view[x][y] = static_cast<char>(tank->get_owner_id());
+        view[x][y] = static_cast<char>('0' + tank->get_owner_id());
       }
     }
   }
