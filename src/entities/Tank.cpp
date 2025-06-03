@@ -3,9 +3,9 @@
 // static id counter for unique tank identification
 int Tank::global_tank_counter = 0;
 
-Tank::Tank(int x, int y, Direction direction, int player_owner,int tank_id, std::unique_ptr<TankAlgorithm> ai)
+Tank::Tank(int x, int y, Direction direction, int player_owner, std::unique_ptr<TankAlgorithm> ai)
     : MoveableEntity(x, y, 1, EntityType::TANK, direction),
-      player_owner(player_owner), tank_id(tank_id){
+      player_owner(player_owner), tank_id(global_tank_counter++){
         
       }
 
