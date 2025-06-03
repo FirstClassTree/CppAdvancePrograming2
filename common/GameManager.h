@@ -28,6 +28,7 @@ public:
   void subscribe_shell(std::shared_ptr<Shell> shell);
   void subscribe_entity(std::shared_ptr<Entity> entity);
   void subscribe_tank(std::shared_ptr<Tank> tank);
+  std::vector<std::shared_ptr<Tank>> get_tanks();
 
   
   std::unique_ptr<SatelliteView> create_satellite_view(int player_id, int tank_id) const;

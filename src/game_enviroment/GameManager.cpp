@@ -35,239 +35,262 @@ Map GameManager::get_map() {
   return *this->map;
 }
 
-
+std::vector<std::shared_ptr<Tank>> GameManager::get_tanks() {
+  return this->game_tanks;
+}
 
 int GameManager::load_map(const std::string &map_path) {
-    std::ifstream map_file = open_map_file(map_path);
-    if (!map_file.is_open()) return -1;
+  std::ifstream map_file = open_map_file(map_path);
+  if (!map_file.is_open())
+    return -1;
 
-    std::string name;
-    int max_steps, num_shells, rows, cols;
-    if (!parse_map_header(map_file, name, max_steps, num_shells, rows, cols)) return -1;
+  std::string name;
+  int max_steps, num_shells, rows, cols;
+  if (!parse_map_header(map_file, name, max_steps, num_shells, rows, cols))
+    return -1;
 
-    auto map = create_empty_map(rows, cols);
-    std::vector<std::shared_ptr<Tank>> tanks_out;
-    std::vector<std::shared_ptr<Entity>> entities_out;
-    std::vector<std::pair<int, std::pair<int, int>>> player_spawn_points_out;
+  auto map = create_empty_map(rows, cols);
+  std::vector<std::shared_ptr<Tank>> tanks_out;
+  std::vector<std::shared_ptr<Entity>> entities_out;
+  std::vector<std::pair<int, std::pair<int, int>>> player_spawn_points_out;
 
-    std::string line;
-    int row_idx = 0;
-    while (std::getline(map_file, line)) {
-        if (row_idx >= rows) {
-            std::cerr << "[GameManager::load_map] Warning: extra rows in file\n";
-            break;
-        }
-        populate_map_row(line, row_idx, cols, max_steps, num_shells, map,
-                         tanks_out, entities_out, player_spawn_points_out);
-        ++row_idx;
+  std::string line;
+  int row_idx = 0;
+  while (std::getline(map_file, line)) {
+    if (row_idx >= rows) {
+      std::cerr << "[GameManager::load_map] Warning: extra rows in file\n";
+      break;
     }
+    populate_map_row(line, row_idx, cols, max_steps, num_shells, map, tanks_out,
+                     entities_out, player_spawn_points_out);
+    ++row_idx;
+  }
 
-    // May be unceearry:
-    if (row_idx < rows)
-        fill_remaining_rows(row_idx, rows, cols, map);
+  // May be unceearry:
+  if (row_idx < rows)
+    fill_remaining_rows(row_idx, rows, cols, map);
 
-    for (auto &entity : entities_out) subscribe_entity(entity);
-    for (auto &tank : tanks_out) subscribe_tank(tank);
+  for (auto &entity : entities_out)
+    subscribe_entity(entity);
+  for (auto &tank : tanks_out)
+    subscribe_tank(tank);
 
-    for (const auto &[player_num, pos] : player_spawn_points_out) {
-        bool exists = std::any_of(players.begin(), players.end(),
-            [player_num](const auto &p) {
-                auto *gp = dynamic_cast<const GamePlayer *>(p.get());
-                return gp && gp->get_id() == player_num;
-            });
-        if (!exists) {
-            players.emplace_back(
-                player_factory.create(player_num, pos.first, pos.second, max_steps, num_shells));
-        }
+  for (const auto &[player_num, pos] : player_spawn_points_out) {
+    bool exists = std::any_of(
+        players.begin(), players.end(), [player_num](const auto &p) {
+          auto *gp = dynamic_cast<const GamePlayer *>(p.get());
+          return gp && gp->get_id() == player_num;
+        });
+    if (!exists) {
+      players.emplace_back(player_factory.create(
+          player_num, pos.first, pos.second, max_steps, num_shells));
     }
+  }
 
-    this->map = std::make_unique<Map>(name, max_steps, num_shells, cols, rows, map);
-    return 0;
+  this->map =
+      std::make_unique<Map>(name, max_steps, num_shells, cols, rows, map);
+  return 0;
 }
 
 #include "MySatelliteView.h"
 
-std::unique_ptr<SatelliteView> GameManager::create_satellite_view(int player_id, int tank_id) const {
-    size_t rows = this->map->get_rows();
-    size_t cols = this->map->get_cols();
+std::unique_ptr<SatelliteView>
+GameManager::create_satellite_view(int player_id, int tank_id) const {
+  size_t rows = this->map->get_rows();
+  size_t cols = this->map->get_cols();
 
-    // Init to empty spaces
-    std::vector<std::vector<char>> view(rows, std::vector<char>(cols, ' '));
+  // Init to empty spaces
+  std::vector<std::vector<char>> view(rows, std::vector<char>(cols, ' '));
 
-    // Add Walls and Mines
-    for (const auto& entity : game_entities) {
-        if (!entity) continue;
-        size_t x = entity->get_x();
-        size_t y = entity->get_y();
-        if (x < rows && y < cols) {
-            switch (entity->get_type()) {
-                case EntityType::WALL:
-                    view[x][y] = '#';
-                    break;
-                case EntityType::MINE:
-                    view[x][y] = '@';
-                    break;
-                default:
-                    break;
-            }
-        }
+  // Add Walls and Mines
+  for (const auto &entity : game_entities) {
+    if (!entity)
+      continue;
+    size_t x = entity->get_x();
+    size_t y = entity->get_y();
+    if (x < rows && y < cols) {
+      switch (entity->get_type()) {
+      case EntityType::WALL:
+        view[x][y] = '#';
+        break;
+      case EntityType::MINE:
+        view[x][y] = '@';
+        break;
+      default:
+        break;
+      }
     }
-    // Tanks
-    for (const auto& tank : game_tanks) {
-        if (!tank || tank->get_health() == 0) continue;
-            size_t x = tank->get_x();
-            size_t y = tank->get_y();
-            if (x < rows && y < cols) {
-                if (tank->get_id() == player_id && tank->get_tank_id() == tank_id) {
-                    view[x][y] = '%';  // requesting tank
-                } else {
-                    view[x][y] = static_cast<char>(tank->get_id());
-                }
-            }
+  }
+  // Tanks
+  for (const auto &tank : game_tanks) {
+    if (!tank || tank->get_health() == 0)
+      continue;
+    size_t x = tank->get_x();
+    size_t y = tank->get_y();
+    if (x < rows && y < cols) {
+      if (tank->get_owner_id() == player_id && tank->get_tank_id() == tank_id) {
+        view[x][y] = '%'; // requesting tank
+      } else {
+        view[x][y] = static_cast<char>(tank->get_owner_id());
+      }
     }
+  }
 
-
-    // add Shells if not destroyed
-    for (const auto& shell : game_shells) {
-    if (!shell || shell->is_destroyed()) continue;
-        size_t x = shell->get_x();
-        size_t y = shell->get_y();
-        if (x < rows && y < cols) {
-            view[x][y] = '*';
+  // add Shells if not destroyed
+  for (const auto &shell : game_shells) {
+    if (!shell || shell->is_destroyed())
+      continue;
+    size_t x = shell->get_x();
+    size_t y = shell->get_y();
+    if (x < rows && y < cols) {
+      view[x][y] = '*';
     }
+  }
+  // return the MySatelliteView
 
+  return std::make_unique<MySatelliteView>(view);
 }
-    // return the MySatelliteView
-
-    return std::make_unique<MySatelliteView>(view);
-}
-
-
 
 std::ifstream GameManager::open_map_file(const std::string &map_path) {
-    std::cout << "[open_map_file] Attempting to open map file: \"" << map_path << "\"\n";
+  std::cout << "[open_map_file] Attempting to open map file: \"" << map_path
+            << "\"\n";
 
-    std::ifstream map_file(map_path);
-    if (!map_file.is_open()) {
-        std::cerr << "[open_map_file] ERROR: Failed to open map file: \"" << map_path << "\"\n";
-    } else {
-        std::cout << "[open_map_file] Successfully opened map file.\n";
-    }
+  std::ifstream map_file(map_path);
+  if (!map_file.is_open()) {
+    std::cerr << "[open_map_file] ERROR: Failed to open map file: \""
+              << map_path << "\"\n";
+  } else {
+    std::cout << "[open_map_file] Successfully opened map file.\n";
+  }
 
-    return map_file;
+  return map_file;
 }
 
 // Utility: strip spaces around '=' and parse int
 int extractIntValue(const std::string &line, const std::string &expected_key) {
-    auto pos = line.find('=');
-    if (pos == std::string::npos)
-        throw std::runtime_error("Missing '=' in: " + line);
+  auto pos = line.find('=');
+  if (pos == std::string::npos)
+    throw std::runtime_error("Missing '=' in: " + line);
 
-    // Extract and clean the key part
-    std::string key = line.substr(0, pos);
-    key.erase(std::remove_if(key.begin(), key.end(), ::isspace), key.end());
+  // Extract and clean the key part
+  std::string key = line.substr(0, pos);
+  key.erase(std::remove_if(key.begin(), key.end(), ::isspace), key.end());
 
-    if (key != expected_key)
-        throw std::runtime_error("Expected key '" + expected_key + "', found '" + key + "'");
+  if (key != expected_key)
+    throw std::runtime_error("Expected key '" + expected_key + "', found '" +
+                             key + "'");
 
-    // Extract and clean the value part
-    std::string value_str = line.substr(pos + 1);
-    value_str.erase(std::remove_if(value_str.begin(), value_str.end(), ::isspace), value_str.end());
+  // Extract and clean the value part
+  std::string value_str = line.substr(pos + 1);
+  value_str.erase(std::remove_if(value_str.begin(), value_str.end(), ::isspace),
+                  value_str.end());
 
-    return std::stoi(value_str);
+  return std::stoi(value_str);
 }
 
-bool GameManager::parse_map_header(std::istream &in, std::string &name, int &max_steps,
-                      int &num_shells, int &rows, int &cols) {
-    std::string line;
-    try {
-        if (!std::getline(in, name)) throw std::runtime_error("Missing map name line");
-        if (!std::getline(in, line)) throw std::runtime_error("Missing MaxSteps line");
-        max_steps = extractIntValue(line, "MaxSteps");
+bool GameManager::parse_map_header(std::istream &in, std::string &name,
+                                   int &max_steps, int &num_shells, int &rows,
+                                   int &cols) {
+  std::string line;
+  try {
+    if (!std::getline(in, name))
+      throw std::runtime_error("Missing map name line");
+    if (!std::getline(in, line))
+      throw std::runtime_error("Missing MaxSteps line");
+    max_steps = extractIntValue(line, "MaxSteps");
 
-        if (!std::getline(in, line)) throw std::runtime_error("Missing NumShells line");
-        num_shells = extractIntValue(line, "NumShells");
+    if (!std::getline(in, line))
+      throw std::runtime_error("Missing NumShells line");
+    num_shells = extractIntValue(line, "NumShells");
 
-        if (!std::getline(in, line)) throw std::runtime_error("Missing Rows line");
-        rows = extractIntValue(line, "Rows");
+    if (!std::getline(in, line))
+      throw std::runtime_error("Missing Rows line");
+    rows = extractIntValue(line, "Rows");
 
-        if (!std::getline(in, line)) throw std::runtime_error("Missing Cols line");
-        cols = extractIntValue(line, "Cols");
+    if (!std::getline(in, line))
+      throw std::runtime_error("Missing Cols line");
+    cols = extractIntValue(line, "Cols");
 
-    } catch (const std::exception &e) {
-        std::cerr << "[parse_map_header] ERROR: " << e.what() << '\n';
-        return false;
-    }
+  } catch (const std::exception &e) {
+    std::cerr << "[parse_map_header] ERROR: " << e.what() << '\n';
+    return false;
+  }
 
-    return true;
+  return true;
 }
 
-
-std::vector<std::vector<Tile>> GameManager::create_empty_map(int rows, int cols) {
-    std::vector<std::vector<Tile>> map(rows, std::vector<Tile>(cols));
-    for (int r = 0; r < rows; ++r) {
-        for (int c = 0; c < cols; ++c) {
-            map[r][c].x = r;
-            map[r][c].y = c;
-        }
+std::vector<std::vector<Tile>> GameManager::create_empty_map(int rows,
+                                                             int cols) {
+  std::vector<std::vector<Tile>> map(rows, std::vector<Tile>(cols));
+  for (int r = 0; r < rows; ++r) {
+    for (int c = 0; c < cols; ++c) {
+      map[r][c].x = r;
+      map[r][c].y = c;
     }
+  }
 
-    return map;
+  return map;
 }
 
 // This function assumes that map[row_idx] is already initialized with x/y
-void GameManager::populate_map_row(const std::string &line, int row_idx, int cols,
-                      int max_steps, int num_shells,
-                      std::vector<std::vector<Tile>> &map,
-                      std::vector<std::shared_ptr<Tank>> &tanks_out,
-                      std::vector<std::shared_ptr<Entity>> &entities_out,
-                      std::vector<std::pair<int, std::pair<int, int>>> &player_spawn_points_out) {
-    for (int col = 0; col < cols; ++col) {
-        Tile &tile = map[row_idx][col];
+void GameManager::populate_map_row(
+    const std::string &line, int row_idx, int cols, int max_steps,
+    int num_shells, std::vector<std::vector<Tile>> &map,
+    std::vector<std::shared_ptr<Tank>> &tanks_out,
+    std::vector<std::shared_ptr<Entity>> &entities_out,
+    std::vector<std::pair<int, std::pair<int, int>>> &player_spawn_points_out) {
+  for (int col = 0; col < cols; ++col) {
+    Tile &tile = map[row_idx][col];
 
-        char c = (col < static_cast<int>(line.size())) ? line[col] : ' ';
+    char c = (col < static_cast<int>(line.size())) ? line[col] : ' ';
 
-        switch (c) {
-            case '#': {
-                auto wall = std::make_shared<Wall>(row_idx, col);
-                tile.ground = wall;
-                entities_out.push_back(wall);
-                break;
-            }
-            case '@': {
-                auto mine = std::make_shared<Mine>(row_idx, col);
-                tile.shell = mine;
-                entities_out.push_back(mine);
-                break;
-            }
-            case '1': case '2': case '3': case '4': case '5':
-            case '6': case '7': case '8': case '9': {
-                int player_num = c - '0';
-                Direction dir = (player_num == 1 ? Direction::L : Direction::R);
-                auto tank = std::make_shared<Tank>(row_idx, col, dir, player_num);
-                tile.actor = tank;
-                tanks_out.push_back(tank);
-                player_spawn_points_out.emplace_back(player_num, std::make_pair(row_idx, col));
-                break;
-            }
-            default:
-                // Treated as empty space
-                break;
-        }
+    switch (c) {
+    case '#': {
+      auto wall = std::make_shared<Wall>(row_idx, col);
+      tile.ground = wall;
+      entities_out.push_back(wall);
+      break;
     }
+    case '@': {
+      auto mine = std::make_shared<Mine>(row_idx, col);
+      tile.shell = mine;
+      entities_out.push_back(mine);
+      break;
+    }
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9': {
+      int player_num = c - '0';
+      Direction dir = (player_num == 1 ? Direction::L : Direction::R);
+      auto tank = std::make_shared<Tank>(row_idx, col, dir, player_num);
+      tile.actor = tank;
+      tanks_out.push_back(tank);
+      player_spawn_points_out.emplace_back(player_num,
+                                           std::make_pair(row_idx, col));
+      break;
+    }
+    default:
+      // Treated as empty space
+      break;
+    }
+  }
 }
 
 void GameManager::fill_remaining_rows(int start_row, int rows, int cols,
-                         std::vector<std::vector<Tile>> &map) {
-    for (int r = start_row; r < rows; ++r) {
-        for (int c = 0; c < cols; ++c) {
-            map[r][c].x = r;
-            map[r][c].y = c;
-        }
+                                      std::vector<std::vector<Tile>> &map) {
+  for (int r = start_row; r < rows; ++r) {
+    for (int c = 0; c < cols; ++c) {
+      map[r][c].x = r;
+      map[r][c].y = c;
     }
+  }
 }
-
-
 
 // int GameManager::load_map(const std::string &map_path) {
 //   std::cout << "[GameManager::load_map] Attempting to load map from: \""
@@ -330,8 +353,9 @@ void GameManager::fill_remaining_rows(int start_row, int rows, int cols,
 //       case '9': {
 //         int player_num = c - '0';
 //         auto tank = std::make_shared<Tank>(row_idx, i, Direction::U,
-//                                            player_num); // TODO: fix direction
-        
+//                                            player_num); // TODO: fix
+//                                            direction
+
 //         this->subscribe_tank(tank);
 //         map[row_idx][i].actor = tank;
 //         bool player_exists = false;
@@ -348,8 +372,10 @@ void GameManager::fill_remaining_rows(int start_row, int rows, int cols,
 //         }
 
 //         if (!player_exists) {
-//           auto new_player = this->player_factory.create(player_num, row_idx, i,
-//                                                         max_steps, num_shells);
+//           auto new_player = this->player_factory.create(player_num, row_idx,
+//           i,
+//                                                         max_steps,
+//                                                         num_shells);
 //           this->players.emplace_back(std::move(new_player));
 //         }
 //         break;

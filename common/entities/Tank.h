@@ -6,19 +6,19 @@
 
 class Tank : public MoveableEntity {
 public:
-  Tank(int x,int y,Direction direction,int player_owner);
+  Tank(int x, int y, Direction direction, int player_owner);
   ~Tank();
 
-  int get_id();
+  int get_owner_id();
   int get_health();
   int get_tank_id();
-  
-  std::string serialize() override;
 
+  std::string serialize() override;
 
 private:
   std::unique_ptr<TankAlgorithm> ai;
-  inline static int global_tank_counter = 0; // static counter shared by all Tanks for id
+  inline static int global_tank_counter =
+      0; // static counter shared by all Tanks for id
   int health;
   int player_owner;
   int tank_id;
