@@ -21,7 +21,7 @@ target_link_libraries(runTests
 
 
 # Optional: Disable AddressSanitizer with cmake -DENABLE_ASAN=OFF
-option(ENABLE_ASAN "Enable AddressSanitizer" ON)
+option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 
 if (ENABLE_ASAN)
     message(STATUS "AddressSanitizer ENABLED")

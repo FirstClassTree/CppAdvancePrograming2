@@ -1,0 +1,15 @@
+Chaser Map Test
+MaxSteps=2000
+NumShells=200
+Rows= 10
+Cols= 10
+##########
+#  1     #
+#        #
+#        #
+#        #
+#        #
+#        #
+#        #
+#  2     #
+##########

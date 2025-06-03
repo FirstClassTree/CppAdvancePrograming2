@@ -23,7 +23,7 @@ void Map::print_map() const {
                                                                          : "@");
         continue;
       } else if (!tile.actor.expired()) {
-        std::cout << tile.actor.lock()->get_id();
+        std::cout << tile.actor.lock()->get_owner_id();
       } else if (!tile.shell.expired()) {
         std::cout << "S";
       } else {
@@ -45,19 +45,10 @@ std::string Map::serialize() {
   return j.dump();
 }
 
+int Map::get_rows() const { return height; }
 
-int Map::get_rows() const {
-    return height;
-}
+int Map::get_cols() const { return width; }
 
-int Map::get_cols() const {
-    return width;
-}
+int Map::get_max_steps() const { return max_steps; }
 
-int Map::get_max_steps() const {
-    return max_steps;
-}
-
-int Map::get_num_shells() const {
-    return num_shells;
-}
+int Map::get_num_shells() const { return num_shells; }
