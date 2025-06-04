@@ -13,8 +13,13 @@ add_library(tanks_game_lib
 message(STATUS "Sources: ${TANKS_GAME_LIB_SOURCES}")
 message(STATUS "Headers: ${TANKS_GAME_LIB_HEADERS}")
 
+find_package(Curses REQUIRED)
+
 
 target_include_directories(tanks_game_lib PUBLIC
     ${PROJECT_SOURCE_DIR}/include
     ${PROJECT_SOURCE_DIR}/common
+    ${CURSES_INCLUDE_DIR}
 )
+
+target_link_libraries(tanks_game_lib PUBLIC ${CURSES_LIBRARIES})
