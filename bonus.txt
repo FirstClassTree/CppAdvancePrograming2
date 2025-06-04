@@ -1,1 +1,6 @@
 weve added logger as part of the bonus
+
+
+
+Automatic testing based on Gtest:
+- To run do:
