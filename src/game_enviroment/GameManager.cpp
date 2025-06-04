@@ -247,6 +247,14 @@ GameManager::create_satellite_view(int player_id, int tank_id) const {
     }
   }
   // return the MySatelliteView
+  // Print the view for debugging
+  //TODO: this method is faulty!!!!
+  for (size_t i = 0; i < rows; ++i) {
+    for (size_t j = 0; j < cols; ++j) {
+      std::cout << view[i][j];
+    }
+    std::cout << std::endl;
+  }
 
   return std::make_unique<MySatelliteView>(view);
 }

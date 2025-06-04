@@ -14,6 +14,6 @@ char MySatelliteView::getObjectAt(size_t x, size_t y) const {
   // std::endl;
   return view_[x][y];
 }
-const std::vector<std::vector<char>>& MySatelliteView::get_grid() const {
-    return view_;
+const std::vector<std::vector<char>> &MySatelliteView::get_grid() const {
+  return view_;
 }

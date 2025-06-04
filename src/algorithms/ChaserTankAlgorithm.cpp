@@ -43,13 +43,11 @@ void ChaserTankAlgorithm::set_target(std::vector<std::vector<char>> &grid) {
 
     size_t num_rows = grid.size();
     size_t num_cols = grid[0].size();
-    std::cout << "Number of rows: " << num_rows << std::endl;
-    std::cout << "Number of cols: " << num_cols << std::endl;
     // Iterate over the grid to find all tanks
     for (size_t r = 0; r < num_rows; ++r) {
         for (size_t c = 0; c < num_cols; ++c) {
             char cell_content = grid[r][c];
-            std::cout << "Cell content: " << cell_content << std::endl;
+            //std::cout << "Cell content: " << cell_content << std::endl;
             // Check if the cell contains a digit character, which we assume represents a tank
             if (std::isdigit(cell_content)) {
                 std::cout << "Found digit: " << cell_content << std::endl;

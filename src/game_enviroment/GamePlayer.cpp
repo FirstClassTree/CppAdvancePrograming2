@@ -38,6 +38,7 @@ GamePlayer::extract_view(SatelliteView &satellite_view) {
   for (std::size_t r = 0; r < map_height; ++r)
     for (std::size_t c = 0; c < map_width; ++c) {
       view[r][c] = satellite_view.getObjectAt(r, c);
+      //std::cout << "View at " << r << ", " << c << ": " << view[r][c] << std::endl;
     }
 
   return view;
