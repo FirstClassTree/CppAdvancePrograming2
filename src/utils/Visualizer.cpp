@@ -1,7 +1,9 @@
-#include "../common/Visualizer.h"
-#include "../common/MySatelliteView.h"
+#include "../../common/Visualizer.h"
+#include "../../common/MySatelliteView.h"
+// #include "../../common/InputHelper.h"
 
 #include <iostream>
+#include <ncurses.h>
 
 // Create SatelliteView with paramaters: (-1,-1) so no &
 void Visualizer::add_snapshot(std::unique_ptr<SatelliteView> view) {
@@ -14,11 +16,29 @@ void Visualizer::run() {
         return;
     }
 
+    initscr();             // NCurses init
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
+
     size_t index = 0;
     draw_view(*snapshots_[index], index);
 
-    // TODO: add interactive ←/→ navigation here
+    int ch;
+    while ((ch = getch()) != 'q') {
+        if (ch == KEY_RIGHT && index + 1 < snapshots_.size()) {
+            index++;
+            draw_view(*snapshots_[index], index);
+        } else if (ch == KEY_LEFT && index > 0) {
+            index--;
+            draw_view(*snapshots_[index], index);
+        }
+    }
+
+    endwin();  // Restore terminal
 }
+
+
 
 void Visualizer::draw_view(const SatelliteView& view, size_t round_index) const {
     const auto* my_view = dynamic_cast<const MySatelliteView*>(&view);
@@ -26,13 +46,16 @@ void Visualizer::draw_view(const SatelliteView& view, size_t round_index) const 
 
     const auto& grid = my_view->get_grid();
 
-    std::cout << "\033[2J\033[1;1H";  // Clear terminal
-    std::cout << "-- ROUND " << round_index << " --\n";
+    clear();  // Clear ncurses screen
+    mvprintw(0, 0, "-- ROUND %zu --", round_index);
 
-    for (const auto& row : grid) {
-        for (char c : row) std::cout << c;
-        std::cout << '\n';
+
+    for (size_t i = 0; i < grid.size(); ++i) {
+        for (size_t j = 0; j < grid[i].size(); ++j) {
+            mvaddch(i + 2, j+1, grid[i][j]);
+        }
     }
 
-    std::cout << "\n[←] Previous | [→] Next | [q] Quit\n";
+    mvprintw(grid.size() + 3, 0, "[<-] Previous | [->] Next | [q] Quit");
+    refresh();
 }

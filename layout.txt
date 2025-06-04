@@ -25,24 +25,6 @@
 │   │   ├── CMakeTmp
 │   │   ├── Makefile.cmake
 │   │   ├── Makefile2
-│   │   ├── Progress
-│   │   │   ├── 15
-│   │   │   ├── 16
-│   │   │   ├── 17
-│   │   │   ├── 18
-│   │   │   ├── 19
-│   │   │   ├── 20
-│   │   │   ├── 21
-│   │   │   ├── 22
-│   │   │   ├── 23
-│   │   │   ├── 24
-│   │   │   ├── 25
-│   │   │   ├── 26
-│   │   │   ├── 27
-│   │   │   ├── 28
-│   │   │   ├── 29
-│   │   │   ├── 30
-│   │   │   └── count.txt
 │   │   ├── TargetDirectories.txt
 │   │   ├── VerifyGlobs.cmake
 │   │   ├── cmake.check_cache
@@ -60,6 +42,8 @@
 │   │       ├── link.txt
 │   │       ├── progress.make
 │   │       └── src
+│   │           ├── main.cpp.o
+│   │           └── main.cpp.o.d
 │   ├── CTestTestfile.cmake
 │   ├── Makefile
 │   ├── Testing
@@ -83,6 +67,7 @@
 │   │   │   │   │   │   ├── build.make
 │   │   │   │   │   │   ├── cmake_clean.cmake
 │   │   │   │   │   │   ├── cmake_clean_target.cmake
+│   │   │   │   │   │   ├── compiler_depend.internal
 │   │   │   │   │   │   ├── compiler_depend.make
 │   │   │   │   │   │   ├── compiler_depend.ts
 │   │   │   │   │   │   ├── depend.make
@@ -90,11 +75,14 @@
 │   │   │   │   │   │   ├── link.txt
 │   │   │   │   │   │   ├── progress.make
 │   │   │   │   │   │   └── src
+│   │   │   │   │   │       ├── gmock-all.cc.o
+│   │   │   │   │   │       └── gmock-all.cc.o.d
 │   │   │   │   │   ├── gmock_main.dir
 │   │   │   │   │   │   ├── DependInfo.cmake
 │   │   │   │   │   │   ├── build.make
 │   │   │   │   │   │   ├── cmake_clean.cmake
 │   │   │   │   │   │   ├── cmake_clean_target.cmake
+│   │   │   │   │   │   ├── compiler_depend.internal
 │   │   │   │   │   │   ├── compiler_depend.make
 │   │   │   │   │   │   ├── compiler_depend.ts
 │   │   │   │   │   │   ├── depend.make
@@ -102,6 +90,8 @@
 │   │   │   │   │   │   ├── link.txt
 │   │   │   │   │   │   ├── progress.make
 │   │   │   │   │   │   └── src
+│   │   │   │   │   │       ├── gmock_main.cc.o
+│   │   │   │   │   │       └── gmock_main.cc.o.d
 │   │   │   │   │   └── progress.marks
 │   │   │   │   ├── CTestTestfile.cmake
 │   │   │   │   ├── Makefile
@@ -120,6 +110,7 @@
 │   │   │       │   │   ├── build.make
 │   │   │       │   │   ├── cmake_clean.cmake
 │   │   │       │   │   ├── cmake_clean_target.cmake
+│   │   │       │   │   ├── compiler_depend.internal
 │   │   │       │   │   ├── compiler_depend.make
 │   │   │       │   │   ├── compiler_depend.ts
 │   │   │       │   │   ├── depend.make
@@ -127,11 +118,14 @@
 │   │   │       │   │   ├── link.txt
 │   │   │       │   │   ├── progress.make
 │   │   │       │   │   └── src
+│   │   │       │   │       ├── gtest-all.cc.o
+│   │   │       │   │       └── gtest-all.cc.o.d
 │   │   │       │   ├── gtest_main.dir
 │   │   │       │   │   ├── DependInfo.cmake
 │   │   │       │   │   ├── build.make
 │   │   │       │   │   ├── cmake_clean.cmake
 │   │   │       │   │   ├── cmake_clean_target.cmake
+│   │   │       │   │   ├── compiler_depend.internal
 │   │   │       │   │   ├── compiler_depend.make
 │   │   │       │   │   ├── compiler_depend.ts
 │   │   │       │   │   ├── depend.make
@@ -139,6 +133,8 @@
 │   │   │       │   │   ├── link.txt
 │   │   │       │   │   ├── progress.make
 │   │   │       │   │   └── src
+│   │   │       │   │       ├── gtest_main.cc.o
+│   │   │       │   │       └── gtest_main.cc.o.d
 │   │   │       │   └── progress.marks
 │   │   │       ├── CTestTestfile.cmake
 │   │   │       ├── Makefile
@@ -473,13 +469,31 @@
 │   ├── cmake_install.cmake
 │   ├── compile_commands.json
 │   ├── lib
+│   │   ├── libgmock.a
+│   │   ├── libgmock_main.a
+│   │   ├── libgtest.a
+│   │   └── libgtest_main.a
 │   ├── src
 │   │   ├── CMakeFiles
 │   │   │   ├── CMakeDirectoryInformation.cmake
 │   │   │   ├── progress.marks
 │   │   │   └── tanks_game_lib.dir
 │   │   │       ├── DependInfo.cmake
+│   │   │       ├── MyPlayer.cpp.o
+│   │   │       ├── MyPlayer.cpp.o.d
+│   │   │       ├── MyPlayerFactory.cpp.o
+│   │   │       ├── MyPlayerFactory.cpp.o.d
+│   │   │       ├── MySatelliteView.cpp.o
+│   │   │       ├── MySatelliteView.cpp.o.d
 │   │   │       ├── algorithms
+│   │   │       │   ├── ChaserTankAlgorithm.cpp.o
+│   │   │       │   ├── ChaserTankAlgorithm.cpp.o.d
+│   │   │       │   ├── MyTankAlgorithmFactory.cpp.o
+│   │   │       │   ├── MyTankAlgorithmFactory.cpp.o.d
+│   │   │       │   ├── SniperTankAlgorithm.cpp.o
+│   │   │       │   ├── SniperTankAlgorithm.cpp.o.d
+│   │   │       │   ├── TankBattleInfo.cpp.o
+│   │   │       │   └── TankBattleInfo.cpp.o.d
 │   │   │       ├── build.make
 │   │   │       ├── cmake_clean.cmake
 │   │   │       ├── cmake_clean_target.cmake
@@ -488,13 +502,45 @@
 │   │   │       ├── compiler_depend.ts
 │   │   │       ├── depend.make
 │   │   │       ├── entities
+│   │   │       │   ├── Entity.cpp.o
+│   │   │       │   ├── Entity.cpp.o.d
+│   │   │       │   ├── Mine.cpp.o
+│   │   │       │   ├── Mine.cpp.o.d
+│   │   │       │   ├── MoveableEntity.cpp.o
+│   │   │       │   ├── MoveableEntity.cpp.o.d
+│   │   │       │   ├── Shell.cpp.o
+│   │   │       │   ├── Shell.cpp.o.d
+│   │   │       │   ├── Tank.cpp.o
+│   │   │       │   ├── Tank.cpp.o.d
+│   │   │       │   ├── Wall.cpp.o
+│   │   │       │   └── Wall.cpp.o.d
 │   │   │       ├── flags.make
 │   │   │       ├── game_enviroment
+│   │   │       │   ├── GameManager.cpp.o
+│   │   │       │   ├── GameManager.cpp.o.d
+│   │   │       │   ├── GamePlayer.cpp.o
+│   │   │       │   ├── GamePlayer.cpp.o.d
+│   │   │       │   ├── GamePlayerFactory.cpp.o
+│   │   │       │   └── GamePlayerFactory.cpp.o.d
 │   │   │       ├── link.txt
+│   │   │       ├── main.cpp.o
+│   │   │       ├── main.cpp.o.d
 │   │   │       ├── progress.make
 │   │   │       └── utils
+│   │   │           ├── InputHelper.cpp.o
+│   │   │           ├── InputHelper.cpp.o.d
+│   │   │           ├── OutputPrinter.cpp.o
+│   │   │           ├── OutputPrinter.cpp.o.d
+│   │   │           ├── Visualizer.cpp.o
+│   │   │           ├── Visualizer.cpp.o.d
+│   │   │           ├── map.cpp.o
+│   │   │           ├── map.cpp.o.d
+│   │   │           ├── tile.cpp.o
+│   │   │           └── tile.cpp.o.d
 │   │   ├── Makefile
-│   │   └── cmake_install.cmake
+│   │   ├── cmake_install.cmake
+│   │   └── libtanks_game_lib.a
+│   ├── tanks_game
 │   └── tests
 │       ├── CMakeFiles
 │       │   ├── CMakeDirectoryInformation.cmake
@@ -502,23 +548,32 @@
 │       │   └── runTests.dir
 │       │       ├── DependInfo.cmake
 │       │       ├── build.make
+│       │       ├── chaser_algo_test.cpp.o
+│       │       ├── chaser_algo_test.cpp.o.d
 │       │       ├── cmake_clean.cmake
+│       │       ├── cmake_test.cpp.o
+│       │       ├── cmake_test.cpp.o.d
+│       │       ├── compiler_depend.internal
 │       │       ├── compiler_depend.make
 │       │       ├── compiler_depend.ts
 │       │       ├── depend.make
 │       │       ├── flags.make
 │       │       ├── link.txt
-│       │       └── progress.make
+│       │       ├── map_test.cpp.o
+│       │       ├── map_test.cpp.o.d
+│       │       ├── output_printer_test.cpp.o
+│       │       ├── output_printer_test.cpp.o.d
+│       │       ├── progress.make
+│       │       ├── tank_entity_test.cpp.o
+│       │       ├── tank_entity_test.cpp.o.d
+│       │       ├── test_json.cpp.o
+│       │       └── test_json.cpp.o.d
 │       ├── CTestTestfile.cmake
 │       ├── Makefile
-│       ├── Testing
-│       │   └── Temporary
-│       │       ├── CTestCostData.txt
-│       │       ├── LastTest.log
-│       │       ├── LastTest.log.tmp
-│       │       └── LastTestsFailed.log
 │       ├── cmake_install.cmake
-│       └── runTests[1]_include.cmake
+│       ├── runTests
+│       ├── runTests[1]_include.cmake
+│       └── runTests[1]_tests.cmake
 ├── common
 │   ├── ActionRequest.h
 │   ├── BattleInfo.h
@@ -530,6 +585,7 @@
 │   ├── GamePlayer.h
 │   ├── GamePlayerFactory.h
 │   ├── IJson.h
+│   ├── InputHelper.h
 │   ├── Map.h
 │   ├── MoveableEntity.h
 │   ├── MyPlayer.h
@@ -541,6 +597,7 @@
 │   ├── SatelliteView.h
 │   ├── TankAlgorithm.h
 │   ├── TankAlgorithmFactory.h
+│   ├── Visualizer.h
 │   ├── algorithms
 │   │   ├── ChaserTankAlgorithm.h
 │   │   ├── MyTankAlgorithmFactory.h
@@ -602,7 +659,9 @@
 │   │   └── GamePlayerFactory.cpp
 │   ├── main.cpp
 │   └── utils
+│       ├── InputHelper.cpp
 │       ├── OutputPrinter.cpp
+│       ├── Visualizer.cpp
 │       ├── map.cpp
 │       └── tile.cpp
 ├── tanks-ui
@@ -660,6 +719,7 @@
     ├── map_test.cpp
     ├── output_printer_test.cpp
     ├── tank_entity_test.cpp
-    └── test_json.cpp
+    ├── test_json.cpp
+    └── test_visualizer.cpp
 
-112 directories, 550 files
+109 directories, 613 files
