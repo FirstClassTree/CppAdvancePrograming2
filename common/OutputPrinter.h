@@ -16,11 +16,10 @@ public:
     void finalizeRound();
 
     void logResult(const std::vector<int>& remainingTanksPerPlayer,
-                   int maxSteps,
                    int winningPlayer = -1,
                    bool maxStepsReached = false,
-                   bool zeroShellsTimeout = false
-                   );
+                   bool zeroShellsTimeout = false,
+                   int maxSteps = -1);
 
     void writeToFile(const std::string& filename);
 

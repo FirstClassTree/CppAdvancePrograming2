@@ -18,7 +18,7 @@ TEST(OutputPrinterTest, BasicRoundLogging) {
     printer.finalizeRound();
 
     std::vector<int> remaining{0, 1};
-    printer.logResult(remaining, 2);  // Player 2 won
+    printer.logResult(remaining, 2,false,false,100);  // Player 2 won
 
     const std::string filename = "test_output.txt";
     printer.writeToFile(filename);

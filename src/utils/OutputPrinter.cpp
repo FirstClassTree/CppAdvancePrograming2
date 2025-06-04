@@ -1,4 +1,4 @@
-#include "OutputPrinter.h"
+#include "../common/OutputPrinter.h"
 #include <fstream>
 #include <sstream>
 #include <cassert>
@@ -64,11 +64,10 @@ void OutputPrinter::finalizeRound() {
 
 // When game ends log result
 void OutputPrinter::logResult(const std::vector<int>& remainingTanksPerPlayer,
-                               int maxSteps,
                                int winningPlayer,
                                bool maxStepsReached,
-                               bool zeroShellsTimeout
-                              ) {
+                               bool zeroShellsTimeout,
+                              int maxSteps) {
 
     std::ostringstream result;
 
