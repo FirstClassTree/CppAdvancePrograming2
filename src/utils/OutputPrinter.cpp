@@ -3,7 +3,7 @@
 #include <sstream>
 #include <cassert>
 #include <unordered_map>
-#include "common/Constants.h"
+#include "../common/Constants.h"
 
 OutputPrinter::OutputPrinter(size_t numTanks)
     : tankStates_(numTanks), roundLines_() { }
@@ -64,10 +64,11 @@ void OutputPrinter::finalizeRound() {
 
 // When game ends log result
 void OutputPrinter::logResult(const std::vector<int>& remainingTanksPerPlayer,
+                               int maxSteps,
                                int winningPlayer,
                                bool maxStepsReached,
                                bool zeroShellsTimeout
-                              ,int maxSteps) {
+                              ) {
 
     std::ostringstream result;
 

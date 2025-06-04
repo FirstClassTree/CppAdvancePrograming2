@@ -369,8 +369,9 @@ void GameManager::populate_map_row(
     case '9': {
       int player_num = c - '0';
       Direction dir = (player_num == 1 ? Direction::L : Direction::R);
+      // init tank_id to -1 temporarly
       auto tank =
-          std::make_shared<Tank>(row_idx, col, dir, player_num, nullptr);
+          std::make_shared<Tank>(row_idx, col, dir, player_num,-1, nullptr);
       tile.actor = tank;
       tanks_out.push_back(tank);
       player_spawn_points_out.emplace_back(player_num,

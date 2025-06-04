@@ -3,7 +3,7 @@
 #include <vector>
 #include <string>
 #include <tuple>
-#include "common/ActionRequest.h"
+#include "../common/ActionRequest.h"
 
 class OutputPrinter {
 public:
@@ -16,10 +16,11 @@ public:
     void finalizeRound();
 
     void logResult(const std::vector<int>& remainingTanksPerPlayer,
+                   int maxSteps,
                    int winningPlayer = -1,
                    bool maxStepsReached = false,
-                   bool zeroShellsTimeout = false,
-                   int maxSteps);
+                   bool zeroShellsTimeout = false
+                   );
 
     void writeToFile(const std::string& filename);
 
