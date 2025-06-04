@@ -1,5 +1,6 @@
 #include "../../common/algorithms/ChaserTankAlgorithm.h"
-#include "ActionRequest.h"
+
+#include <iostream>
 
 using namespace std;
 
@@ -16,7 +17,9 @@ ChaserTankAlgorithm::~ChaserTankAlgorithm() {}
 void ChaserTankAlgorithm::updateBattleInfo(BattleInfo &battle_info) {
   auto &tank_info = dynamic_cast<TankBattleInfo &>(battle_info);
   //now call make_decision after gathering the data from the battle_info.
-
+  auto view = tank_info.get_view();
+  set_target(view);
+  make_decision(view);
   this->dirty = false;
 }
 
@@ -24,6 +27,64 @@ void ChaserTankAlgorithm::make_decision(std::vector<std::vector<char>> &grid) {
   auto bfs_grid = make_bfs_grid(grid);
   this->bfs(bfs_grid);
 
+}
+
+void ChaserTankAlgorithm::set_target(std::vector<std::vector<char>> &grid) {
+
+    if (grid.empty() || grid[0].empty()) {
+        this->currentTarget.sync = false;
+        return;
+    }
+
+    long long min_dist_sq = std::numeric_limits<long long>::max();
+    bool found_target = false;
+    int best_target_x = -1; // Temporary variable for the best target's x coordinate
+    int best_target_y = -1; // Temporary variable for the best target's y coordinate
+
+    size_t num_rows = grid.size();
+    size_t num_cols = grid[0].size();
+    std::cout << "Number of rows: " << num_rows << std::endl;
+    std::cout << "Number of cols: " << num_cols << std::endl;
+    // Iterate over the grid to find all tanks
+    for (size_t r = 0; r < num_rows; ++r) {
+        for (size_t c = 0; c < num_cols; ++c) {
+            char cell_content = grid[r][c];
+            std::cout << "Cell content: " << cell_content << std::endl;
+            // Check if the cell contains a digit character, which we assume represents a tank
+            if (std::isdigit(cell_content)) {
+                std::cout << "Found digit: " << cell_content << std::endl;
+                int potential_player_id = cell_content - '0';
+
+                // Check if this tank belongs to an enemy player
+                if (potential_player_id != this->player_index) {
+                    std::cout << "Found enemy tank at x: " << r << ", y: " << c << std::endl;
+                    long long dr = static_cast<long long>(r) - this->currentState.x; // Difference in rows
+                    long long dc = static_cast<long long>(c) - this->currentState.y; // Difference in columns
+                    
+                    long long dist_sq = dr * dr + dc * dc; // Squared Euclidean distance
+
+                    if (dist_sq < min_dist_sq) {
+                        min_dist_sq = dist_sq;
+                        best_target_x = static_cast<int>(r);
+                        best_target_y = static_cast<int>(c);
+                        found_target = true;
+                    }
+                }
+            }
+        }
+    }
+
+    if (found_target) {
+        this->currentTarget.x = best_target_x;
+        this->currentTarget.y = best_target_y;
+        this->currentTarget.sync = true;
+    } else {
+        // No enemy tanks found in the current view
+        this->currentTarget.sync = false;
+        std::cout << "No enemy tanks found in the current view" << std::endl;
+        // currentTarget.x and .y will retain their previous values,
+        // but .sync = false indicates that this target is no longer valid/acquired.
+    }
 }
 
 // TODO: make shorter.
@@ -58,6 +119,7 @@ void ChaserTankAlgorithm::bfs(std::vector<std::vector<bool>> &grid) {
   }
   if (dist[this->currentTarget.x][this->currentTarget.y] == -1) {
     this->chooseAction = ActionRequest::DoNothing;
+    std::cout << "Target not reachable at x: " << this->currentTarget.x << ", y: " << this->currentTarget.y << std::endl;
     return;
   }
   Step cur{this->currentTarget.x, this->currentTarget.y};
@@ -95,9 +157,11 @@ ActionRequest ChaserTankAlgorithm::rotate_toward(Direction from, Direction to) {
       return ActionRequest::RotateLeft90;
     }
   }
+  std::cout << "rotate_toward didnt do shit" << std::endl;
 }
 
 void ChaserTankAlgorithm::simulate_move() {
+  std::cout << "simulate_move" << std::endl;
   // U, UR, R, RD, D, DL, L, UL
   // These static const arrays are assumed to be defined at file scope in ChaserTankAlgorithm.cpp
   const int DX[] = {-1, -1, 0, 1, 1, 1, 0, -1}; // Changes in X (row)
@@ -147,6 +211,7 @@ void ChaserTankAlgorithm::simulate_move() {
     // No change to state.
     break;
   case ActionRequest::GetBattleInfo:
+    std::cout << "GetBattleInfo simulated" << std::endl;
     // This is a request for information, not a tank action that changes its state.
     // The actual state update will happen in updateBattleInfo.
     break;

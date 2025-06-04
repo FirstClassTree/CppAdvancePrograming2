@@ -104,7 +104,7 @@ int GameManager::load_map(const std::string &map_path) {
         });
     if (!exists) {
       players.emplace_back(player_factory.create(
-          player_num, pos.first, pos.second, max_steps, num_shells));
+          player_num, rows, cols, max_steps, num_shells));
     }
   }
 

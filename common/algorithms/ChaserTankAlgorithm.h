@@ -6,6 +6,8 @@
 #include <vector>
 #include <queue>
 #include "../Direction.h"
+#include "ActionRequest.h"
+#include <limits>
 
 struct Step { int x, y; };
 struct Target { int x, y; bool sync;};
