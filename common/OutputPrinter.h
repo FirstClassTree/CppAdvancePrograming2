@@ -24,6 +24,6 @@ public:
     void writeToFile(const std::string& filename);
 
 private:
-    std::vector<std::tuple<ActionRequest, bool, bool>> tankStates_;
+    std::vector<std::tuple<ActionRequest, bool, int>> tankStates_;
     std::vector<std::string> roundLines_;
 };

@@ -23,7 +23,7 @@ void OutputPrinter::markTankIgnored(size_t tankIndex) {
 // If tank was killed
 void OutputPrinter::markTankKilled(size_t tankIndex) {
     assert(tankIndex < tankStates_.size());
-    std::get<2>(tankStates_[tankIndex]) = true;
+    std::get<2>(tankStates_[tankIndex]) = 1;
 }
 // we want to be able to translate ActionRequest to String:
 namespace {
@@ -44,23 +44,27 @@ namespace {
 void OutputPrinter::finalizeRound() {
     std::ostringstream line;
     for (size_t i = 0; i < tankStates_.size(); ++i) {
-        const auto& [action, ignored, killed] = tankStates_[i];
-        auto it = actionToString.find(action);
-        assert(it != actionToString.end());
-
-        line << it->second;
-        if (ignored) line << " (ignored)";
-        if (killed) line << " (killed)";
+        auto& [action, ignored, killed] = tankStates_[i];
+        if (killed == 2) {
+            line << "killed";
+        } else {
+            auto it = actionToString.find(action);
+            assert(it != actionToString.end());
+            line << it->second;
+            if (ignored) line << " (ignored)";
+            if (killed == 1) line << " (killed)";
+        }
 
         if (i + 1 < tankStates_.size())
             line << ", ";
+        // Promote newly killed tanks to permanent killed status so it print killed in next iterations
+        if (killed == 1) killed = 2;
+        // Reset transient flag
+        ignored = false;
     }
-
     roundLines_.push_back(line.str());
-
-    // Prepare for next round
-    tankStates_ = std::vector<std::tuple<ActionRequest, bool, bool>>(tankStates_.size());
 }
+
 
 // When game ends log result
 void OutputPrinter::logResult(const std::vector<int>& remainingTanksPerPlayer,
