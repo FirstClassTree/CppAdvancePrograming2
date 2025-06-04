@@ -1,4 +1,5 @@
 #include "../../common/GamePlayer.h"
+#include <iostream>
 #include <vector>
 
 GamePlayer::GamePlayer(int player_index, size_t x, size_t y, size_t max_steps,
@@ -34,10 +35,10 @@ int GamePlayer::get_id() const { return id; }
 std::vector<std::vector<char>>
 GamePlayer::extract_view(SatelliteView &satellite_view) {
   std::vector<std::vector<char>> view(map_height, std::vector<char>(map_width));
-
   for (std::size_t r = 0; r < map_height; ++r)
-    for (std::size_t c = 0; c < map_width; ++c)
+    for (std::size_t c = 0; c < map_width; ++c) {
       view[r][c] = satellite_view.getObjectAt(r, c);
+    }
 
   return view;
 }

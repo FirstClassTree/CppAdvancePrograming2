@@ -23,13 +23,15 @@ void GameManager::subscribe_tank(std::shared_ptr<Tank> tank) {
   this->game_tanks.push_back(tank);
 }
 
-const std::vector<std::unique_ptr<Player>> &GameManager::get_players() const  {
+const std::vector<std::unique_ptr<Player>> &GameManager::get_players() const {
   return players;
 }
 
-const std::shared_ptr<Tank> GameManager::get_tank(int tankIndex,int playerIndex) const {
+const std::shared_ptr<Tank> GameManager::get_tank(int tankIndex,
+                                                  int playerIndex) const {
   for (const auto &tank : game_tanks) {
-    if (tank->get_tank_id() == tankIndex && tank->get_owner_id() == playerIndex) {
+    if (tank->get_tank_id() == tankIndex &&
+        tank->get_owner_id() == playerIndex) {
       return tank;
     }
   }
@@ -114,25 +116,88 @@ int GameManager::load_map(const std::string &map_path) {
 }
 
 void GameManager::post_load_process() {
-  int tank_ids[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+  int tank_ids[10] = {0, 0, 0, 0, 0,
+                      0, 0, 0, 0, 0}; // Assumes player IDs 0-9 can have tanks
 
-  for (auto &tank : game_tanks) {
-    if (!tank)
+  for (auto &tank_sp : game_tanks) { // Changed variable name tank to tank_sp
+                                     // for clarity (shared_ptr)
+    if (!tank_sp) {
       continue;
-    tank_algorithm_factory.tank_x = tank->get_x();
-    tank_algorithm_factory.tank_y = tank->get_y();
-    tank->set_ai(tank_algorithm_factory.create(tank->get_owner_id(),
-                                               tank_ids[tank->get_owner_id()]));
-    tank->set_tank_id(tank_ids[tank->get_owner_id()]);
-    tank_ids[tank->get_owner_id()]++;
-    dynamic_cast<GamePlayer*>(this->players[tank->get_owner_id()].get())->tanks.push_back(tank);
+    }
+
+    tank_algorithm_factory.tank_x = tank_sp->get_x();
+    tank_algorithm_factory.tank_y = tank_sp->get_y();
+
+    int owner_id = tank_sp->get_owner_id();
+
+    // Basic bounds check for tank_ids array access. Player IDs from maps are
+    // usually 1-9. If owner_id is outside 0-9, this logic needs more robust
+    // error handling or clarification on how player IDs are managed vs. array
+    // indexing.
+    if (owner_id < 0 ||
+        owner_id >= 10) { // Check against 0-9 for tank_ids array
+      std::cerr
+          << "Error: Tank (owner_id=" << owner_id
+          << ") has an ID out of expected range [0-9] for tank_ids array in "
+             "post_load_process. Skipping tank association with player.\n";
+      // Still proceed to set AI and tank_id if possible, but skip player
+      // association. Depending on requirements, might want to skip this tank
+      // entirely. For now, we will attempt to set AI and ID if owner_id is
+      // valid for create() and set_tank_id(). The create factory method might
+      // have its own validation for player_index.
+    } else {
+      // Only increment tank_ids[owner_id] if owner_id is a valid index.
+      int current_tank_id_for_owner = tank_ids[owner_id];
+      tank_sp->set_ai(
+          tank_algorithm_factory.create(owner_id, current_tank_id_for_owner));
+      tank_sp->set_tank_id(current_tank_id_for_owner);
+      tank_ids[owner_id]++;
+    }
+
+    GamePlayer *target_player = nullptr;
+    for (const auto &player_up :
+         this->players) { // player_up is std::unique_ptr<Player>
+      if (player_up) {    // Check unique_ptr is not null
+        GamePlayer *gp = dynamic_cast<GamePlayer *>(player_up.get());
+        if (gp && gp->get_id() == owner_id) {
+          target_player = gp;
+          break;
+        }
+      }
+    }
+
+    if (target_player) {
+      target_player->tanks.push_back(
+          tank_sp); // GamePlayer::tanks is std::vector<std::weak_ptr<Tank>>
+    } else {
+      std::cerr << "Error: Player with ID " << owner_id
+                << " not found for tank in post_load_process.\n";
+      // This may or may not be a critical error depending on game rules.
+    }
   }
 }
 
 std::unique_ptr<SatelliteView>
 GameManager::create_satellite_view(int player_id, int tank_id) const {
+  if (!this->map) {
+    std::cerr
+        << "Error: GameManager::create_satellite_view called with null map."
+        << std::endl;
+    throw std::runtime_error(
+        "GameManager: Map is not loaded, cannot create satellite view.");
+  }
+
   size_t rows = this->map->get_rows();
   size_t cols = this->map->get_cols();
+
+  if (rows == 0 || cols == 0) {
+    std::cerr << "Error: GameManager::create_satellite_view called for map "
+                 "with zero dimensions (rows="
+              << rows << ", cols=" << cols << ")." << std::endl;
+    throw std::runtime_error(
+        "GameManager: Map has zero dimensions, cannot create satellite view.");
+  }
+
 
   // Init to empty spaces
   std::vector<std::vector<char>> view(rows, std::vector<char>(cols, ' '));
@@ -166,7 +231,7 @@ GameManager::create_satellite_view(int player_id, int tank_id) const {
       if (tank->get_owner_id() == player_id && tank->get_tank_id() == tank_id) {
         view[x][y] = '%'; // requesting tank
       } else {
-        view[x][y] = static_cast<char>(tank->get_owner_id());
+        view[x][y] = static_cast<char>('0' + tank->get_owner_id());
       }
     }
   }
@@ -305,7 +370,7 @@ void GameManager::populate_map_row(
       int player_num = c - '0';
       Direction dir = (player_num == 1 ? Direction::L : Direction::R);
       auto tank =
-          std::make_shared<Tank>(row_idx, col, dir, player_num, -1, nullptr);
+          std::make_shared<Tank>(row_idx, col, dir, player_num, nullptr);
       tile.actor = tank;
       tanks_out.push_back(tank);
       player_spawn_points_out.emplace_back(player_num,
