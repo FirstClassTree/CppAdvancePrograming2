@@ -40,6 +40,8 @@
 │   │   │   ├── 26
 │   │   │   ├── 27
 │   │   │   ├── 28
+│   │   │   ├── 29
+│   │   │   ├── 30
 │   │   │   └── count.txt
 │   │   ├── TargetDirectories.txt
 │   │   ├── VerifyGlobs.cmake
@@ -58,8 +60,6 @@
 │   │       ├── link.txt
 │   │       ├── progress.make
 │   │       └── src
-│   │           ├── main.cpp.o
-│   │           └── main.cpp.o.d
 │   ├── CTestTestfile.cmake
 │   ├── Makefile
 │   ├── Testing
@@ -472,7 +472,6 @@
 │   ├── bin
 │   ├── cmake_install.cmake
 │   ├── compile_commands.json
-│   ├── layout.txt
 │   ├── lib
 │   ├── src
 │   │   ├── CMakeFiles
@@ -480,21 +479,7 @@
 │   │   │   ├── progress.marks
 │   │   │   └── tanks_game_lib.dir
 │   │   │       ├── DependInfo.cmake
-│   │   │       ├── MyPlayer.cpp.o
-│   │   │       ├── MyPlayer.cpp.o.d
-│   │   │       ├── MyPlayerFactory.cpp.o
-│   │   │       ├── MyPlayerFactory.cpp.o.d
-│   │   │       ├── MySatelliteView.cpp.o
-│   │   │       ├── MySatelliteView.cpp.o.d
 │   │   │       ├── algorithms
-│   │   │       │   ├── ChaserTankAlgorithm.cpp.o
-│   │   │       │   ├── ChaserTankAlgorithm.cpp.o.d
-│   │   │       │   ├── MyTankAlgorithmFactory.cpp.o
-│   │   │       │   ├── MyTankAlgorithmFactory.cpp.o.d
-│   │   │       │   ├── SniperTankAlgorithm.cpp.o
-│   │   │       │   ├── SniperTankAlgorithm.cpp.o.d
-│   │   │       │   ├── TankBattleInfo.cpp.o
-│   │   │       │   └── TankBattleInfo.cpp.o.d
 │   │   │       ├── build.make
 │   │   │       ├── cmake_clean.cmake
 │   │   │       ├── cmake_clean_target.cmake
@@ -503,14 +488,6 @@
 │   │   │       ├── compiler_depend.ts
 │   │   │       ├── depend.make
 │   │   │       ├── entities
-│   │   │       │   ├── Entity.cpp.o
-│   │   │       │   ├── Entity.cpp.o.d
-│   │   │       │   ├── Mine.cpp.o
-│   │   │       │   ├── Mine.cpp.o.d
-│   │   │       │   ├── MoveableEntity.cpp.o
-│   │   │       │   ├── MoveableEntity.cpp.o.d
-│   │   │       │   ├── Shell.cpp.o
-│   │   │       │   └── Shell.cpp.o.d
 │   │   │       ├── flags.make
 │   │   │       ├── game_enviroment
 │   │   │       ├── link.txt
@@ -518,7 +495,6 @@
 │   │   │       └── utils
 │   │   ├── Makefile
 │   │   └── cmake_install.cmake
-│   ├── tanks_game
 │   └── tests
 │       ├── CMakeFiles
 │       │   ├── CMakeDirectoryInformation.cmake
@@ -546,6 +522,7 @@
 ├── common
 │   ├── ActionRequest.h
 │   ├── BattleInfo.h
+│   ├── Constants.h
 │   ├── Direction.h
 │   ├── Entity.h
 │   ├── EntityType.h
@@ -557,6 +534,7 @@
 │   ├── MoveableEntity.h
 │   ├── MyPlayer.h
 │   ├── MySatelliteView.h
+│   ├── OutputPrinter.h
 │   ├── Player.h
 │   ├── PlayerFactory.h
 │   ├── Pos.h
@@ -624,6 +602,7 @@
 │   │   └── GamePlayerFactory.cpp
 │   ├── main.cpp
 │   └── utils
+│       ├── OutputPrinter.cpp
 │       ├── map.cpp
 │       └── tile.cpp
 ├── tanks-ui
@@ -679,7 +658,8 @@
     ├── chaser_algo_test.cpp
     ├── cmake_test.cpp
     ├── map_test.cpp
+    ├── output_printer_test.cpp
     ├── tank_entity_test.cpp
     └── test_json.cpp
 
-112 directories, 570 files
+112 directories, 550 files

@@ -18,6 +18,11 @@ target_link_libraries(runTests
     GTest::gtest_main
     tanks_game_lib
 )
+# add_executable(output_printer_test tests/output_printer_test.cpp)
+# target_link_libraries(output_printer_test
+#     GTest::gtest_main
+#     tanks_game_lib
+# )
 
 
 # Optional: Disable AddressSanitizer with cmake -DENABLE_ASAN=OFF
