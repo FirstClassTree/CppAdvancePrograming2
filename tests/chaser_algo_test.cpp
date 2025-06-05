@@ -27,7 +27,6 @@ TEST(ChaserAlgoTest, TestChaserSimpleVertical) {
     FAIL();
   }
   TankAlgorithm &ai = tank->get_ai();
-
   auto action = ai.getAction();
   EXPECT_EQ(action, ActionRequest::GetBattleInfo);
   auto satellite = game_manager.create_satellite_view(playerIndex, tankIndex);
@@ -37,5 +36,69 @@ TEST(ChaserAlgoTest, TestChaserSimpleVertical) {
   }
   player->updateTankWithBattleInfo(ai, *satellite);
   action = ai.getAction();
-  EXPECT_EQ(action, ActionRequest::DoNothing); // TODO: this is wrong,its working but it doesnt find the targets, problem might be in the satellite view, theres no chars of players.
+  EXPECT_EQ(action, ActionRequest::RotateLeft90);
+
+  satellite = game_manager.create_satellite_view(playerIndex, tankIndex);
+  if (!satellite) {
+    std::cerr << "Failed to create satellite view for player index " << playerIndex << " and tank index " << tankIndex << std::endl;
+    FAIL();
+  }
+  player->updateTankWithBattleInfo(ai, *satellite);
+  action = ai.getAction();
+  EXPECT_EQ(action, ActionRequest::MoveForward);
+
+    satellite = game_manager.create_satellite_view(playerIndex, tankIndex);
+  if (!satellite) {
+    std::cerr << "Failed to create satellite view for player index " << playerIndex << " and tank index " << tankIndex << std::endl;
+    FAIL();
+  }
+  player->updateTankWithBattleInfo(ai, *satellite);
+  action = ai.getAction();
+  EXPECT_EQ(action, ActionRequest::MoveForward);
+
+    satellite = game_manager.create_satellite_view(playerIndex, tankIndex);
+  if (!satellite) {
+    std::cerr << "Failed to create satellite view for player index " << playerIndex << " and tank index " << tankIndex << std::endl;
+    FAIL();
+  }
+  player->updateTankWithBattleInfo(ai, *satellite);
+  action = ai.getAction();
+  EXPECT_EQ(action, ActionRequest::MoveForward);
+
+      satellite = game_manager.create_satellite_view(playerIndex, tankIndex);
+  if (!satellite) {
+    std::cerr << "Failed to create satellite view for player index " << playerIndex << " and tank index " << tankIndex << std::endl;
+    FAIL();
+  }
+  player->updateTankWithBattleInfo(ai, *satellite);
+  action = ai.getAction();
+  EXPECT_EQ(action, ActionRequest::MoveForward);
+
+      satellite = game_manager.create_satellite_view(playerIndex, tankIndex);
+  if (!satellite) {
+    std::cerr << "Failed to create satellite view for player index " << playerIndex << " and tank index " << tankIndex << std::endl;
+    FAIL();
+  }
+  player->updateTankWithBattleInfo(ai, *satellite);
+  action = ai.getAction();
+  EXPECT_EQ(action, ActionRequest::MoveForward);
+
+        satellite = game_manager.create_satellite_view(playerIndex, tankIndex);
+  if (!satellite) {
+    std::cerr << "Failed to create satellite view for player index " << playerIndex << " and tank index " << tankIndex << std::endl;
+    FAIL();
+  }
+  player->updateTankWithBattleInfo(ai, *satellite);
+  action = ai.getAction();
+  EXPECT_EQ(action, ActionRequest::MoveForward);
+
+        satellite = game_manager.create_satellite_view(playerIndex, tankIndex);
+  if (!satellite) {
+    std::cerr << "Failed to create satellite view for player index " << playerIndex << " and tank index " << tankIndex << std::endl;
+    FAIL();
+  }
+  player->updateTankWithBattleInfo(ai, *satellite);
+  action = ai.getAction();
+  EXPECT_EQ(action, ActionRequest::MoveForward);
+
 }
