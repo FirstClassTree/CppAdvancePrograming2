@@ -17,6 +17,7 @@
 
 #include "Direction.h"
 #include "GamePlayerFactory.h"
+#include "../common/OutputPrinter.h"
 
 class GameManager {
 public:
@@ -45,6 +46,27 @@ private:
   std::vector<std::shared_ptr<Tank>> game_tanks;
   GamePlayerFactory player_factory;
   MyTankAlgorithmFactory tank_algorithm_factory;
+
+  // Collect actions from all living tanks
+  std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> collect_tank_actions();
+
+
+
+  void run();
+
+  // Apply collected actions, update game state and log to OutputPrinter
+  void apply_tank_actions(
+      const std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>>& actions,
+      OutputPrinter& printer);
+
+  // Update shells, resolve collisions, handle deaths etc.
+  void update_game_state();
+
+  // Return true if game should terminate
+  bool check_end_conditions(int current_step, int& steps_without_shells);
+
+  // Determine the winner (-1 = tie, otherwise 1 or 2)
+  int determine_winner(const std::vector<int>& tanks_per_player);
 
   void post_load_process();
 

@@ -12,9 +12,11 @@ Tank::~Tank() {}
 int Tank::get_owner_id() { return player_owner; }
 int Tank::get_health() { return health; }
 int Tank::get_tank_id() { return tank_id; }
+int Tank::get_shell_num() { return shell_num; }
 
 TankAlgorithm& Tank::get_ai() { return *ai; }
 
+void Tank::set_shell_num(int shell_num) {this->shell_num = shell_num;}
 void Tank::set_tank_id(int tank_id) { this->tank_id = tank_id; }
 void Tank::set_ai(std::unique_ptr<TankAlgorithm> ai) { this->ai = std::move(ai); }
 

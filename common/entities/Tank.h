@@ -15,7 +15,9 @@ public:
   int get_owner_id();
   int get_health();
   int get_tank_id();
+  int get_shell_num();
 
+  void set_shell_num(int shell_num);
   void set_tank_id(int tank_id);
   void set_ai(std::unique_ptr<TankAlgorithm> ai);
   TankAlgorithm& get_ai();
@@ -26,6 +28,7 @@ private:
   int health;
   int player_owner;
   int tank_id;
+  int shell_num;
 };
 
 #endif

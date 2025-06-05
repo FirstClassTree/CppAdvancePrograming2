@@ -3,6 +3,9 @@
 #include "entities/Wall.h"
 #include "utils/Tile.h"
 #include <unordered_map>
+#include "../common/OutputPrinter.h"
+#include "../common/TankAlgorithm.h"
+#include "../common/Constants.h"
 
 // int extractIntValue(const std::string &line, const std::string &key) {
 //   std::regex pattern("^\\s*" + key + "\\s*=\\s*(\\d+)\\s*$");
@@ -178,6 +181,224 @@ void GameManager::post_load_process() {
   }
 }
 
+
+void GameManager::run() {
+    if (!map) {
+        std::cerr << "GameManager::run - Map not loaded. Aborting." << std::endl;
+        return;
+    }
+    const int max_steps = map->get_max_steps();
+    const int num_players = 2; // fixed for this assignment
+    OutputPrinter printer(game_tanks.size());
+
+    int steps_without_shells = 0;
+
+    for (int step = 0; step < max_steps; ++step) {
+        // Phase 1: Collect actions for all tanks
+        auto tank_actions = collect_tank_actions();
+
+        // Phase 2: Apply actions to tanks and update OutputPrinter state
+        apply_tank_actions(tank_actions, printer);
+
+        // Phase 3: Update environment (e.g., shell movement, collisions)
+        update_game_state();
+
+        // Phase 4: Finalize this round's output
+        printer.finalizeRound();
+
+        // Phase 5: Check for termination
+        if (check_end_conditions(step, steps_without_shells)) {
+            break;
+        }
+    }
+
+    // Phase 6: Final result
+    std::vector<int> tanks_per_player(num_players, 0);
+    for (const auto& tank : game_tanks) {
+        if (tank && tank->get_health() > 0) {
+            int owner = tank->get_owner_id();
+            if (owner >= 1 && owner <= num_players) {
+                tanks_per_player[owner - 1]++;
+            }
+        }
+    }
+    int winner = determine_winner(tanks_per_player);
+    bool tie_due_to_shells = false; // TODO: implement actual check logic
+    bool tie_due_to_steps = false;  // TODO: implement actual check logic
+
+    printer.logResult(tanks_per_player, winner, tie_due_to_steps, tie_due_to_shells, max_steps);
+    printer.writeToFile("output.txt");
+}
+// Phase 1
+std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> GameManager::collect_tank_actions() {
+    std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> actions;
+
+    for (const auto& tank : game_tanks) {
+        if (!tank || tank->get_health() == 0)
+            continue;
+
+        auto& algo = tank->get_ai();
+
+        ActionRequest action = algo.getAction();
+
+        // Handle GetBattleInfo immediately
+        if (action == ActionRequest::GetBattleInfo) {
+            for (const auto& player_up : players) {
+                if (!player_up) continue;
+                GamePlayer* player = dynamic_cast<GamePlayer*>(player_up.get());
+                if (player && player->get_id() == tank->get_owner_id()) {
+                    auto satellite_view = create_satellite_view(tank->get_owner_id(), tank->get_tank_id());
+                    player->updateTankWithBattleInfo(algo, *satellite_view);
+                    break;
+                }
+            }
+            action = algo.getAction(); // get action again after update
+        }
+        actions.emplace_back(tank, action);
+    }
+
+    return actions;
+}
+
+//Phase 2
+void GameManager::apply_tank_actions(
+    const std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>>& actions,
+    OutputPrinter& printer) {
+
+    for (size_t i = 0; i < actions.size(); ++i) {
+        const auto& [tank, action] = actions[i];
+
+        // Default: assume the action is accepted (will be updated later if ignored)
+        printer.setTankAction(i, action);
+
+        if (!tank || tank->get_health() == 0) {
+            printer.markTankKilled(i);  // Tank is already dead, ensure output reflects that
+            continue;
+        }
+
+        bool action_applied = false;
+
+        switch (action) {
+            case ActionRequest::MoveForward:
+            case ActionRequest::MoveBackward:
+            case ActionRequest::RotateLeft90:
+            case ActionRequest::RotateRight90:
+            case ActionRequest::RotateLeft45:
+            case ActionRequest::RotateRight45:
+            case ActionRequest::Shoot:
+                // Placeholder for actual action logic
+                // TODO: add shooting:
+                // action_applied = try_apply_action(tank, action);
+                break;
+
+            case ActionRequest::DoNothing:
+                action_applied = true;
+                break;
+
+            case ActionRequest::GetBattleInfo:
+                // Should not happen here: handled earlier
+                printer.markTankIgnored(i);
+                continue;
+        }
+
+        if (!action_applied) {
+            printer.markTankIgnored(i);
+        }
+
+        // Optionally, check if tank was destroyed this step and mark it
+        if (tank->get_health() == 0) {
+            printer.markTankKilled(i);
+        }
+    }
+}
+
+// Phase 3:
+void GameManager::update_game_state() {
+    // 1. Move all active shells
+    for (auto& shell : game_shells) {
+        if (shell && !shell->is_destroyed()) {
+            // TODO: Advance shell by 2 units
+            // TODO: Check for collisions (walls, tanks, other shells)
+        }
+    }
+
+    // 2. Check for shell collisions (with tanks, other shells, walls)
+    // TODO: Handle weakening walls, destroying tanks or shells on impact
+
+    // 3. Check if any tanks stepped on mines
+    for (const auto& tank : game_tanks) {
+        if (!tank || tank->get_health() == 0)
+            continue;
+
+        for (const auto& entity : game_entities) {
+            if (entity && entity->get_type() == EntityType::MINE &&
+                entity->get_x() == tank->get_x() &&
+                entity->get_y() == tank->get_y()) {
+
+                // TODO: Destroy both tank and mine
+            }
+        }
+    }
+
+    // 4. Cleanup: remove dead shells or entities if needed
+    // (optional depending on whether you handle "is_destroyed()" logic elsewhere)
+
+    // TODO: Handle shell vs shell collision logic
+}
+
+// Phase 5: 
+bool GameManager::check_end_conditions(int current_step, int& steps_without_shells) {
+    constexpr int MAX_PLAYERS = 9;
+    std::vector<int> alive_tanks(MAX_PLAYERS + 1, 0);  // index 0 unused for 1-based IDs
+    bool any_shells_left = false;
+
+    for (const auto& tank : game_tanks) {
+        if (!tank || tank->get_health() == 0)
+            continue;
+
+        int owner = tank->get_owner_id();
+        if (owner >= 1 && owner <= MAX_PLAYERS)
+            alive_tanks[owner]++;
+
+        if (tank->get_shell_num())  
+            any_shells_left = true;
+    }
+
+    int alive_players = std::count_if(alive_tanks.begin(), alive_tanks.end(), [](int c) { return c > 0; });
+
+    if (alive_players == 0)
+        return true;  // Tie, no tanks left
+    if (alive_players == 1)
+        return true;  // One winner
+
+    if (!any_shells_left) {
+        steps_without_shells++;
+        if (steps_without_shells >= ZERO_SHELLS_GRACE_STEPS)
+            return true;  // Tie by zero shells timeout
+    } else {
+        steps_without_shells = 0;
+    }
+
+    return false;  // Game continues
+}
+
+//Phase 6
+int GameManager::determine_winner(const std::vector<int>& tanks_per_player) {
+    int max_tanks = 0;
+    int winner = -1;
+
+    for (size_t i = 0; i < tanks_per_player.size(); ++i) {
+        if (tanks_per_player[i] > max_tanks) {
+            max_tanks = tanks_per_player[i];
+            winner = static_cast<int>(i + 1);  // player index is 1-based
+        } else if (tanks_per_player[i] == max_tanks && max_tanks > 0) {
+            winner = -1;  // tie if two players have same count
+        }
+    }
+
+    return winner;  // -1 for tie, otherwise winner's ID
+}
+
 // Call with (-1,-1) if called for visualisersa
 std::unique_ptr<SatelliteView>
 GameManager::create_satellite_view(int player_id, int tank_id) const {
@@ -188,11 +409,8 @@ GameManager::create_satellite_view(int player_id, int tank_id) const {
     throw std::runtime_error(
         "GameManager: Map is not loaded, cannot create satellite view.");
   }
-
   size_t rows = this->map->get_rows();
   size_t cols = this->map->get_cols();
-
-
   // for visualizer in case (-1,-1):
   std::unordered_map<std::pair<size_t, size_t>, Direction> direction_map;
 
@@ -287,6 +505,7 @@ std::ifstream GameManager::open_map_file(const std::string &map_path) {
 
   return map_file;
 }
+
 
 // Utility: strip spaces around '=' and parse int
 int extractIntValue(const std::string &line, const std::string &expected_key) {
