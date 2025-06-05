@@ -8,5 +8,4 @@ Automatic testing based on Gtest:
 
 To test visualier:
 cd test
-g++ test_visualizer.cpp ../src/MySatelliteView.cpp ../src/utils/Visualizer.cpp -o test_visualizer -lncurses
-./test_visualizer
+g++ test_visualizer.cpp ./src/MySatelliteView.cpp ./src/utils/Visualizer.cpp -o test_visualizer -lncurses

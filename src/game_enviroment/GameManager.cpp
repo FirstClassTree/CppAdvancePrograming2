@@ -2,6 +2,7 @@
 #include "MySatelliteView.h"
 #include "entities/Wall.h"
 #include "utils/Tile.h"
+#include <unordered_map>
 
 // int extractIntValue(const std::string &line, const std::string &key) {
 //   std::regex pattern("^\\s*" + key + "\\s*=\\s*(\\d+)\\s*$");
@@ -177,6 +178,7 @@ void GameManager::post_load_process() {
   }
 }
 
+// Call with (-1,-1) if called for visualisersa
 std::unique_ptr<SatelliteView>
 GameManager::create_satellite_view(int player_id, int tank_id) const {
   if (!this->map) {
@@ -190,6 +192,10 @@ GameManager::create_satellite_view(int player_id, int tank_id) const {
   size_t rows = this->map->get_rows();
   size_t cols = this->map->get_cols();
 
+
+  // for visualizer in case (-1,-1):
+  std::unordered_map<std::pair<size_t, size_t>, Direction> direction_map;
+
   if (rows == 0 || cols == 0) {
     std::cerr << "Error: GameManager::create_satellite_view called for map "
                  "with zero dimensions (rows="
@@ -197,7 +203,6 @@ GameManager::create_satellite_view(int player_id, int tank_id) const {
     throw std::runtime_error(
         "GameManager: Map has zero dimensions, cannot create satellite view.");
   }
-
 
   // Init to empty spaces
   std::vector<std::vector<char>> view(rows, std::vector<char>(cols, ' '));
@@ -233,6 +238,11 @@ GameManager::create_satellite_view(int player_id, int tank_id) const {
       } else {
         view[x][y] = static_cast<char>('0' + tank->get_owner_id());
       }
+      // Add direction for visualizer
+    if (player_id == -1 && tank_id == -1) {
+        // Assume satellite_view is declared later, so we collect this info now
+        direction_map.emplace(std::make_pair(x, y), tank->get_direction());
+      } 
     }
   }
 
@@ -256,7 +266,11 @@ GameManager::create_satellite_view(int player_id, int tank_id) const {
     std::cout << std::endl;
   }
 
-  return std::make_unique<MySatelliteView>(view);
+  auto satellite_view = std::make_unique<MySatelliteView>(view);
+  if (player_id == -1 && tank_id == -1) {
+    satellite_view->setDirectionMap(std::move(direction_map));
+  }
+  return satellite_view;
 }
 
 std::ifstream GameManager::open_map_file(const std::string &map_path) {

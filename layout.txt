@@ -567,7 +567,9 @@
 │       │       ├── tank_entity_test.cpp.o
 │       │       ├── tank_entity_test.cpp.o.d
 │       │       ├── test_json.cpp.o
-│       │       └── test_json.cpp.o.d
+│       │       ├── test_json.cpp.o.d
+│       │       ├── test_visualizer.cpp.o
+│       │       └── test_visualizer.cpp.o.d
 │       ├── CTestTestfile.cmake
 │       ├── Makefile
 │       ├── cmake_install.cmake
@@ -712,6 +714,8 @@
 │   ├── tsconfig.json
 │   ├── tsconfig.node.json
 │   └── vite.config.ts
+├── test_visualizer
+├── test_visualizer.cpp
 └── tests
     ├── CMakeLists.txt
     ├── chaser_algo_test.cpp
@@ -719,7 +723,6 @@
     ├── map_test.cpp
     ├── output_printer_test.cpp
     ├── tank_entity_test.cpp
-    ├── test_json.cpp
-    └── test_visualizer.cpp
+    └── test_json.cpp
 
-109 directories, 613 files
+109 directories, 616 files
