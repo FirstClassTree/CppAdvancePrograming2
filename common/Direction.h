@@ -30,7 +30,7 @@ inline std::pair<int, int> get_direction_offset(Direction d) {
 }
 
 // need to calculate by degrees
-Direction rotate(Direction dir, int degrees) {
+inline Direction rotate(Direction dir, int degrees) {
     static const std::vector<Direction> dirs = {
         Direction::U, Direction::UR, Direction::R, Direction::RD,
         Direction::D, Direction::DL, Direction::L, Direction::UL
