@@ -330,21 +330,51 @@ void GameManager::apply_tank_actions(
         bool action_applied = false;
 
         switch (action) {
-          //Todo Implement actions:  
-          
-          case ActionRequest::MoveForward:
-            // TODO check if ignored
-            
+            // TODO Implement more actions:  
+            case ActionRequest::MoveForward: {
+              auto [dx, dy] = get_direction_offset(tank->get_direction());
+              int next_x = (tank->get_x() + dx + map->get_rows()) % map->get_rows();
+              int next_y = (tank->get_y() + dy + map->get_cols()) % map->get_cols();
+              auto& tile = map->get_tile(next_x, next_y);
+              auto ground = tile.ground.lock();
+              auto other_tank = tile.actor.lock();
+
+              // Block movement if a wall or another tank is in the destination
+              if (!ground || ground->get_type() != EntityType::WALL) {
+                  if (!other_tank || other_tank->get_health() == 0) {
+                      tank->set_pos(next_x, next_y);
+                      action_applied = true;
+                  }
+              }
+              break;
+            }
+             
+                      
             case ActionRequest::MoveBackward:
+            // TODO implement
             // TODO check if ignored
+
             
             case ActionRequest::RotateLeft90:
-            case ActionRequest::RotateRight90:
-            case ActionRequest::RotateLeft45:
-            case ActionRequest::RotateRight45:
-                // TODO: Implement tank movement logic here
+                tank->set_direction(rotate(tank->get_direction(), -90));
                 action_applied = true;
                 break;
+
+            case ActionRequest::RotateRight90:
+                tank->set_direction(rotate(tank->get_direction(), 90));
+                action_applied = true;
+                break;
+
+            case ActionRequest::RotateLeft45:
+                tank->set_direction(rotate(tank->get_direction(), -45));
+                action_applied = true;
+                break;
+
+            case ActionRequest::RotateRight45:
+                tank->set_direction(rotate(tank->get_direction(), 45));
+                action_applied = true;
+                break;
+                
 
             case ActionRequest::Shoot:
                 // TODO: Implement shooting logic
@@ -352,6 +382,7 @@ void GameManager::apply_tank_actions(
                 break;
 
             case ActionRequest::DoNothing:
+                
                 action_applied = true;
                 break;
 

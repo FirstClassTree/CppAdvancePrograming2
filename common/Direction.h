@@ -1,6 +1,7 @@
 #ifndef DIRECTION_H
 #define DIRECTION_H
 #include <utility>
+#include <vector>
 
 enum class Direction {
   U,
@@ -28,6 +29,20 @@ inline std::pair<int, int> get_direction_offset(Direction d) {
     }
 }
 
+// need to calculate by degrees
+Direction rotate(Direction dir, int degrees) {
+    static const std::vector<Direction> dirs = {
+        Direction::U, Direction::UR, Direction::R, Direction::RD,
+        Direction::D, Direction::DL, Direction::L, Direction::UL
+    };
+    auto it = std::find(dirs.begin(), dirs.end(), dir);
+    if (it == dirs.end()) return dir;
+
+    int index = std::distance(dirs.begin(), it);
+    int steps = degrees / 45;
+    int new_index = (index + steps + dirs.size()) % dirs.size();
+    return dirs[new_index];
+}
 
 
 #endif
