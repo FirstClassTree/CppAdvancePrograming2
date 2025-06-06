@@ -24,6 +24,8 @@ public:
 
   std::string serialize() override;
 
+  void damage();
+
 private:
   int health;
   int player_owner;

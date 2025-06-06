@@ -2,9 +2,8 @@
 #include "Entity.h"
 #include "json.hpp"
 
-Wall::Wall(int x, int y) : Entity(x, y, EntityType::WALL) {}
-
-Wall::~Wall() {}
+// 2 is new 1 is weakend
+Wall::Wall(int x, int y) : Entity(x, y, EntityType::WALL),health(2){}
 
 
 std::string Wall::serialize() {
@@ -13,4 +12,12 @@ std::string Wall::serialize() {
   j["x"] = get_x();
   j["y"] = get_y();
   return j.dump();
+}
+
+void Wall::weaken() {
+  if (health > 0) --health;
+}
+
+bool Wall::is_destroyed() const {
+  return health <= 0;
 }

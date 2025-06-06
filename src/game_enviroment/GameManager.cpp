@@ -194,23 +194,25 @@ void GameManager::run() {
     int steps_without_shells = 0;
 
     for (int step = 0; step < max_steps; ++step) {
-        // Phase 1: Collect actions for all tanks
-        auto tank_actions = collect_tank_actions();
 
-        // Phase 2: Apply actions to tanks and update OutputPrinter state
-        apply_tank_actions(tank_actions, printer);
+      // Phase 1: Collect and apply tank actions, and resolve mine collisons
+      auto tank_actions = collect_tank_actions();
+      apply_tank_actions(tank_actions, printer);
 
-        // Phase 3: Update environment (e.g., shell movement, collisions)
-        update_game_state();
+      // Phase 2: Move shells and resolve their collisons
+      move_shells_stepwise();
 
-        // Phase 4: Finalize this round's output
-        printer.finalizeRound();
+      // Phase 3: Handle any remaining logic
+      update_game_state();
 
-        // Phase 5: Check for termination
-        if (check_end_conditions(step, steps_without_shells)) {
-            break;
-        }
+      // Phase 4: Finalize round output
+      printer.finalizeRound();
+
+      // Phase 5: Check termination conditions
+      if (check_end_conditions(step, steps_without_shells)) {
+          break;
     }
+}
 
     // Phase 6: Final result
     std::vector<int> tanks_per_player(num_players, 0);
@@ -229,6 +231,56 @@ void GameManager::run() {
     printer.logResult(tanks_per_player, winner, tie_due_to_steps, tie_due_to_shells, max_steps);
     printer.writeToFile("output.txt");
 }
+
+//Phase 2:
+void GameManager::move_shells_stepwise() {
+    for (auto& shell : game_shells) {
+        if (!shell || shell->is_destroyed())
+            continue;
+
+        for (int step = 0; step < 2; ++step) {
+            auto [dx, dy] = get_direction_offset(shell->get_direction());
+            int next_x = shell->get_x() + dx;
+            int next_y = shell->get_y() + dy;
+
+            int rows = map->get_rows();
+            int cols = map->get_cols();
+            next_x = (next_x + rows) % rows;
+            next_y = (next_y + cols) % cols;
+
+            auto& tile = map->get_tile(next_x, next_y);
+
+            // Check wall collision
+            auto ground = tile.ground.lock();
+            if (ground && ground->get_type() == EntityType::WALL) {
+                auto wall = std::dynamic_pointer_cast<Wall>(ground);
+                if (wall) {
+                    wall->weaken();
+                    if (wall->is_destroyed()) {
+                        tile.ground.reset();
+                    }
+                }
+                shell->destroy();
+                break;
+            }
+
+            // Check tank collision
+            auto tank = tile.actor.lock();
+            if (tank && tank->get_health() > 0) {
+                tank->damage();  // assuming this method reduces health or destroys
+                shell->destroy();
+                break;
+            }
+
+            // Move shell
+            shell->set_pos(next_x, next_y);
+        }
+    }
+}
+
+
+
+
 // Phase 1
 std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> GameManager::collect_tank_actions() {
     std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> actions;
@@ -260,7 +312,7 @@ std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> GameManager::collec
     return actions;
 }
 
-//Phase 2
+//Phase 1.b
 void GameManager::apply_tank_actions(
     const std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>>& actions,
     OutputPrinter& printer) {
@@ -268,27 +320,35 @@ void GameManager::apply_tank_actions(
     for (size_t i = 0; i < actions.size(); ++i) {
         const auto& [tank, action] = actions[i];
 
-        // Default: assume the action is accepted (will be updated later if ignored)
         printer.setTankAction(i, action);
 
         if (!tank || tank->get_health() == 0) {
-            printer.markTankKilled(i);  // Tank is already dead, ensure output reflects that
+            printer.markTankKilled(i);
             continue;
         }
 
         bool action_applied = false;
 
         switch (action) {
-            case ActionRequest::MoveForward:
+          //Todo Implement actions:  
+          
+          case ActionRequest::MoveForward:
+            // TODO check if ignored
+            
             case ActionRequest::MoveBackward:
+            // TODO check if ignored
+            
             case ActionRequest::RotateLeft90:
             case ActionRequest::RotateRight90:
             case ActionRequest::RotateLeft45:
             case ActionRequest::RotateRight45:
+                // TODO: Implement tank movement logic here
+                action_applied = true;
+                break;
+
             case ActionRequest::Shoot:
-                // Placeholder for actual action logic
-                // TODO: add shooting:
-                // action_applied = try_apply_action(tank, action);
+                // TODO: Implement shooting logic
+                action_applied = true;
                 break;
 
             case ActionRequest::DoNothing:
@@ -296,22 +356,33 @@ void GameManager::apply_tank_actions(
                 break;
 
             case ActionRequest::GetBattleInfo:
-                // Should not happen here: handled earlier
-                printer.markTankIgnored(i);
+                action_applied = true;
                 continue;
+        }
+
+        // Mine check (only for living tanks)
+        if (tank->get_health() > 0) {
+            auto& tile = map->get_tile(tank->get_x(), tank->get_y());
+            auto ground = tile.ground.lock();
+            if (ground && ground->get_type() == EntityType::MINE) {
+                tank->damage();  // or tank->set_health(0);
+                tile.ground.reset();  // Remove the mine
+                // Optionally destroy the mine object if needed
+            }
         }
 
         if (!action_applied) {
             printer.markTankIgnored(i);
         }
 
-        // Optionally, check if tank was destroyed this step and mark it
         if (tank->get_health() == 0) {
             printer.markTankKilled(i);
         }
     }
 }
 
+
+// Not sure if neccarry but will see
 // Phase 3:
 void GameManager::update_game_state() {
     // 1. Move all active shells

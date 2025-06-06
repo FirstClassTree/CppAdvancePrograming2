@@ -13,6 +13,9 @@ void Shell::destroy() {
 bool Shell::is_destroyed() const {
     return destroyed;
 }
+
+
+
 std::string Shell::serialize() {
   nlohmann::json j;
   j["type"] = "S";

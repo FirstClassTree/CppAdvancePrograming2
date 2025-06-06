@@ -14,10 +14,11 @@
 #include <memory>
 #include <regex>
 #include <string>
-
 #include "Direction.h"
 #include "GamePlayerFactory.h"
 #include "../common/OutputPrinter.h"
+#include <unordered_set>
+#include "../common/HashUtils.h"
 
 class GameManager {
 public:
@@ -53,6 +54,10 @@ private:
 
 
   void run();
+
+  
+  void move_shells_stepwise();
+
 
   // Apply collected actions, update game state and log to OutputPrinter
   void apply_tank_actions(

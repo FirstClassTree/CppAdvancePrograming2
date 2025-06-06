@@ -586,6 +586,7 @@
 │   ├── GameManager.h
 │   ├── GamePlayer.h
 │   ├── GamePlayerFactory.h
+│   ├── HashUtils.h
 │   ├── IJson.h
 │   ├── InputHelper.h
 │   ├── Map.h
@@ -725,4 +726,4 @@
     ├── tank_entity_test.cpp
     └── test_json.cpp
 
-109 directories, 616 files
+109 directories, 617 files

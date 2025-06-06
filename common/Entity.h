@@ -15,11 +15,14 @@ public:
   inline static int global_entity_counter = 0;
 
 private:
-  int x;
-  int y;
+
   int uuid;
   EntityType type;
-  
+
+// so moveable can access
+protected:
+  int x;
+  int y;
 };
 
 #endif

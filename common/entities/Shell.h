@@ -11,6 +11,7 @@ public:
     void destroy();
     bool is_destroyed() const;
 
+
     std::string serialize() override;
 
 private:

@@ -13,4 +13,10 @@ namespace std {
             return hash<size_t>{}(p.first) ^ (hash<size_t>{}(p.second) << 1);
         }
     };
+    template <>
+    struct hash<std::pair<int, int>> {
+        std::size_t operator()(const std::pair<int, int>& p) const noexcept {
+            return hash<int>{}(p.first) ^ (hash<int>{}(p.second) << 1);
+        }
+    };
 }

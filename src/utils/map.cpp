@@ -34,6 +34,13 @@ void Map::print_map() const {
   }
 }
 
+Tile& Map::get_tile(int x, int y) {
+    if (x < 0 || x >= height || y < 0 || y >= width) {
+        throw std::out_of_range("Map::get_tile: index out of bounds");
+    }
+    return map[x][y];
+}
+
 std::string Map::serialize() {
   nlohmann::json j;
   j["name"] = name;

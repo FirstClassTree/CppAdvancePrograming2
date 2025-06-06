@@ -17,6 +17,8 @@ public:
   const std::vector<std::vector<Tile>> &get_map() const;
   void print_map() const;
 
+  Tile& get_tile(int x, int y);
+
   int get_rows() const;
   int get_cols() const;
   int get_max_steps() const;
