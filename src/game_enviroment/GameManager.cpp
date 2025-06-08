@@ -329,13 +329,13 @@ void GameManager::apply_tank_actions(
 
         bool action_applied = false;
         bool in_backward_move_sequence = false;
-        if (tank->get_backward_state() == BackwardState::Waiting1 ||tank->get_backward_state() == BackwardState::Waiting2 || tank->get_backward_state() == BackwardState::ReadyFast  ) {
+        if (tank->get_backward_state() == BackwardState::Waiting1 ||tank->get_backward_state() == BackwardState::Waiting2) {
                 in_backward_move_sequence = true;
               }  
         switch (action) {
             // TODO Implement more actions:  
             case ActionRequest::MoveForward: {
-              if (in_backward_move_sequence) {
+              if (in_backward_move_sequence || tank->get_backward_state() == BackwardState::ReadyFast) {
                     tank->cancel_backward_sequence();
                     // Cancel and do nothing
                     break;
@@ -386,40 +386,47 @@ void GameManager::apply_tank_actions(
             
             case ActionRequest::RotateLeft90:
                 if (in_backward_move_sequence) break;
+                tank->cancel_backward_sequence();
                 tank->set_direction(rotate(tank->get_direction(), -90));
                 action_applied = true;
                 break;
 
             case ActionRequest::RotateRight90:
                 if (in_backward_move_sequence) break;
+                tank->cancel_backward_sequence();
                 tank->set_direction(rotate(tank->get_direction(), 90));
                 action_applied = true;
                 break;
 
             case ActionRequest::RotateLeft45:
                 if (in_backward_move_sequence) break;
+                tank->cancel_backward_sequence();
                 tank->set_direction(rotate(tank->get_direction(), -45));
                 action_applied = true;
                 break;
 
             case ActionRequest::RotateRight45:
                 if (in_backward_move_sequence) break;
+                tank->cancel_backward_sequence();
                 tank->set_direction(rotate(tank->get_direction(), 45));
                 action_applied = true;
                 break;
             case ActionRequest::Shoot:
                 if (in_backward_move_sequence) break;
+                tank->cancel_backward_sequence();
                 // TODO: Implement shooting logic
                 action_applied = true;
                 break;
 
             case ActionRequest::DoNothing:
-                if (in_backward_move_sequence) break;                
+                if (in_backward_move_sequence) break;      
+                tank->cancel_backward_sequence();          
                 action_applied = true;
                 break;
 
             case ActionRequest::GetBattleInfo:
                 if (in_backward_move_sequence) break;
+                tank->cancel_backward_sequence();
                 action_applied = true;
                 continue;
         }
