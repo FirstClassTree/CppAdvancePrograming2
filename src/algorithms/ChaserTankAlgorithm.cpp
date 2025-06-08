@@ -18,15 +18,26 @@ ChaserTankAlgorithm::~ChaserTankAlgorithm() {}
 
 void ChaserTankAlgorithm::updateBattleInfo(BattleInfo &battle_info) {
   auto &tank_info = dynamic_cast<TankBattleInfo &>(battle_info);
-  // now call make_decision after gathering the data from the battle_info.
   auto view = tank_info.get_view();
+  locate_me(view);
   set_target(view);
   make_decision(view);
   this->dirty = false;
 }
 
+void ChaserTankAlgorithm::locate_me(std::vector<std::vector<char>> &grid) {
+  for (size_t r = 0; r < grid.size(); ++r) {
+    for (size_t c = 0; c < grid[r].size(); ++c) {
+      if (grid[r][c] == '%') {
+        this->currentState.x = r;
+        this->currentState.y = c;
+        return;
+      }
+    }
+  }
+}
+
 void ChaserTankAlgorithm::make_decision(std::vector<std::vector<char>> &grid) {
-  //TODO: Segfault after this line!
   auto bfs_grid = make_bfs_grid(grid);
   if (this->currentTarget.sync) {
     bfs_grid[this->currentTarget.x][this->currentTarget.y] = false;
@@ -102,8 +113,8 @@ void ChaserTankAlgorithm::bfs(std::vector<std::vector<bool>> &grid) {
   const int DY[] = {0, 0, 1, -1, 1, -1, 1, -1};
 
   vector<vector<int>> dist(H, vector<int>(W, -1));
-  vector<vector<Step>> parent(H, vector<Step>(W, {-1, -1}));
-  queue<Step> q;
+  vector<vector<ChaserStep>> parent(H, vector<ChaserStep>(W, {-1, -1}));
+  queue<ChaserStep> q;
 
   dist[this->currentState.x][this->currentState.y] = 0;
   q.push({this->currentState.x, this->currentState.y});
@@ -129,8 +140,8 @@ void ChaserTankAlgorithm::bfs(std::vector<std::vector<bool>> &grid) {
     this->chooseAction = ActionRequest::DoNothing;
     return;
   }
-  Step cur{this->currentTarget.x, this->currentTarget.y};
-  Step prv = parent[cur.x][cur.y];
+  ChaserStep cur{this->currentTarget.x, this->currentTarget.y};
+  ChaserStep prv = parent[cur.x][cur.y];
   while (!(prv.x == this->currentState.x && prv.y == this->currentState.y)) {
     cur = prv;
     prv = parent[cur.x][cur.y];
@@ -262,7 +273,8 @@ ActionRequest ChaserTankAlgorithm::getAction() {
   return this->chooseAction;
 }
 
-Direction ChaserTankAlgorithm::get_direction_from_step(Step cur, Step prv) {
+Direction ChaserTankAlgorithm::get_direction_from_step(ChaserStep cur,
+                                                       ChaserStep prv) {
   std::cout << "get_direction_from_step cur: " << cur.x << ", " << cur.y
             << " prv: " << prv.x << ", " << prv.y << std::endl;
   if (cur.x == prv.x && cur.y == prv.y + 1)
