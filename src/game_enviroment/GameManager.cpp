@@ -328,10 +328,18 @@ void GameManager::apply_tank_actions(
         }
 
         bool action_applied = false;
-
+        bool in_backward_move_sequence = false;
+        if (tank->get_backward_state() == BackwardState::Waiting1 ||tank->get_backward_state() == BackwardState::Waiting2 || tank->get_backward_state() == BackwardState::ReadyFast  ) {
+                in_backward_move_sequence = true;
+              }  
         switch (action) {
             // TODO Implement more actions:  
             case ActionRequest::MoveForward: {
+              if (in_backward_move_sequence) {
+                    tank->cancel_backward_sequence();
+                    // Cancel and do nothing
+                    break;
+              } 
               auto [dx, dy] = get_direction_offset(tank->get_direction());
               int next_x = (tank->get_x() + dx + map->get_rows()) % map->get_rows();
               int next_y = (tank->get_y() + dy + map->get_cols()) % map->get_cols();
@@ -350,45 +358,73 @@ void GameManager::apply_tank_actions(
             }
              
                       
-            case ActionRequest::MoveBackward:
-            // TODO implement
-            // TODO check if ignored
+            case ActionRequest::MoveBackward: {
+              auto state = tank->get_backward_state();
+                if (state == BackwardState::None) {
+                    tank->start_backward_sequence();  // Begin the delay
+                } 
+                else if (state == BackwardState::ReadyFast) {
+                    auto [dx, dy] = get_direction_offset(tank->get_direction());
+                    int back_x = (tank->get_x() - dx + map->get_rows()) % map->get_rows();
+                    int back_y = (tank->get_y() - dy + map->get_cols()) % map->get_cols();
+                    auto& tile = map->get_tile(back_x, back_y);
+                    auto ground = tile.ground.lock();
+                    auto other_tank = tile.actor.lock();
 
+                    if (!ground || ground->get_type() != EntityType::WALL) {
+                        if (!other_tank || other_tank->get_health() == 0) {
+                            tank->set_pos(back_x, back_y);
+                            action_applied = true;
+                        }
+                    }
+                } else if (state == BackwardState::Waiting1 || state == BackwardState::Waiting2) {
+                    // Do nothing, but count the step in run loop separately
+                    // Could optionally log state
+                }
+                break;
+            }
             
             case ActionRequest::RotateLeft90:
+                if (in_backward_move_sequence) break;
                 tank->set_direction(rotate(tank->get_direction(), -90));
                 action_applied = true;
                 break;
 
             case ActionRequest::RotateRight90:
+                if (in_backward_move_sequence) break;
                 tank->set_direction(rotate(tank->get_direction(), 90));
                 action_applied = true;
                 break;
 
             case ActionRequest::RotateLeft45:
+                if (in_backward_move_sequence) break;
                 tank->set_direction(rotate(tank->get_direction(), -45));
                 action_applied = true;
                 break;
 
             case ActionRequest::RotateRight45:
+                if (in_backward_move_sequence) break;
                 tank->set_direction(rotate(tank->get_direction(), 45));
                 action_applied = true;
                 break;
-                
-
             case ActionRequest::Shoot:
+                if (in_backward_move_sequence) break;
                 // TODO: Implement shooting logic
                 action_applied = true;
                 break;
 
             case ActionRequest::DoNothing:
-                
+                if (in_backward_move_sequence) break;                
                 action_applied = true;
                 break;
 
             case ActionRequest::GetBattleInfo:
+                if (in_backward_move_sequence) break;
                 action_applied = true;
                 continue;
+        }
+        if (in_backward_move_sequence) {
+            tank->advance_backward_state();
         }
 
         // Mine check (only for living tanks)
@@ -401,7 +437,6 @@ void GameManager::apply_tank_actions(
                 // Optionally destroy the mine object if needed
             }
         }
-
         if (!action_applied) {
             printer.markTankIgnored(i);
         }

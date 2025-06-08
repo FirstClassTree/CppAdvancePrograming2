@@ -3,7 +3,7 @@
 
 Tank::Tank(int x, int y, Direction direction, int player_owner,int tank_id, std::unique_ptr<TankAlgorithm> ai)
     : MoveableEntity(x, y, 1, EntityType::TANK, direction),
-      player_owner(player_owner), tank_id(tank_id),health(1){
+      player_owner(player_owner), tank_id(tank_id),health(1),backward_state(BackwardState::None){
         
       }
 
@@ -27,6 +27,33 @@ void Tank::set_ai(std::unique_ptr<TankAlgorithm> ai) { this->ai = std::move(ai);
 void Tank::damage() {
     this->health = 0;  
 }
+
+void Tank::start_backward_sequence() {
+
+    backward_state = BackwardState::Waiting1;
+}
+
+void Tank::cancel_backward_sequence() {
+        backward_state = BackwardState::None;
+}
+
+bool Tank::is_ready_to_move_backward() const {
+    return backward_state == BackwardState::ReadyFast;
+}
+
+void Tank::advance_backward_state() {
+    if (backward_state == BackwardState::Waiting1) {
+        backward_state = BackwardState::Waiting2;
+    } else if (backward_state == BackwardState::Waiting2) {
+        backward_state = BackwardState::ReadyFast;
+    }
+}
+
+BackwardState Tank::get_backward_state() const {
+    return backward_state;
+}
+
+
 
 std::string Tank::serialize() {
   nlohmann::json j;

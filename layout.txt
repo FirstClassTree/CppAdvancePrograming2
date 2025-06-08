@@ -529,11 +529,11 @@
 │   │   │       └── utils
 │   │   │           ├── InputHelper.cpp.o
 │   │   │           ├── InputHelper.cpp.o.d
+│   │   │           ├── Map.cpp.o
 │   │   │           ├── OutputPrinter.cpp.o
 │   │   │           ├── OutputPrinter.cpp.o.d
 │   │   │           ├── Visualizer.cpp.o
 │   │   │           ├── Visualizer.cpp.o.d
-│   │   │           ├── map.cpp.o
 │   │   │           ├── map.cpp.o.d
 │   │   │           ├── tile.cpp.o
 │   │   │           └── tile.cpp.o.d
@@ -663,9 +663,9 @@
 │   ├── main.cpp
 │   └── utils
 │       ├── InputHelper.cpp
+│       ├── Map.cpp
 │       ├── OutputPrinter.cpp
 │       ├── Visualizer.cpp
-│       ├── map.cpp
 │       └── tile.cpp
 ├── tanks-ui
 │   ├── README.md
