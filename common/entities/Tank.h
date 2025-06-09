@@ -3,6 +3,7 @@
 
 #include "../MoveableEntity.h"
 #include "../TankAlgorithm.h"
+#include "../Constants.h"
 
 
 // support for the delay neccarry
@@ -25,7 +26,6 @@ public:
   int get_health();
   int get_tank_id();
   int get_shell_num();
-
   void set_shell_num(int shell_num);
   void set_tank_id(int tank_id);
   void set_ai(std::unique_ptr<TankAlgorithm> ai);
@@ -43,6 +43,12 @@ public:
   void damage();
 
 
+  bool can_shoot() const;
+  void mark_shot();
+  void tick_cooldown();
+
+
+
 
 
 
@@ -53,6 +59,7 @@ private:
   int player_owner;
   int tank_id;
   int shell_num;
+  int shoot_cooldown = 0;
 };
 
 #endif

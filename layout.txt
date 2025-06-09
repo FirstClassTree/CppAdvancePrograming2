@@ -621,6 +621,8 @@
 │       │   │   ├── test_chaser_horizontal.txt
 │       │   │   └── test_chaser_vertical.txt
 │       │   └── shooter
+│       │       ├── test_sniper_move_and_shoot.txt
+│       │       └── test_sniper_vertical.txt
 │       ├── entities
 │       │   └── tank
 │       │       ├── test_tanks_id.txt
@@ -723,7 +725,8 @@
     ├── cmake_test.cpp
     ├── map_test.cpp
     ├── output_printer_test.cpp
+    ├── sniper_algo_test.cpp
     ├── tank_entity_test.cpp
     └── test_json.cpp
 
-109 directories, 617 files
+109 directories, 620 files

@@ -23,13 +23,32 @@ void Tank::set_tank_id(int tank_id) { this->tank_id = tank_id; }
 void Tank::set_ai(std::unique_ptr<TankAlgorithm> ai) { this->ai = std::move(ai); }
 
 
+
+bool Tank::can_shoot() const {
+    return shell_num > 0 && shoot_cooldown == 0;
+}
+
+void Tank::mark_shot() {
+    if (can_shoot()) {
+        shell_num--;
+        // +1 because each round removes cooldown including shooting round
+        shoot_cooldown = SHOOT_COOLDOWN_STEPS + 1;
+    }
+}
+
+void Tank::tick_cooldown() {
+    if (shoot_cooldown > 0) {
+        shoot_cooldown--;
+    }
+}
+
+
 // Substruct 1 instead if planning on multiple lives
 void Tank::damage() {
     this->health = 0;  
 }
 
 void Tank::start_backward_sequence() {
-
     backward_state = BackwardState::Waiting1;
 }
 

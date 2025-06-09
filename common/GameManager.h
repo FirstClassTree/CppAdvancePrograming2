@@ -20,6 +20,12 @@
 #include <unordered_set>
 #include "../common/HashUtils.h"
 
+struct GameEndStatus {
+    bool finished = false;
+    bool tie_due_to_shells = false;
+    bool tie_due_to_steps = false;
+};
+
 class GameManager {
 public:
   GameManager();
@@ -68,7 +74,7 @@ private:
   void update_game_state();
 
   // Return true if game should terminate
-  bool check_end_conditions(int current_step, int& steps_without_shells);
+  GameEndStatus check_end_conditions(int current_step, int& steps_without_shells);
 
   // Determine the winner (-1 = tie, otherwise 1 or 2)
   int determine_winner(const std::vector<int>& tanks_per_player);
