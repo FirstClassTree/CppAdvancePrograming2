@@ -1,9 +1,10 @@
 #include "../../common/Visualizer.h"
 #include "../../common/MySatelliteView.h"
 // #include "../../common/InputHelper.h"
-
 #include <iostream>
 #include <ncurses.h>
+
+
 
 // Create SatelliteView with paramaters: (-1,-1) so no &
 void Visualizer::add_snapshot(std::unique_ptr<SatelliteView> view) {

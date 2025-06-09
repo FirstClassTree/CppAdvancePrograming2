@@ -24,6 +24,14 @@ GameManager::GameManager() {
   this->tank_algorithm_factory = MyTankAlgorithmFactory();
 }
 
+GameManager::GameManager(GamePlayerFactory player_factory,
+                         MyTankAlgorithmFactory tank_algorithm_factory,
+                         bool enable_visual)
+    : enable_visualizer(enable_visual),
+      player_factory(std::move(player_factory)),
+      tank_algorithm_factory(std::move(tank_algorithm_factory)) {}
+
+
 void GameManager::subscribe_tank(std::shared_ptr<Tank> tank) {
   this->subscribe_entity(tank);
   this->game_tanks.push_back(tank);
@@ -207,11 +215,13 @@ void GameManager::run() {
       // Phase 2: Move shells and resolve their collisons, walls, shell to shell,
       move_shells_stepwise();
 
-      // Phase 3: Handle any remaining logic -- probably can remove
-      update_game_state();
+      // Optional visualization
+      if (enable_visualizer) {
+            visualizer.add_snapshot(create_satellite_view(-1, -1));
+        }
 
       // // Phase 4: Finalize round output
-      // printer.finalizeRound();
+      printer.finalizeRound();
 
       // Phase 5: Check termination conditions
       status = check_end_conditions(step, steps_without_shells);
@@ -223,6 +233,7 @@ void GameManager::run() {
           status.finished = true;
           status.tie_due_to_steps = true;
       }
+      
 }
 
     // Phase 6: Final result
@@ -244,6 +255,9 @@ void GameManager::run() {
 
     printer.logResult(tanks_per_player, winner, status.tie_due_to_steps, status.tie_due_to_shells, max_steps);
     printer.writeToFile("output.txt");
+    if (enable_visualizer) {
+        visualizer.run();
+    }
 }
 
 //Phase 2:

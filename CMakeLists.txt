@@ -13,3 +13,4 @@ enable_testing()
 add_subdirectory(tests)
 
 add_executable(tanks_game src/main.cpp)
+target_link_libraries(tanks_game PRIVATE tanks_game_lib ncurses)

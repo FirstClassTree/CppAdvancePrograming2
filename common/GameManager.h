@@ -19,6 +19,7 @@
 #include "../common/OutputPrinter.h"
 #include <unordered_set>
 #include "../common/HashUtils.h"
+#include "../common/Visualizer.h"
 
 struct GameEndStatus {
     bool finished = false;
@@ -29,6 +30,11 @@ struct GameEndStatus {
 class GameManager {
 public:
   GameManager();
+  GameManager(GamePlayerFactory player_factory,
+              MyTankAlgorithmFactory tank_algorithm_factory,
+              bool enable_visual = false);
+  
+  
   int load_map(const std::string &map_path);
   Map get_map();
 
@@ -43,6 +49,7 @@ public:
   std::unique_ptr<SatelliteView> create_satellite_view(int player_id,
                                                        int tank_id) const;
 
+  void run();
 
 
 private:
@@ -57,9 +64,12 @@ private:
   // Collect actions from all living tanks
   std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> collect_tank_actions();
 
+  bool enable_visualizer = false;
+  Visualizer visualizer;
 
 
-  void run();
+
+
 
   
   void move_shells_stepwise();
