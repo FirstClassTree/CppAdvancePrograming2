@@ -38,16 +38,19 @@ private:
   void bfs(std::vector<std::vector<bool>> &grid);
   std::vector<std::vector<bool>>
   make_bfs_grid(std::vector<std::vector<char>> &grid);
+  void take_from_queue();
   Direction get_direction_from_step(ChaserStep cur, ChaserStep prv);
   ActionRequest rotate_toward(Direction from, Direction to);
 
   void simulate_move();
 
   int player_index;
+  int info_cooldown;
   int tank_index;
   bool dirty = true;
   ChaserState currentState;
   ChaserTarget currentTarget;
+  std::queue<ChaserStep> m_path;
 };
 
 #endif

@@ -9,6 +9,8 @@ Tank::Tank(int x, int y, Direction direction, int player_owner,int tank_id, std:
 
 Tank::~Tank() {}
 
+
+
 int Tank::get_owner_id() { return player_owner; }
 int Tank::get_health() { return health; }
 int Tank::get_tank_id() { return tank_id; }

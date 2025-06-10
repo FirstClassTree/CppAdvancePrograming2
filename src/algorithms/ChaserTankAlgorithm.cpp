@@ -1,5 +1,6 @@
 #include "../../common/algorithms/ChaserTankAlgorithm.h"
 
+#include <algorithm>
 #include <iostream>
 
 using namespace std;
@@ -9,6 +10,7 @@ ChaserTankAlgorithm::ChaserTankAlgorithm(int player_index, int tank_index,
   this->chooseAction = ActionRequest::GetBattleInfo;
   this->player_index = player_index;
   this->tank_index = tank_index;
+  this->info_cooldown = 0;
   this->currentState = {tank_x, tank_y,
                         player_index == 1 ? Direction::L : Direction::R, false};
   this->currentTarget = {0, 0, false};
@@ -38,11 +40,48 @@ void ChaserTankAlgorithm::locate_me(std::vector<std::vector<char>> &grid) {
 }
 
 void ChaserTankAlgorithm::make_decision(std::vector<std::vector<char>> &grid) {
-  auto bfs_grid = make_bfs_grid(grid);
-  if (this->currentTarget.sync) {
-    bfs_grid[this->currentTarget.x][this->currentTarget.y] = false;
+  if (!this->currentTarget.sync) {
+    this->chooseAction = ActionRequest::DoNothing;
+    return;
   }
-  this->bfs(bfs_grid);
+
+  auto bfs_grid = make_bfs_grid(grid);
+
+  // Invalidate path if next step is blocked
+  if (!m_path.empty()) {
+    ChaserStep next_step = m_path.front();
+    if (bfs_grid[next_step.x][next_step.y]) {
+      std::queue<ChaserStep> empty;
+      m_path.swap(empty); // Path is blocked, clear it.
+    }
+  }
+
+  // If no path, calculate one
+  if (m_path.empty()) {
+    // Our target should be traversable in bfs grid
+    bfs_grid[this->currentTarget.x][this->currentTarget.y] = false;
+    this->bfs(bfs_grid);
+  }
+
+  // If we have a path, decide next action
+}
+
+void ChaserTankAlgorithm::take_from_queue() {
+  if (!m_path.empty()) {
+    ChaserStep next_step = m_path.front();
+    ChaserStep current_pos = {this->currentState.x, this->currentState.y};
+    Direction direction = get_direction_from_step(next_step, current_pos);
+    this->chooseAction = rotate_toward(this->currentState.direction, direction);
+
+    // If we are moving forward, it means we are aligned and will move to the
+    // next step. So we consume the step from the path.
+    if (this->chooseAction == ActionRequest::MoveForward) {
+      m_path.pop();
+    }
+  } else {
+    // No path found or could be calculated
+    this->chooseAction = ActionRequest::DoNothing;
+  }
 }
 
 void ChaserTankAlgorithm::set_target(std::vector<std::vector<char>> &grid) {
@@ -92,16 +131,27 @@ void ChaserTankAlgorithm::set_target(std::vector<std::vector<char>> &grid) {
   }
 
   if (found_target) {
+    if (this->currentTarget.x != best_target_x ||
+        this->currentTarget.y != best_target_y || !this->currentTarget.sync) {
+      std::queue<ChaserStep> empty;
+      this->m_path.swap(empty);
+    }
     this->currentTarget.x = best_target_x;
     this->currentTarget.y = best_target_y;
     this->currentTarget.sync = true;
     std::cout << "Found target at: " << best_target_x << ", " << best_target_y
               << std::endl;
   } else {
+    std::cout << "No target found" << std::endl;
     // No enemy tanks found in the current view
+    if (this->currentTarget.sync) { // if there was a target, clear path
+      std::queue<ChaserStep> empty;
+      this->m_path.swap(empty);
+    }
     this->currentTarget.sync = false;
     // currentTarget.x and .y will retain their previous values,
-    // but .sync = false indicates that this target is no longer valid/acquired.
+    // but .sync = false indicates that this target is no longer
+    // valid/acquired.
   }
 }
 
@@ -136,19 +186,31 @@ void ChaserTankAlgorithm::bfs(std::vector<std::vector<bool>> &grid) {
       }
     }
   }
+
+  // Clear any old path before creating a new one.
+  std::queue<ChaserStep> empty;
+  m_path.swap(empty);
+
   if (dist[this->currentTarget.x][this->currentTarget.y] == -1) {
-    this->chooseAction = ActionRequest::DoNothing;
-    return;
+    return; // No path found
   }
+
+  std::vector<ChaserStep> reversed_path;
   ChaserStep cur{this->currentTarget.x, this->currentTarget.y};
-  ChaserStep prv = parent[cur.x][cur.y];
-  while (!(prv.x == this->currentState.x && prv.y == this->currentState.y)) {
-    cur = prv;
-    prv = parent[cur.x][cur.y];
+  while (cur.x != this->currentState.x || cur.y != this->currentState.y) {
+    reversed_path.push_back(cur);
+    cur = parent[cur.x][cur.y];
+    if (cur.x == -1) { // Should not happen if path was found
+      std::queue<ChaserStep> empty_q;
+      m_path.swap(empty_q); // Error, clear path
+      return;
+    }
   }
-  Direction direction = get_direction_from_step(cur, prv);
-  this->chooseAction = rotate_toward(this->currentState.direction, direction);
-  this->simulate_move();
+  std::reverse(reversed_path.begin(), reversed_path.end());
+
+  for (const auto &step : reversed_path) {
+    m_path.push(step);
+  }
 }
 
 ActionRequest ChaserTankAlgorithm::rotate_toward(Direction from, Direction to) {
@@ -268,8 +330,15 @@ ChaserTankAlgorithm::make_bfs_grid(std::vector<std::vector<char>> &grid) {
   return bfs_grid;
 }
 ActionRequest ChaserTankAlgorithm::getAction() {
+  if (this->info_cooldown <= 0) {
+    this->info_cooldown = 4;
+    return ActionRequest::GetBattleInfo;
+  }
   if (this->dirty)
     return ActionRequest::GetBattleInfo;
+  take_from_queue();
+  this->info_cooldown--;
+  this->simulate_move();
   return this->chooseAction;
 }
 

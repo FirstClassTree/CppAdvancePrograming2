@@ -1,11 +1,11 @@
 #include "../../common/GameManager.h"
+#include "../common/Constants.h"
+#include "../common/OutputPrinter.h"
+#include "../common/TankAlgorithm.h"
 #include "MySatelliteView.h"
 #include "entities/Wall.h"
 #include "utils/Tile.h"
 #include <unordered_map>
-#include "../common/OutputPrinter.h"
-#include "../common/TankAlgorithm.h"
-#include "../common/Constants.h"
 
 // int extractIntValue(const std::string &line, const std::string &key) {
 //   std::regex pattern("^\\s*" + key + "\\s*=\\s*(\\d+)\\s*$");
@@ -16,8 +16,6 @@
 //     throw std::runtime_error("Invalid format for line: " + line);
 //   }
 // }
-
-
 
 GameManager::GameManager() {
   this->player_factory = GamePlayerFactory();
@@ -30,7 +28,6 @@ GameManager::GameManager(GamePlayerFactory player_factory,
     : enable_visualizer(enable_visual),
       player_factory(std::move(player_factory)),
       tank_algorithm_factory(std::move(tank_algorithm_factory)) {}
-
 
 void GameManager::subscribe_tank(std::shared_ptr<Tank> tank) {
   this->subscribe_entity(tank);
@@ -117,8 +114,8 @@ int GameManager::load_map(const std::string &map_path) {
           return gp && gp->get_id() == player_num;
         });
     if (!exists) {
-      players.emplace_back(player_factory.create(
-          player_num, rows, cols, max_steps, num_shells));
+      players.emplace_back(
+          player_factory.create(player_num, rows, cols, max_steps, num_shells));
     }
   }
 
@@ -143,6 +140,8 @@ void GameManager::post_load_process() {
     tank_algorithm_factory.tank_y = tank_sp->get_y();
 
     int owner_id = tank_sp->get_owner_id();
+
+    tank_sp->set_direction(owner_id == 1 ? Direction::L : Direction::R);
 
     // Basic bounds check for tank_ids array access. Player IDs from maps are
     // usually 1-9. If owner_id is outside 0-9, this logic needs more robust
@@ -191,393 +190,417 @@ void GameManager::post_load_process() {
   }
 }
 
-
 void GameManager::run() {
-    if (!map) {
-        std::cerr << "GameManager::run - Map not loaded. Aborting." << std::endl;
-        return;
-    }
-    const int max_steps = map->get_max_steps();
-    //  Getting the num of players out of size:
-    const int num_players = static_cast<int>(players.size());
-    OutputPrinter printer(game_tanks.size());
+  if (!map) {
+    std::cerr << "GameManager::run - Map not loaded. Aborting." << std::endl;
+    return;
+  }
+  const int max_steps = map->get_max_steps();
+  //  Getting the num of players out of size:
+  const int num_players = static_cast<int>(players.size());
+  OutputPrinter printer(game_tanks.size());
 
-    int steps_without_shells = 0;
-    GameEndStatus status;
-    
+  int steps_without_shells = 0;
+  GameEndStatus status;
 
+  for (int step = 0; step < max_steps; ++step) {
 
-    for (int step = 0; step < max_steps; ++step) {
+    // Phase 1: Collect and apply tank actions, and resolve mine collisons
+    auto tank_actions = collect_tank_actions();
+    apply_tank_actions(tank_actions, printer);
 
-      // Phase 1: Collect and apply tank actions, and resolve mine collisons
-      auto tank_actions = collect_tank_actions();
-      apply_tank_actions(tank_actions, printer);
+    // Phase 2: Move shells and resolve their collisons, walls, shell to shell,
+    move_shells_stepwise();
 
-      // Phase 2: Move shells and resolve their collisons, walls, shell to shell,
-      move_shells_stepwise();
-
-      // Optional visualization
-      if (enable_visualizer) {
-            visualizer.add_snapshot(create_satellite_view(-1, -1));
-        }
-
-      // // Phase 4: Finalize round output
-      printer.finalizeRound();
-
-      // Phase 5: Check termination conditions
-      status = check_end_conditions(step, steps_without_shells);
-      if (status.finished) {
-          break;
-      }
-      // Handle tie due to max steps
-      if (step == max_steps - 1) {
-          status.finished = true;
-          status.tie_due_to_steps = true;
-      }
-      
-}
-
-    // Phase 6: Final result
-    std::vector<int> tanks_per_player(num_players, 0);
-    for (const auto& tank : game_tanks) {
-        if (tank && tank->get_health() > 0) {
-            int owner = tank->get_owner_id();
-            if (owner >= 1 && owner <= num_players) {
-                tanks_per_player[owner - 1]++;
-            }
-        }
-    }
-    int winner = determine_winner(tanks_per_player);
-    // Step-based tie logic (if ended only by reaching max steps)
-      if (!status.tie_due_to_shells && winner == -1) {
-          status.tie_due_to_steps = true;
-      }
-
-
-    printer.logResult(tanks_per_player, winner, status.tie_due_to_steps, status.tie_due_to_shells, max_steps);
-    printer.writeToFile("output.txt");
+    // Optional visualization
     if (enable_visualizer) {
-        visualizer.run();
+      visualizer.add_snapshot(create_satellite_view(-1, -1));
     }
+
+    // // Phase 4: Finalize round output
+    printer.finalizeRound();
+
+    // Phase 5: Check termination conditions
+    status = check_end_conditions(step, steps_without_shells);
+    if (status.finished) {
+      break;
+    }
+    // Handle tie due to max steps
+    if (step == max_steps - 1) {
+      status.finished = true;
+      status.tie_due_to_steps = true;
+    }
+  }
+
+  // Phase 6: Final result
+  std::vector<int> tanks_per_player(num_players, 0);
+  for (const auto &tank : game_tanks) {
+    if (tank && tank->get_health() > 0) {
+      int owner = tank->get_owner_id();
+      if (owner >= 1 && owner <= num_players) {
+        tanks_per_player[owner - 1]++;
+      }
+    }
+  }
+  int winner = determine_winner(tanks_per_player);
+  // Step-based tie logic (if ended only by reaching max steps)
+  if (!status.tie_due_to_shells && winner == -1) {
+    status.tie_due_to_steps = true;
+  }
+
+  printer.logResult(tanks_per_player, winner, status.tie_due_to_steps,
+                    status.tie_due_to_shells, max_steps);
+  printer.writeToFile("output.txt");
+  if (enable_visualizer) {
+    visualizer.run();
+  }
 }
 
-//Phase 2:
+// Phase 2:
 void GameManager::move_shells_stepwise() {
-    constexpr int sub_steps = 2;
-    int rows = map->get_rows();
-    int cols = map->get_cols();
+  constexpr int sub_steps = 2;
+  int rows = map->get_rows();
+  int cols = map->get_cols();
 
-    for (int step = 0; step < sub_steps; ++step) {
-        // Track positions after this sub-step for shell to shell collisons
-        std::unordered_map<std::pair<int, int>, std::vector<std::shared_ptr<Shell>>> position_map;
+  for (int step = 0; step < sub_steps; ++step) {
+    // Track positions after this sub-step for shell to shell collisons
+    std::unordered_map<std::pair<int, int>, std::vector<std::shared_ptr<Shell>>>
+        position_map;
 
-        // First move all active shells one sub-step
-        for (auto& shell : game_shells) {
-            if (!shell || shell->is_destroyed())
-                continue;
+    // First move all active shells one sub-step
+    for (auto &shell : game_shells) {
+      if (!shell || shell->is_destroyed())
+        continue;
 
-            auto [dx, dy] = get_direction_offset(shell->get_direction());
-            int next_x = (shell->get_x() + dx + rows) % rows;
-            int next_y = (shell->get_y() + dy + cols) % cols;
+      auto [dx, dy] = get_direction_offset(shell->get_direction());
+      int next_x = (shell->get_x() + dx + rows) % rows;
+      int next_y = (shell->get_y() + dy + cols) % cols;
 
-            auto& tile = map->get_tile(next_x, next_y);
+      auto &tile = map->get_tile(next_x, next_y);
 
-            // Wall collision
-            auto ground = tile.ground.lock();
-            if (ground && ground->get_type() == EntityType::WALL) {
-                auto wall = std::dynamic_pointer_cast<Wall>(ground);
-                if (wall) {
-                    wall->weaken();
-                    if (wall->is_destroyed()) {
-                        tile.ground.reset();
-                    }
-                }
-                shell->destroy();
-                continue;
-            }
-
-            // Tank collision
-            auto tank = tile.actor.lock();
-            if (tank && tank->get_health() > 0) {
-                tank->damage();
-                shell->destroy();
-                continue;
-            }
-
-            // Move and register for shell–shell check
-            shell->set_pos(next_x, next_y);
-            position_map[{next_x, next_y}].push_back(shell);
+      // Wall collision
+      auto ground = tile.ground.lock();
+      if (ground && ground->get_type() == EntityType::WALL) {
+        auto wall = std::dynamic_pointer_cast<Wall>(ground);
+        if (wall) {
+          wall->weaken();
+          if (wall->is_destroyed()) {
+            tile.ground.reset();
+          }
         }
+        shell->destroy();
+        continue;
+      }
 
-        // Detect and destroy shells that collide
-        for (auto& [pos, shells] : position_map) {
-            if (shells.size() > 1) {
-                for (auto& shell : shells) {
-                    shell->destroy();
-                }
-            }
-        }
+      // Tank collision
+      auto tank = tile.actor.lock();
+      if (tank && tank->get_health() > 0) {
+        tank->damage();
+        shell->destroy();
+        continue;
+      }
+
+      // Move and register for shell–shell check
+      shell->set_pos(next_x, next_y);
+      position_map[{next_x, next_y}].push_back(shell);
     }
+
+    // Detect and destroy shells that collide
+    for (auto &[pos, shells] : position_map) {
+      if (shells.size() > 1) {
+        for (auto &shell : shells) {
+          shell->destroy();
+        }
+      }
+    }
+  }
 }
-
-
 
 // Phase 1
-std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> GameManager::collect_tank_actions() {
-    std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> actions;
+std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>>
+GameManager::collect_tank_actions() {
+  std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> actions;
 
-    for (const auto& tank : game_tanks) {
-        if (!tank || tank->get_health() == 0)
-            continue;
+  for (const auto &tank : game_tanks) {
+    if (!tank || tank->get_health() == 0)
+      continue;
 
-        auto& algo = tank->get_ai();
+    auto &algo = tank->get_ai();
 
-        ActionRequest action = algo.getAction();
+    ActionRequest action = algo.getAction();
 
-        // Handle GetBattleInfo immediately
-        if (action == ActionRequest::GetBattleInfo) {
-            for (const auto& player_up : players) {
-                if (!player_up) continue;
-                GamePlayer* player = dynamic_cast<GamePlayer*>(player_up.get());
-                if (player && player->get_id() == tank->get_owner_id()) {
-                    auto satellite_view = create_satellite_view(tank->get_owner_id(), tank->get_tank_id());
-                    player->updateTankWithBattleInfo(algo, *satellite_view);
-                    break;
-                }
-            }
-            action = algo.getAction(); // get action again after update
+    // Handle GetBattleInfo immediately
+    if (action == ActionRequest::GetBattleInfo) {
+      for (const auto &player_up : players) {
+        if (!player_up)
+          continue;
+        GamePlayer *player = dynamic_cast<GamePlayer *>(player_up.get());
+        if (player && player->get_id() == tank->get_owner_id()) {
+          auto satellite_view =
+              create_satellite_view(tank->get_owner_id(), tank->get_tank_id());
+          player->updateTankWithBattleInfo(algo, *satellite_view);
+          break;
         }
-        actions.emplace_back(tank, action);
+      }
+      action = algo.getAction(); // get action again after update
     }
+    actions.emplace_back(tank, action);
+  }
 
-    return actions;
+  return actions;
 }
 
-//Phase 1.b
-// TODO split function because it is too long
+// Phase 1.b
+//  TODO split function because it is too long
 void GameManager::apply_tank_actions(
-    const std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>>& actions,
-    OutputPrinter& printer) {
+    const std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> &actions,
+    OutputPrinter &printer) {
 
-    for (size_t i = 0; i < actions.size(); ++i) {
-        const auto& [tank, action] = actions[i];
+  for (size_t i = 0; i < actions.size(); ++i) {
+    const auto &[tank, action] = actions[i];
 
-        printer.setTankAction(i, action);
+    printer.setTankAction(i, action);
 
-        // std::cout << "[Tank Init] Tank for player " << tank->get_owner_id() 
-        //   << " at (" << tank->get_x() << ", " << tank->get_y() << ") initialized with " 
-        //   << tank->get_shell_num() << " shells." << std::endl;
+    // std::cout << "[Tank Init] Tank for player " << tank->get_owner_id()
+    //   << " at (" << tank->get_x() << ", " << tank->get_y() << ") initialized
+    //   with "
+    //   << tank->get_shell_num() << " shells." << std::endl;
 
-        if (!tank || tank->get_health() == 0) {
-            printer.markTankKilled(i);
-            continue;
-        }
-
-        bool action_applied = false;
-        bool in_backward_move_sequence = false;
-        if (tank->get_backward_state() == BackwardState::Waiting1 ||tank->get_backward_state() == BackwardState::Waiting2) {
-                in_backward_move_sequence = true;
-              }  
-        switch (action) {
-            case ActionRequest::MoveForward: {
-              if (in_backward_move_sequence || tank->get_backward_state() == BackwardState::ReadyFast) {
-                    tank->cancel_backward_sequence();
-                    // Cancel and do nothing
-                    break;
-              } 
-              auto [dx, dy] = get_direction_offset(tank->get_direction());
-              int next_x = (tank->get_x() + dx + map->get_rows()) % map->get_rows();
-              int next_y = (tank->get_y() + dy + map->get_cols()) % map->get_cols();
-              auto& tile = map->get_tile(next_x, next_y);
-              auto ground = tile.ground.lock();
-              auto other_tank = tile.actor.lock();
-
-              // Block movement if a wall or another tank is in the destination
-              if (!ground || ground->get_type() != EntityType::WALL) {
-                  if (!other_tank || other_tank->get_health() == 0) {
-                      tank->set_pos(next_x, next_y);
-                      action_applied = true;
-                  }
-              }
-              break;
-            }
-             
-                      
-            case ActionRequest::MoveBackward: {
-              auto state = tank->get_backward_state();
-                if (state == BackwardState::None) {
-                    tank->start_backward_sequence();  // Begin the delay
-                } 
-                else if (state == BackwardState::ReadyFast) {
-                    auto [dx, dy] = get_direction_offset(tank->get_direction());
-                    int back_x = (tank->get_x() - dx + map->get_rows()) % map->get_rows();
-                    int back_y = (tank->get_y() - dy + map->get_cols()) % map->get_cols();
-                    auto& tile = map->get_tile(back_x, back_y);
-                    auto ground = tile.ground.lock();
-                    auto other_tank = tile.actor.lock();
-
-                    if (!ground || ground->get_type() != EntityType::WALL) {
-                        if (!other_tank || other_tank->get_health() == 0) {
-                            tank->set_pos(back_x, back_y);
-                            action_applied = true;
-                        }
-                    }
-                } else if (state == BackwardState::Waiting1 || state == BackwardState::Waiting2) {
-                    // Do nothing, but count the step in run loop separately
-                    // Could optionally log state
-                }
-                break;
-            }
-            
-            case ActionRequest::RotateLeft90:{
-                if (in_backward_move_sequence) break;
-                tank->cancel_backward_sequence();
-                Direction old_dir = tank->get_direction();
-                tank->set_direction(rotate(tank->get_direction(), -90));
-                action_applied = true;
-                break;
-            }
-
-            case ActionRequest::RotateRight90:
-                if (in_backward_move_sequence) break;
-                tank->cancel_backward_sequence();
-                tank->set_direction(rotate(tank->get_direction(), 90));
-                action_applied = true;
-                break;
-
-            case ActionRequest::RotateLeft45:
-                if (in_backward_move_sequence) break;
-                tank->cancel_backward_sequence();
-                tank->set_direction(rotate(tank->get_direction(), -45));
-                action_applied = true;
-                break;
-
-            case ActionRequest::RotateRight45:
-                if (in_backward_move_sequence) break;
-                tank->cancel_backward_sequence();
-                tank->set_direction(rotate(tank->get_direction(), 45));
-                action_applied = true;
-                break;
-            case ActionRequest::Shoot:{
-                if (in_backward_move_sequence) break;
-                tank->cancel_backward_sequence();
-                // Not allowed to shoot — cooldown or no ammo
-                if (!tank->can_shoot()) {
-                    break;
-                }
-                // Calculate shell spawn position
-                auto [dx, dy] = get_direction_offset(tank->get_direction());
-                int shell_x = (tank->get_x() + dx + map->get_rows()) % map->get_rows();
-                int shell_y = (tank->get_y() + dy + map->get_cols()) % map->get_cols();
-                // Create and register shell
-                auto shell = std::make_shared<Shell>(shell_x, shell_y, tank->get_direction());
-                subscribe_shell(shell);  // add to game_shells and game_entities
-
-                tank->mark_shot();  // reduce shell count, begin cooldown
-                action_applied = true;
-                break;
-              }
-
-            case ActionRequest::DoNothing:
-                if (in_backward_move_sequence) break;      
-                tank->cancel_backward_sequence();          
-                action_applied = true;
-                break;
-
-            case ActionRequest::GetBattleInfo:
-                if (in_backward_move_sequence) break;
-                tank->cancel_backward_sequence();
-                std::cerr << "[apply_tank_actions] WARNING: Reached ActionRequest::GetBattleInfo for tank "
-                << tank->get_owner_id() << ":" << tank->get_tank_id()
-                << " — this should have been handled in collect_tank_actions()." << std::endl;
-                action_applied = true;
-                continue;
-        }
-        if (in_backward_move_sequence) {
-            tank->advance_backward_state();
-        }
-
-        if (tank->get_health() > 0) {
-          // tick shooting cooldown  
-          tank->tick_cooldown();
-
-        // Mine check (only for living tanks)
-            auto& tile = map->get_tile(tank->get_x(), tank->get_y());
-            auto ground = tile.ground.lock();
-            if (ground && ground->get_type() == EntityType::MINE) {
-                tank->damage();  // or tank->set_health(0);
-                tile.ground.reset();  // Remove the mine
-                // Optionally destroy the mine object if needed
-            }
-        }
-        if (!action_applied) {
-            printer.markTankIgnored(i);
-        }
-        if (tank->get_health() == 0) {
-            printer.markTankKilled(i);
-        }
+    if (!tank || tank->get_health() == 0) {
+      printer.markTankKilled(i);
+      continue;
     }
-}
 
+    bool action_applied = false;
+    bool in_backward_move_sequence = false;
+    if (tank->get_backward_state() == BackwardState::Waiting1 ||
+        tank->get_backward_state() == BackwardState::Waiting2) {
+      in_backward_move_sequence = true;
+    }
+    switch (action) {
+    case ActionRequest::MoveForward: {
+      if (in_backward_move_sequence ||
+          tank->get_backward_state() == BackwardState::ReadyFast) {
+        tank->cancel_backward_sequence();
+        // Cancel and do nothing
+        break;
+      }
+      auto [dx, dy] = get_direction_offset(tank->get_direction());
+      int next_x = (tank->get_x() + dx + map->get_rows()) % map->get_rows();
+      int next_y = (tank->get_y() + dy + map->get_cols()) % map->get_cols();
+      auto &tile = map->get_tile(next_x, next_y);
+      auto ground = tile.ground.lock();
+      auto other_tank = tile.actor.lock();
+
+      // Block movement if a wall or another tank is in the destination
+      if (!ground || ground->get_type() != EntityType::WALL) {
+        if (!other_tank || other_tank->get_health() == 0) {
+          tank->set_pos(next_x, next_y);
+          action_applied = true;
+        }
+      }
+      break;
+    }
+
+    case ActionRequest::MoveBackward: {
+      auto state = tank->get_backward_state();
+      if (state == BackwardState::None) {
+        tank->start_backward_sequence(); // Begin the delay
+      } else if (state == BackwardState::ReadyFast) {
+        auto [dx, dy] = get_direction_offset(tank->get_direction());
+        int back_x = (tank->get_x() - dx + map->get_rows()) % map->get_rows();
+        int back_y = (tank->get_y() - dy + map->get_cols()) % map->get_cols();
+        auto &tile = map->get_tile(back_x, back_y);
+        auto ground = tile.ground.lock();
+        auto other_tank = tile.actor.lock();
+
+        if (!ground || ground->get_type() != EntityType::WALL) {
+          if (!other_tank || other_tank->get_health() == 0) {
+            tank->set_pos(back_x, back_y);
+            action_applied = true;
+          }
+        }
+      } else if (state == BackwardState::Waiting1 ||
+                 state == BackwardState::Waiting2) {
+        // Do nothing, but count the step in run loop separately
+        // Could optionally log state
+      }
+      break;
+    }
+
+    case ActionRequest::RotateLeft90: {
+      if (in_backward_move_sequence)
+        break;
+      tank->cancel_backward_sequence();
+      Direction new_dir = static_cast<Direction>(
+          (static_cast<int>(tank->get_direction()) - 2 + 8) % 8);
+      tank->set_direction(new_dir);
+      action_applied = true;
+      break;
+    }
+
+    case ActionRequest::RotateRight90: {
+      if (in_backward_move_sequence)
+        break;
+      tank->cancel_backward_sequence();
+      Direction new_dir = static_cast<Direction>(
+          (static_cast<int>(tank->get_direction()) + 2 + 8) % 8);
+      tank->set_direction(new_dir);
+      action_applied = true;
+      break;
+    }
+
+    case ActionRequest::RotateLeft45: {
+      if (in_backward_move_sequence)
+        break;
+      tank->cancel_backward_sequence();
+      Direction new_dir = static_cast<Direction>(
+          (static_cast<int>(tank->get_direction()) - 1 + 8) % 8);
+      tank->set_direction(new_dir);
+      action_applied = true;
+      break;
+    }
+
+    case ActionRequest::RotateRight45: {
+      if (in_backward_move_sequence)
+        break;
+      tank->cancel_backward_sequence();
+      tank->cancel_backward_sequence();
+      Direction new_dir = static_cast<Direction>(
+          (static_cast<int>(tank->get_direction()) + 1 + 8) % 8);
+      tank->set_direction(new_dir);
+      action_applied = true;
+      break;
+    }
+    case ActionRequest::Shoot: {
+      if (in_backward_move_sequence)
+        break;
+      tank->cancel_backward_sequence();
+      // Not allowed to shoot — cooldown or no ammo
+      if (!tank->can_shoot()) {
+        break;
+      }
+      // Calculate shell spawn position
+      auto [dx, dy] = get_direction_offset(tank->get_direction());
+      int shell_x = (tank->get_x() + dx + map->get_rows()) % map->get_rows();
+      int shell_y = (tank->get_y() + dy + map->get_cols()) % map->get_cols();
+      // Create and register shell
+      auto shell =
+          std::make_shared<Shell>(shell_x, shell_y, tank->get_direction());
+      subscribe_shell(shell); // add to game_shells and game_entities
+
+      tank->mark_shot(); // reduce shell count, begin cooldown
+      action_applied = true;
+      break;
+    }
+
+    case ActionRequest::DoNothing:
+      if (in_backward_move_sequence)
+        break;
+      tank->cancel_backward_sequence();
+      action_applied = true;
+      break;
+
+    case ActionRequest::GetBattleInfo:
+      if (in_backward_move_sequence)
+        break;
+      tank->cancel_backward_sequence();
+      std::cerr << "[apply_tank_actions] WARNING: Reached "
+                   "ActionRequest::GetBattleInfo for tank "
+                << tank->get_owner_id() << ":" << tank->get_tank_id()
+                << " — this should have been handled in collect_tank_actions()."
+                << std::endl;
+      action_applied = true;
+      continue;
+    }
+    if (in_backward_move_sequence) {
+      tank->advance_backward_state();
+    }
+
+    if (tank->get_health() > 0) {
+      // tick shooting cooldown
+      tank->tick_cooldown();
+
+      // Mine check (only for living tanks)
+      auto &tile = map->get_tile(tank->get_x(), tank->get_y());
+      auto ground = tile.ground.lock();
+      if (ground && ground->get_type() == EntityType::MINE) {
+        tank->damage();      // or tank->set_health(0);
+        tile.ground.reset(); // Remove the mine
+                             // Optionally destroy the mine object if needed
+      }
+    }
+    if (!action_applied) {
+      printer.markTankIgnored(i);
+    }
+    if (tank->get_health() == 0) {
+      printer.markTankKilled(i);
+    }
+  }
+}
 
 // Not sure if neccarry but will see
 // Phase 3:
 void GameManager::update_game_state() {
   return;
-    
- 
-    // 4. Cleanup: remove dead shells or entities if needed
-    // (optional depending on whether you handle "is_destroyed()" logic elsewhere)
 
-    // TODO: Handle shell vs shell collision logic
+  // 4. Cleanup: remove dead shells or entities if needed
+  // (optional depending on whether you handle "is_destroyed()" logic elsewhere)
+
+  // TODO: Handle shell vs shell collision logic
 }
 
-// Phase 5: 
-GameEndStatus GameManager::check_end_conditions(int current_step, int& steps_without_shells) {
-    std::vector<int> alive_tanks(MAX_PLAYERS + 1, 0);
-    bool any_shells_left = false;
+// Phase 5:
+GameEndStatus GameManager::check_end_conditions(int current_step,
+                                                int &steps_without_shells) {
+  std::vector<int> alive_tanks(MAX_PLAYERS + 1, 0);
+  bool any_shells_left = false;
 
-    for (const auto& tank : game_tanks) {
-        if (!tank || tank->get_health() == 0) continue;
-        int owner = tank->get_owner_id();
-        if (owner >= 1 && owner <= MAX_PLAYERS) alive_tanks[owner]++;
-        if (tank->get_shell_num()) any_shells_left = true;
+  for (const auto &tank : game_tanks) {
+    if (!tank || tank->get_health() == 0)
+      continue;
+    int owner = tank->get_owner_id();
+    if (owner >= 1 && owner <= MAX_PLAYERS)
+      alive_tanks[owner]++;
+    if (tank->get_shell_num())
+      any_shells_left = true;
+  }
+
+  int alive_players = std::count_if(alive_tanks.begin(), alive_tanks.end(),
+                                    [](int c) { return c > 0; });
+
+  GameEndStatus status;
+
+  if (alive_players == 0 || alive_players == 1) {
+    status.finished = true;
+  } else if (!any_shells_left) {
+    steps_without_shells++;
+    if (steps_without_shells >= ZERO_SHELLS_GRACE_STEPS) {
+      status.finished = true;
+      status.tie_due_to_shells = true;
     }
+  } else {
+    steps_without_shells = 0;
+  }
 
-    int alive_players = std::count_if(alive_tanks.begin(), alive_tanks.end(), [](int c) { return c > 0; });
-
-    GameEndStatus status;
-
-    if (alive_players == 0 || alive_players == 1) {
-        status.finished = true;
-    } else if (!any_shells_left) {
-        steps_without_shells++;
-        if (steps_without_shells >= ZERO_SHELLS_GRACE_STEPS) {
-            status.finished = true;
-            status.tie_due_to_shells = true;
-        }
-    } else {
-        steps_without_shells = 0;
-    }
-
-    return status;
+  return status;
 }
 
-//Phase 6
-int GameManager::determine_winner(const std::vector<int>& tanks_per_player) {
-    int max_tanks = 0;
-    int winner = -1;
+// Phase 6
+int GameManager::determine_winner(const std::vector<int> &tanks_per_player) {
+  int max_tanks = 0;
+  int winner = -1;
 
-    for (size_t i = 0; i < tanks_per_player.size(); ++i) {
-        if (tanks_per_player[i] > max_tanks) {
-            max_tanks = tanks_per_player[i];
-            winner = static_cast<int>(i + 1);  // player index is 1-based
-        } else if (tanks_per_player[i] == max_tanks && max_tanks > 0) {
-            winner = -1;  // tie if two players have same count
-        }
+  for (size_t i = 0; i < tanks_per_player.size(); ++i) {
+    if (tanks_per_player[i] > max_tanks) {
+      max_tanks = tanks_per_player[i];
+      winner = static_cast<int>(i + 1); // player index is 1-based
+    } else if (tanks_per_player[i] == max_tanks && max_tanks > 0) {
+      winner = -1; // tie if two players have same count
     }
+  }
 
-    return winner;  // -1 for tie, otherwise winner's ID
+  return winner; // -1 for tie, otherwise winner's ID
 }
 
 // Call with (-1,-1) if called for visualisersa
@@ -638,10 +661,10 @@ GameManager::create_satellite_view(int player_id, int tank_id) const {
         view[x][y] = static_cast<char>('0' + tank->get_owner_id());
       }
       // Add direction for visualizer
-    if (player_id == -1 && tank_id == -1) {
+      if (player_id == -1 && tank_id == -1) {
         // Assume satellite_view is declared later, so we collect this info now
         direction_map.emplace(std::make_pair(x, y), tank->get_direction());
-      } 
+      }
     }
   }
 
@@ -679,7 +702,6 @@ std::ifstream GameManager::open_map_file(const std::string &map_path) {
 
   return map_file;
 }
-
 
 // Utility: strip spaces around '=' and parse int
 int extractIntValue(const std::string &line, const std::string &expected_key) {
@@ -786,12 +808,12 @@ void GameManager::populate_map_row(
       Direction dir = (player_num == 1 ? Direction::L : Direction::R);
       // init tank_id to -1 temporarly
       auto tank =
-          std::make_shared<Tank>(row_idx, col, dir, player_num,-1, nullptr);
-      
+          std::make_shared<Tank>(row_idx, col, dir, player_num, -1, nullptr);
+
       tank->set_shell_num(num_shells);
-      std::cout << "[Tank Init] Tank for player " << player_num 
-          << " at (" << row_idx << ", " << col << ") initialized with " 
-          << tank->get_shell_num() << " shells." << std::endl;
+      std::cout << "[Tank Init] Tank for player " << player_num << " at ("
+                << row_idx << ", " << col << ") initialized with "
+                << tank->get_shell_num() << " shells." << std::endl;
       tile.actor = tank;
       tanks_out.push_back(tank);
       player_spawn_points_out.emplace_back(player_num,

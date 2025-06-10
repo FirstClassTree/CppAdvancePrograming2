@@ -1,4 +1,5 @@
 #include "MoveableEntity.h"
+#include <iostream>
 
 
 MoveableEntity::~MoveableEntity() {}
