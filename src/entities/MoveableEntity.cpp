@@ -3,10 +3,10 @@
 
 MoveableEntity::~MoveableEntity() {}
 
-Direction MoveableEntity::get_direction() { return direction; }
+Direction MoveableEntity::get_direction() { return this->direction; }
 
 void MoveableEntity::set_direction(Direction direction) {
-    direction = direction;
+    this->direction = direction;
 }
 
 void MoveableEntity::set_pos(int x, int y) {

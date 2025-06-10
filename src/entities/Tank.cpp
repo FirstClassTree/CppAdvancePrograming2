@@ -12,7 +12,7 @@ Tank::~Tank() {}
 int Tank::get_owner_id() { return player_owner; }
 int Tank::get_health() { return health; }
 int Tank::get_tank_id() { return tank_id; }
-int Tank::get_shell_num() { return shell_num; }
+int Tank::get_shell_num() { return this->shell_num; }
 
 
 

@@ -58,5 +58,5 @@ int Map::get_cols() const { return width; }
 
 int Map::get_max_steps() const { return max_steps; }
 
-int Map::get_num_shells() const { return num_shells; }
+int Map::get_num_shells() const { return this->num_shells; }
 

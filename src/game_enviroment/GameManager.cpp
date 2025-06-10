@@ -204,6 +204,7 @@ void GameManager::run() {
 
     int steps_without_shells = 0;
     GameEndStatus status;
+    
 
 
     for (int step = 0; step < max_steps; ++step) {
@@ -363,6 +364,10 @@ void GameManager::apply_tank_actions(
 
         printer.setTankAction(i, action);
 
+        // std::cout << "[Tank Init] Tank for player " << tank->get_owner_id() 
+        //   << " at (" << tank->get_x() << ", " << tank->get_y() << ") initialized with " 
+        //   << tank->get_shell_num() << " shells." << std::endl;
+
         if (!tank || tank->get_health() == 0) {
             printer.markTankKilled(i);
             continue;
@@ -424,12 +429,14 @@ void GameManager::apply_tank_actions(
                 break;
             }
             
-            case ActionRequest::RotateLeft90:
+            case ActionRequest::RotateLeft90:{
                 if (in_backward_move_sequence) break;
                 tank->cancel_backward_sequence();
+                Direction old_dir = tank->get_direction();
                 tank->set_direction(rotate(tank->get_direction(), -90));
                 action_applied = true;
                 break;
+            }
 
             case ActionRequest::RotateRight90:
                 if (in_backward_move_sequence) break;
@@ -780,6 +787,11 @@ void GameManager::populate_map_row(
       // init tank_id to -1 temporarly
       auto tank =
           std::make_shared<Tank>(row_idx, col, dir, player_num,-1, nullptr);
+      
+      tank->set_shell_num(num_shells);
+      std::cout << "[Tank Init] Tank for player " << player_num 
+          << " at (" << row_idx << ", " << col << ") initialized with " 
+          << tank->get_shell_num() << " shells." << std::endl;
       tile.actor = tank;
       tanks_out.push_back(tank);
       player_spawn_points_out.emplace_back(player_num,
