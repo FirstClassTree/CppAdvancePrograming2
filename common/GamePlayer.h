@@ -34,4 +34,76 @@ private:
   std::string name;
 };
 
+class GamePlayer1 : public GamePlayer {
+public:
+  GamePlayer1(size_t x, size_t y, size_t max_steps,
+              size_t num_shells, std::string name,
+              std::vector<std::weak_ptr<Tank>> tanks);
+  ~GamePlayer1();
+};
+
+class GamePlayer2 : public GamePlayer {
+public:
+  GamePlayer2(size_t x, size_t y, size_t max_steps,
+              size_t num_shells, std::string name,
+              std::vector<std::weak_ptr<Tank>> tanks);
+  ~GamePlayer2();
+};
+
+class GamePlayer3 : public GamePlayer {
+public:
+  GamePlayer3(size_t x, size_t y, size_t max_steps,
+              size_t num_shells, std::string name,
+              std::vector<std::weak_ptr<Tank>> tanks);
+  ~GamePlayer3();
+};
+
+class GamePlayer4 : public GamePlayer {
+public:
+  GamePlayer4(size_t x, size_t y, size_t max_steps,
+              size_t num_shells, std::string name,
+              std::vector<std::weak_ptr<Tank>> tanks);
+  ~GamePlayer4();
+};
+
+class GamePlayer5 : public GamePlayer {
+public:
+  GamePlayer5(size_t x, size_t y, size_t max_steps,
+              size_t num_shells, std::string name,
+              std::vector<std::weak_ptr<Tank>> tanks);
+  ~GamePlayer5();
+};
+
+class GamePlayer6 : public GamePlayer {
+public:
+  GamePlayer6(size_t x, size_t y, size_t max_steps,
+              size_t num_shells, std::string name,
+              std::vector<std::weak_ptr<Tank>> tanks);
+  ~GamePlayer6();
+};
+
+class GamePlayer7 : public GamePlayer {
+public:
+  GamePlayer7(size_t x, size_t y, size_t max_steps,
+              size_t num_shells, std::string name,
+              std::vector<std::weak_ptr<Tank>> tanks);
+  ~GamePlayer7();
+};
+
+class GamePlayer8 : public GamePlayer {
+public:
+  GamePlayer8(size_t x, size_t y, size_t max_steps,
+              size_t num_shells, std::string name,
+              std::vector<std::weak_ptr<Tank>> tanks);
+  ~GamePlayer8();
+};
+
+class GamePlayer9 : public GamePlayer {
+public:
+  GamePlayer9(size_t x, size_t y, size_t max_steps,
+              size_t num_shells, std::string name,
+              std::vector<std::weak_ptr<Tank>> tanks);
+  ~GamePlayer9();
+};
+
 #endif
