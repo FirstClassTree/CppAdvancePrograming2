@@ -16,6 +16,11 @@ make
 ./tanks_game ../files/tests/maps/test_map_1.txt --visual 
 
 
+Logging Bonus
+Implement a logging system that writes to a log.txt file in the build directiory. 
+For each tank, log every action it takes in each round, including the round number, step count, player ID, tank ID, AI algorithm name, action name, remaining ammo, and cooldown. 
+This feature is valuable for debugging and provides a precise understanding of the game's flow and decision-making process.
+
 
 To test visualier:
 cd test
