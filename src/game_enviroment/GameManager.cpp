@@ -290,6 +290,12 @@ void GameManager::move_shells_stepwise() {
           wall->weaken();
           if (wall->is_destroyed()) {
             tile.ground.reset();
+            // Remove wall from game_entities
+            game_entities.erase(std::remove_if(game_entities.begin(), game_entities.end(),
+              [wall](const std::shared_ptr<Entity> &e) {
+                return e == wall;
+              }), game_entities.end());
+            
           }
         }
         shell->destroy();
@@ -304,23 +310,34 @@ void GameManager::move_shells_stepwise() {
         continue;
       }
 
-      // Move and register for shell–shell check
+      auto &prev_tile = map->get_tile(shell->get_x(), shell->get_y());
+      if (prev_tile.shell.lock() == shell) {
+        prev_tile.shell.reset();
+      }
+      
       shell->set_pos(next_x, next_y);
       position_map[{next_x, next_y}].push_back(shell);
     }
-
     // Detect and destroy shells that collide
     for (auto &[pos, shells] : position_map) {
+      auto &tile = map->get_tile(pos.first, pos.second);
       if (shells.size() > 1) {
         for (auto &shell : shells) {
           shell->destroy();
+          if (tile.shell.lock() == shell) {
+            tile.shell.reset();
+          }
         }
+      } else {
+        // Safe: only one shell here
+        tile.shell = shells[0];
       }
     }
-  }
+}
 }
 
 bool try_move_tank(std::shared_ptr<Tank> tank, Map *map, int dx, int dy) {
+
     int new_x = (tank->get_x() + dx + map->get_rows()) % map->get_rows();
     int new_y = (tank->get_y() + dy + map->get_cols()) % map->get_cols();
 
@@ -504,7 +521,10 @@ void GameManager::apply_tank_actions(
       // Create and register shell
       auto shell =
           std::make_shared<Shell>(shell_x, shell_y, tank->get_direction());
-      subscribe_shell(shell); // add to game_shells and game_entities
+
+          subscribe_shell(shell); // add to game_shells and game_entities
+      map->get_tile(shell_x, shell_y).shell = shell;
+
 
       tank->mark_shot(); // reduce shell count, begin cooldown
       action_applied = true;
