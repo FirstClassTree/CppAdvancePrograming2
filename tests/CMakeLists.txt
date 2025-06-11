@@ -26,25 +26,25 @@ target_link_libraries(runTests
 
 
 # Optional: Disable AddressSanitizer with cmake -DENABLE_ASAN=OFF
-option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
+# option(ENABLE_ASAN "Enable AddressSanitizer" OFF)
 
-if (ENABLE_ASAN)
-    message(STATUS "AddressSanitizer ENABLED")
+# if (ENABLE_ASAN)
+#     message(STATUS "AddressSanitizer ENABLED")
 
-    # Apply ASan flags with helpful defaults
-    target_compile_options(runTests PRIVATE
-        -fsanitize=address
-        -g
-        -O0
-        -fno-omit-frame-pointer  # for better stack traces
-    )
-    target_link_options(runTests PRIVATE
-        -fsanitize=address
-    )
+#     # Apply ASan flags with helpful defaults
+#     target_compile_options(runTests PRIVATE
+#         -fsanitize=address
+#         -g
+#         -O0
+#         -fno-omit-frame-pointer  # for better stack traces
+#     )
+#     target_link_options(runTests PRIVATE
+#         -fsanitize=address
+#     )
 
-    # Optional: Set runtime environment variables for verbose ASan
-    set(ENV{ASAN_OPTIONS} "verbosity=1:abort_on_error=1")
-endif()
+#     # Optional: Set runtime environment variables for verbose ASan
+#     set(ENV{ASAN_OPTIONS} "verbosity=1:abort_on_error=1")
+# endif()
 
 
 # Register the tests
