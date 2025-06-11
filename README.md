@@ -4,6 +4,7 @@
 # C++AdvancePrograming 2
 ## Project submitted by 
 Tal Weiss 323131268
+Lior Buchmeier 314711128
 
 
 This project is a C++ application (Tank Game) built using CMake.
