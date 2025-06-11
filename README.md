@@ -71,6 +71,11 @@ Tests are managed with CTest and Google Test. After building the project:
     ```
     This will execute all discovered tests (e.g., `runTests` which includes `MapTest`, etc.). Test results will be displayed in the terminal.
 
+    can also run with valgrind:
+    ```bash
+    valgrind   --leak-check=full   --show-leak-kinds=all   --track-origins=yes   --error-exitcode=1   ./tests/runTests
+    ```
+
 
     ** to run without memory leak check -DENABLE_ASAN=OFF
 
