@@ -249,10 +249,6 @@ void GameManager::run() {
     }
   }
   int winner = determine_winner(tanks_per_player);
-  // Step-based tie logic (if ended only by reaching max steps)
-  if (!status.tie_due_to_shells && winner == -1) {
-    status.tie_due_to_steps = true;
-  }
 
   printer.logResult(tanks_per_player, winner, status.tie_due_to_steps,
                     status.tie_due_to_shells, max_steps);
@@ -392,13 +388,9 @@ void GameManager::apply_tank_actions(
 
     std::vector<TankMove> tank_moves;
     std::map<std::pair<int, int>, std::vector<std::shared_ptr<Tank>>> end_positions;
-
-
-
-
   for (size_t i = 0; i < actions.size(); ++i) {
     const auto &[tank, action] = actions[i];
-a
+
     printer.setTankAction(i, action);
     if (!tank || tank->get_health() == 0) {
       printer.markTankKilled(i);
@@ -562,7 +554,6 @@ a
       printer.markTankKilled(i);
     }
   }
-
   // Resolve Tank direct collisions (same tile)
       for (auto &[pos, tanks_here] : end_positions) {
           if (tanks_here.size() > 1) {
@@ -588,20 +579,7 @@ a
 
 
 
-
-
-// Not sure if neccarry but will see
-// Phase 3:
-void GameManager::update_game_state() {
-  return;
-
-  // 4. Cleanup: remove dead shells or entities if needed
-  // (optional depending on whether you handle "is_destroyed()" logic elsewhere)
-
-  // TODO: Handle shell vs shell collision logic
-}
-
-// Phase 5:
+// Phase 4:
 GameEndStatus GameManager::check_end_conditions(int current_step,
                                                 int &steps_without_shells) {
   std::vector<int> alive_tanks(MAX_PLAYERS + 1, 0);
