@@ -34,7 +34,6 @@
 │   │       ├── DependInfo.cmake
 │   │       ├── build.make
 │   │       ├── cmake_clean.cmake
-│   │       ├── compiler_depend.internal
 │   │       ├── compiler_depend.make
 │   │       ├── compiler_depend.ts
 │   │       ├── depend.make
@@ -67,7 +66,6 @@
 │   │   │   │   │   │   ├── build.make
 │   │   │   │   │   │   ├── cmake_clean.cmake
 │   │   │   │   │   │   ├── cmake_clean_target.cmake
-│   │   │   │   │   │   ├── compiler_depend.internal
 │   │   │   │   │   │   ├── compiler_depend.make
 │   │   │   │   │   │   ├── compiler_depend.ts
 │   │   │   │   │   │   ├── depend.make
@@ -82,7 +80,6 @@
 │   │   │   │   │   │   ├── build.make
 │   │   │   │   │   │   ├── cmake_clean.cmake
 │   │   │   │   │   │   ├── cmake_clean_target.cmake
-│   │   │   │   │   │   ├── compiler_depend.internal
 │   │   │   │   │   │   ├── compiler_depend.make
 │   │   │   │   │   │   ├── compiler_depend.ts
 │   │   │   │   │   │   ├── depend.make
@@ -103,6 +100,7 @@
 │   │   │       │   │   └── lib
 │   │   │       │   │       └── cmake
 │   │   │       │   │           └── GTest
+│   │   │       │   │               ├── GTestTargets-debug.cmake
 │   │   │       │   │               ├── GTestTargets-noconfig.cmake
 │   │   │       │   │               └── GTestTargets.cmake
 │   │   │       │   ├── gtest.dir
@@ -110,7 +108,6 @@
 │   │   │       │   │   ├── build.make
 │   │   │       │   │   ├── cmake_clean.cmake
 │   │   │       │   │   ├── cmake_clean_target.cmake
-│   │   │       │   │   ├── compiler_depend.internal
 │   │   │       │   │   ├── compiler_depend.make
 │   │   │       │   │   ├── compiler_depend.ts
 │   │   │       │   │   ├── depend.make
@@ -125,7 +122,6 @@
 │   │   │       │   │   ├── build.make
 │   │   │       │   │   ├── cmake_clean.cmake
 │   │   │       │   │   ├── cmake_clean_target.cmake
-│   │   │       │   │   ├── compiler_depend.internal
 │   │   │       │   │   ├── compiler_depend.make
 │   │   │       │   │   ├── compiler_depend.ts
 │   │   │       │   │   ├── depend.make
@@ -473,6 +469,7 @@
 │   │   ├── libgmock_main.a
 │   │   ├── libgtest.a
 │   │   └── libgtest_main.a
+│   ├── log.txt
 │   ├── output.txt
 │   ├── src
 │   │   ├── CMakeFiles
@@ -498,7 +495,6 @@
 │   │   │       ├── build.make
 │   │   │       ├── cmake_clean.cmake
 │   │   │       ├── cmake_clean_target.cmake
-│   │   │       ├── compiler_depend.internal
 │   │   │       ├── compiler_depend.make
 │   │   │       ├── compiler_depend.ts
 │   │   │       ├── depend.make
@@ -530,12 +526,14 @@
 │   │   │       └── utils
 │   │   │           ├── InputHelper.cpp.o
 │   │   │           ├── InputHelper.cpp.o.d
+│   │   │           ├── Logger.cpp.o
+│   │   │           ├── Logger.cpp.o.d
 │   │   │           ├── Map.cpp.o
+│   │   │           ├── Map.cpp.o.d
 │   │   │           ├── OutputPrinter.cpp.o
 │   │   │           ├── OutputPrinter.cpp.o.d
 │   │   │           ├── Visualizer.cpp.o
 │   │   │           ├── Visualizer.cpp.o.d
-│   │   │           ├── map.cpp.o.d
 │   │   │           ├── tile.cpp.o
 │   │   │           └── tile.cpp.o.d
 │   │   ├── Makefile
@@ -554,7 +552,6 @@
 │       │       ├── cmake_clean.cmake
 │       │       ├── cmake_test.cpp.o
 │       │       ├── cmake_test.cpp.o.d
-│       │       ├── compiler_depend.internal
 │       │       ├── compiler_depend.make
 │       │       ├── compiler_depend.ts
 │       │       ├── depend.make
@@ -584,6 +581,7 @@
 │   ├── BattleInfo.h
 │   ├── Constants.h
 │   ├── Direction.h
+│   ├── DirectionUtility.h
 │   ├── Entity.h
 │   ├── EntityType.h
 │   ├── GameManager.h
@@ -592,6 +590,7 @@
 │   ├── HashUtils.h
 │   ├── IJson.h
 │   ├── InputHelper.h
+│   ├── Logger.h
 │   ├── Map.h
 │   ├── MoveableEntity.h
 │   ├── MyPlayer.h
@@ -634,6 +633,9 @@
 │       │   ├── rust_json_test.txt
 │       │   └── serialized_json_test.txt
 │       └── maps
+│           ├── input_big_multiple_players.txt
+│           ├── input_complex_flp.txt
+│           ├── input_simple.txt
 │           ├── missing_rows_map.txt
 │           ├── test_map_1.txt
 │           ├── test_map_cols_overflow.txt
@@ -667,6 +669,7 @@
 │   ├── main.cpp
 │   └── utils
 │       ├── InputHelper.cpp
+│       ├── Logger.cpp
 │       ├── Map.cpp
 │       ├── OutputPrinter.cpp
 │       ├── Visualizer.cpp
@@ -731,4 +734,4 @@
     ├── tank_entity_test.cpp
     └── test_json.cpp
 
-109 directories, 622 files
+109 directories, 625 files

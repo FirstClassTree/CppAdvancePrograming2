@@ -1,8 +1,4 @@
 
-
-
-
-
 # Add all source files
 file(GLOB_RECURSE TANKS_GAME_LIB_SOURCES CONFIGURE_DEPENDS *.cpp)
 
