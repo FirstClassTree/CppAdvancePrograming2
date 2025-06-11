@@ -1,7 +1,7 @@
 Big Multiple Players Battlefield
 MaxSteps=500
 NumShells=20
-Rows= 15
+Rows= 14
 Cols= 21
 ####################
 # 1  1    #        #

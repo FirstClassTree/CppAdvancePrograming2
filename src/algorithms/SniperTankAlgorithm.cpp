@@ -4,33 +4,39 @@
 #include <iostream>
 
 SniperTankAlgorithm::SniperTankAlgorithm(int player_index, int tank_index,
-                                         int tank_x, int tank_y) {
+                                         int tank_x, int tank_y)
+{
   this->player_index = player_index;
   this->tank_index = tank_index;
   this->currentState = {
       tank_x, tank_y, player_index == 1 ? Direction::L : Direction::R,
-      false,  SCOUT,  16,
+      false, SCOUT, 16,
       0};
   this->currentTarget = {0, 0, false};
   this->waypoint = {0, 0, false};
   this->chooseAction = ActionRequest::GetBattleInfo;
 }
 
-void SniperTankAlgorithm::set_target(std::vector<std::vector<char>> &grid) {
+void SniperTankAlgorithm::set_target(std::vector<std::vector<char>> &grid)
+{
 
-  if (grid.empty() || grid[0].empty()) {
+  if (grid.empty() || grid[0].empty())
+  {
     this->currentTarget.sync = false;
     return;
   }
   std::vector<SniperStep> candidates = get_candidates(grid);
-  if (candidates.empty()) {
+  if (candidates.empty())
+  {
     this->currentTarget.sync = false;
     return;
   }
-  for (auto &candidate : candidates) {
+  for (auto &candidate : candidates)
+  {
     if (!this->is_path_obstructed(
             grid, SniperStep{this->currentState.x, this->currentState.y},
-            candidate)) {
+            candidate))
+    {
       this->currentTarget = {candidate.x, candidate.y, true};
       std::cout << "set_target to: " << candidate.x << ", " << candidate.y
                 << std::endl;
@@ -40,7 +46,8 @@ void SniperTankAlgorithm::set_target(std::vector<std::vector<char>> &grid) {
   std::cout << "no valid target found" << std::endl;
   this->currentTarget.sync = false;
 }
-bool SniperTankAlgorithm::is_in_sight() {
+bool SniperTankAlgorithm::is_in_sight()
+{
   Direction direction = get_direction_from_step(
       SniperStep{this->currentState.x, this->currentState.y},
       SniperStep{this->currentTarget.x, this->currentTarget.y});
@@ -48,7 +55,8 @@ bool SniperTankAlgorithm::is_in_sight() {
 }
 
 Direction SniperTankAlgorithm::get_direction_from_step(SniperStep cur,
-                                                       SniperStep prv) {
+                                                       SniperStep prv)
+{
   std::cout << "get_direction_from_step cur: " << cur.x << ", " << cur.y
             << " prv: " << prv.x << ", " << prv.y << std::endl;
 
@@ -84,28 +92,34 @@ Direction SniperTankAlgorithm::get_direction_from_step(SniperStep cur,
 void SniperTankAlgorithm::move_toward(std::vector<std::vector<char>> &grid) {}
 
 std::vector<SniperStep>
-SniperTankAlgorithm::get_candidates(std::vector<std::vector<char>> &grid) {
+SniperTankAlgorithm::get_candidates(std::vector<std::vector<char>> &grid)
+{
   std::vector<SniperStep> candidates;
   size_t num_rows = grid.size();
   size_t num_cols = grid[0].size();
-  for (size_t r = 0; r < num_rows; ++r) {
-    for (size_t c = 0; c < num_cols; ++c) {
+  for (size_t r = 0; r < num_rows; ++r)
+  {
+    for (size_t c = 0; c < num_cols; ++c)
+    {
       char cell_content = grid[r][c];
       // Check if the cell contains a digit character, which we assume
       // represents a tank
-      if (std::isdigit(cell_content)) {
+      if (std::isdigit(cell_content))
+      {
         int potential_player_id = cell_content - '0';
         // Exclude self
-        if (potential_player_id != this->player_index) {
+        if (potential_player_id != this->player_index)
+        {
           candidates.push_back({static_cast<int>(r), static_cast<int>(c)});
         }
       }
     }
   }
   return candidates;
-  }
+}
 
-bool SniperTankAlgorithm::aligned() {
+bool SniperTankAlgorithm::aligned()
+{
   int dx = this->currentTarget.x - this->currentState.x;
   int dy = this->currentTarget.y - this->currentState.y;
 
@@ -133,7 +147,8 @@ bool SniperTankAlgorithm::aligned() {
 
 bool SniperTankAlgorithm::is_path_obstructed(
     std::vector<std::vector<char>> &grid, const SniperStep &from,
-    const SniperStep &to) {
+    const SniperStep &to)
+{
   // Check if there is a wall ('#') or an allied tank between from and to
   int x0 = from.x;
   int y0 = from.y;
@@ -145,26 +160,38 @@ bool SniperTankAlgorithm::is_path_obstructed(
   int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
   int err = dx + dy, e2;
 
-  while (true) {
-    // Skip the starting cell (the tank itself)
-    if (!(x0 == from.x && y0 == from.y)) {
-      char cell = grid[x0][y0];
+  auto inside = [&](int r, int c) -> bool
+  {
+    return r >= 0 && r < static_cast<int>(grid.size()) &&
+           c >= 0 && c < static_cast<int>(grid[r].size());
+  };
+
+  while (true)
+  {
+    if (!(x0 == from.x && y0 == from.y))
+    {
+      if (!inside(x0, y0)) // <-- new
+        return true;       // wandered off the board ⇒ blocked
+
+      char cell = grid[x0][y0]; // now guaranteed in-bounds
       if (cell == '#')
-        return true; // Wall
-      if (std::isdigit(cell)) {
-        int player_id = cell - '0';
-        if (player_id == this->player_index)
-          return true; // Allied tank
-      }
+        return true; // wall
+      if (std::isdigit(cell) &&
+          (cell - '0') == player_index)
+        return true; // allied tank
     }
+
     if (x0 == x1 && y0 == y1)
-      break;
+      break; // reached target
+
     e2 = 2 * err;
-    if (e2 >= dy) {
+    if (e2 >= dy)
+    {
       err += dy;
       x0 += sx;
     }
-    if (e2 <= dx) {
+    if (e2 <= dx)
+    {
       err += dx;
       y0 += sy;
     }
@@ -172,20 +199,24 @@ bool SniperTankAlgorithm::is_path_obstructed(
   return false;
 }
 
-void SniperTankAlgorithm::find_waypoint(std::vector<std::vector<char>> &grid) {
+void SniperTankAlgorithm::find_waypoint(std::vector<std::vector<char>> &grid)
+{
   std::cout << "finding waypoint" << std::endl;
-  if (!this->currentTarget.sync) {
+  if (!this->currentTarget.sync)
+  {
     this->waypoint.sync = false;
     return;
   }
 
   size_t num_rows = grid.size();
-  if (num_rows == 0) {
+  if (num_rows == 0)
+  {
     this->waypoint.sync = false;
     return;
   }
   size_t num_cols = grid[0].size();
-  if (num_cols == 0) {
+  if (num_cols == 0)
+  {
     this->waypoint.sync = false;
     return;
   }
@@ -198,16 +229,20 @@ void SniperTankAlgorithm::find_waypoint(std::vector<std::vector<char>> &grid) {
   if (this->currentState.x >= 0 &&
       this->currentState.x < static_cast<int>(num_rows) &&
       this->currentState.y >= 0 &&
-      this->currentState.y < static_cast<int>(num_cols)) {
+      this->currentState.y < static_cast<int>(num_cols))
+  {
     visited[this->currentState.x][this->currentState.y] = true;
-  } else {
+  }
+  else
+  {
     this->waypoint.sync = false;
     return;
   }
 
   SniperStep target_step = {this->currentTarget.x, this->currentTarget.y};
   std::cout << "exploring" << std::endl;
-  while (!q.empty()) {
+  while (!q.empty())
+  {
     SniperStep current_pos = q.front();
     q.pop();
 
@@ -217,7 +252,8 @@ void SniperTankAlgorithm::find_waypoint(std::vector<std::vector<char>> &grid) {
         (dx_align == 0 || dy_align == 0 || abs(dx_align) == abs(dy_align));
 
     if (is_aligned_from_pos &&
-        !is_path_obstructed(grid, current_pos, target_step)) {
+        !is_path_obstructed(grid, current_pos, target_step))
+    {
       this->waypoint = {current_pos.x, current_pos.y, true};
       std::cout << "found waypoint: " << current_pos.x << ", " << current_pos.y
                 << std::endl;
@@ -228,15 +264,18 @@ void SniperTankAlgorithm::find_waypoint(std::vector<std::vector<char>> &grid) {
     const int dx_move[] = {0, 0, 1, -1};
     const int dy_move[] = {1, -1, 0, 0};
 
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 4; ++i)
+    {
       int next_x = current_pos.x + dx_move[i];
       int next_y = current_pos.y + dy_move[i];
 
       if (next_x >= 0 && next_x < static_cast<int>(num_rows) && next_y >= 0 &&
-          next_y < static_cast<int>(num_cols) && !visited[next_x][next_y]) {
+          next_y < static_cast<int>(num_cols) && !visited[next_x][next_y])
+      {
         visited[next_x][next_y] = true;
         char cell = grid[next_x][next_y];
-        if (cell != '#' && !std::isdigit(cell)) {
+        if (cell != '#' && !std::isdigit(cell))
+        {
           q.push({next_x, next_y});
         }
       }
@@ -246,7 +285,8 @@ void SniperTankAlgorithm::find_waypoint(std::vector<std::vector<char>> &grid) {
   this->waypoint.sync = false;
 }
 
-void SniperTankAlgorithm::simulate_move() {
+void SniperTankAlgorithm::simulate_move()
+{
   // U, UR, R, RD, D, DL, L, UL
   // These static const arrays are assumed to be defined at file scope in
   // ChaserTankAlgorithm.cpp
@@ -256,8 +296,10 @@ void SniperTankAlgorithm::simulate_move() {
 
   bool state_has_changed = false;
 
-  switch (this->chooseAction) {
-  case ActionRequest::MoveForward: {
+  switch (this->chooseAction)
+  {
+  case ActionRequest::MoveForward:
+  {
     int dir_idx = static_cast<int>(this->currentState.direction);
     // Assuming DX and DY are accessible here (e.g., file-scope static const)
     // and their order matches the Direction enum.
@@ -321,15 +363,22 @@ void SniperTankAlgorithm::simulate_move() {
   }
 }
 
-void SniperTankAlgorithm::locate_me(std::vector<std::vector<char>> &grid) {
-  for (size_t r = 0; r < grid.size(); ++r) {
-    for (size_t c = 0; c < grid[r].size(); ++c) {
-      if (grid[r][c] == '%') {
+void SniperTankAlgorithm::locate_me(std::vector<std::vector<char>> &grid)
+{
+  for (size_t r = 0; r < grid.size(); ++r)
+  {
+    for (size_t c = 0; c < grid[r].size(); ++c)
+    {
+      if (grid[r][c] == '%')
+      {
         int x = static_cast<int>(r);
         int y = static_cast<int>(c);
-        if (this->currentState.x == x && this->currentState.y == y) {
+        if (this->currentState.x == x && this->currentState.y == y)
+        {
           continue;
-        } else {
+        }
+        else
+        {
           this->currentState.x = x;
           this->currentState.y = y;
           this->dirty = true;
@@ -340,22 +389,29 @@ void SniperTankAlgorithm::locate_me(std::vector<std::vector<char>> &grid) {
   }
 }
 
-ActionRequest SniperTankAlgorithm::getAction() {
-  if (this->dirty) {
+ActionRequest SniperTankAlgorithm::getAction()
+{
+  if (this->dirty)
+  {
     return ActionRequest::GetBattleInfo;
   }
 
-  switch (this->currentState.phase) {
+  switch (this->currentState.phase)
+  {
 
-  case AIM: {
-    if (this->is_in_sight()) {
+  case AIM:
+  {
+    if (this->is_in_sight())
+    {
       this->chooseAction = ActionRequest::Shoot;
       this->currentState.cooldown = 4;
       this->currentState.ammo -= 1;
       this->currentState.phase = SCOUT;
       std::cout << "shooting" << std::endl;
       break;
-    } else {
+    }
+    else
+    {
       Direction direction = get_direction_from_step(
           SniperStep{this->currentState.x, this->currentState.y},
           SniperStep{this->currentTarget.x, this->currentTarget.y});
@@ -365,35 +421,42 @@ ActionRequest SniperTankAlgorithm::getAction() {
       break;
     }
   }
-  case SCOUT: {
+  case SCOUT:
+  {
     std::cout << "in scout" << std::endl;
     if (this->currentState.x == this->waypoint.x &&
-        this->currentState.y == this->waypoint.y) {
+        this->currentState.y == this->waypoint.y)
+    {
       std::cout << "in scout, waypoint is reached" << std::endl;
       std::cout << "waypoint: " << this->waypoint.x << ", " << this->waypoint.y
                 << std::endl;
       std::cout << "state: " << this->currentState.x << ", "
                 << this->currentState.y << std::endl;
-      if (this->currentState.cooldown == 0) {
+      if (this->currentState.cooldown == 0)
+      {
         std::cout << "in scout, cooldown is 0" << std::endl;
         this->currentState.phase = AIM;
       }
       this->chooseAction = ActionRequest::DoNothing;
       break;
     }
-    if (this->waypoint.sync) {
+    if (this->waypoint.sync)
+    {
       Direction direction = get_direction_from_step(
           SniperStep{this->currentState.x, this->currentState.y},
           SniperStep{this->waypoint.x, this->waypoint.y});
       this->chooseAction =
           rotate_toward(this->currentState.direction, direction);
       break;
-    } else {
+    }
+    else
+    {
       this->chooseAction = ActionRequest::GetBattleInfo;
     }
   }
   }
-  if (this->currentState.cooldown > 0) {
+  if (this->currentState.cooldown > 0)
+  {
     this->currentState.cooldown -= 1;
   }
 
@@ -401,8 +464,10 @@ ActionRequest SniperTankAlgorithm::getAction() {
   return this->chooseAction;
 }
 
-ActionRequest SniperTankAlgorithm::rotate_toward(Direction from, Direction to) {
-  auto mod8 = [](int x) { return (x % 8 + 8) % 8; };
+ActionRequest SniperTankAlgorithm::rotate_toward(Direction from, Direction to)
+{
+  auto mod8 = [](int x)
+  { return (x % 8 + 8) % 8; };
 
   int fi = static_cast<int>(from);
   int ti = static_cast<int>(to);
@@ -412,24 +477,35 @@ ActionRequest SniperTankAlgorithm::rotate_toward(Direction from, Direction to) {
   if (diff_pos == 0)
     return ActionRequest::MoveForward;
 
-  if (diff_pos < diff_neg) {
-    if (diff_pos == 1) {
+  if (diff_pos < diff_neg)
+  {
+    if (diff_pos == 1)
+    {
       return ActionRequest::RotateRight45;
-    } else {
+    }
+    else
+    {
       return ActionRequest::RotateRight90;
     }
-  } else {
-    if (diff_neg == 1) {
+  }
+  else
+  {
+    if (diff_neg == 1)
+    {
       return ActionRequest::RotateLeft45;
-    } else {
+    }
+    else
+    {
       return ActionRequest::RotateLeft90;
     }
   }
 }
 
-void SniperTankAlgorithm::updateBattleInfo(BattleInfo &battle_info) {
+void SniperTankAlgorithm::updateBattleInfo(BattleInfo &battle_info)
+{
   this->dirty = false;
-  if (this->currentState.ammo == 0) {
+  if (this->currentState.ammo == 0)
+  {
     this->chooseAction = ActionRequest::DoNothing;
     return;
   }
@@ -437,18 +513,23 @@ void SniperTankAlgorithm::updateBattleInfo(BattleInfo &battle_info) {
   // set relevant data.
   auto &tank_info = dynamic_cast<TankBattleInfo &>(battle_info);
   auto view = tank_info.get_view();
-  if (!this->currentTarget.sync) {
+  if (!this->currentTarget.sync)
+  {
     set_target(view);
   }
   locate_me(view);
-  if (!this->aligned()) {
+  if (!this->aligned())
+  {
     this->currentState.phase = SCOUT;
     std::cout << "set to scout" << std::endl;
-  } else {
+  }
+  else
+  {
     this->currentState.phase = AIM;
     std::cout << "set to aim" << std::endl;
   }
-  if (!this->waypoint.sync) {
+  if (!this->waypoint.sync)
+  {
     find_waypoint(view);
   }
 }
