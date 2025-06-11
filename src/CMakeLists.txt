@@ -1,10 +1,4 @@
 
-
-# This line enables debugging with gdb
-set(CMAKE_BUILD_TYPE Debug)
-
-
-
 # Add all source files
 file(GLOB_RECURSE TANKS_GAME_LIB_SOURCES CONFIGURE_DEPENDS *.cpp)
 
