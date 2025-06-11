@@ -6,6 +6,8 @@
 #include "entities/Wall.h"
 #include "utils/Tile.h"
 #include <unordered_map>
+#include "../common/Logger.h"
+#include "../common/DirectionUtility.h"
 
 // int extractIntValue(const std::string &line, const std::string &key) {
 //   std::regex pattern("^\\s*" + key + "\\s*=\\s*(\\d+)\\s*$");
@@ -202,8 +204,12 @@ void GameManager::run() {
 
   int steps_without_shells = 0;
   GameEndStatus status;
+  
+  Logger& logger = Logger::getInstance();
+
 
   for (int step = 0; step < max_steps; ++step) {
+    logger.setRound(step);
 
     // Phase 1: Collect and apply tank actions, and resolve mine collisons
     auto tank_actions = collect_tank_actions();
@@ -251,6 +257,8 @@ void GameManager::run() {
   printer.logResult(tanks_per_player, winner, status.tie_due_to_steps,
                     status.tie_due_to_shells, max_steps);
   printer.writeToFile("output.txt");
+  
+  logger.flush();
   if (enable_visualizer) {
     visualizer.run();
   }
@@ -355,6 +363,8 @@ GameManager::collect_tank_actions() {
 void GameManager::apply_tank_actions(
     const std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> &actions,
     OutputPrinter &printer) {
+      Logger& logger = Logger::getInstance();
+
 
   for (size_t i = 0; i < actions.size(); ++i) {
     const auto &[tank, action] = actions[i];
@@ -370,6 +380,7 @@ void GameManager::apply_tank_actions(
       printer.markTankKilled(i);
       continue;
     }
+    logger.logTankAction(*tank, actionRequestToString(action));
 
     bool action_applied = false;
     bool in_backward_move_sequence = false;

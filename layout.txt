@@ -473,6 +473,7 @@
 │   │   ├── libgmock_main.a
 │   │   ├── libgtest.a
 │   │   └── libgtest_main.a
+│   ├── output.txt
 │   ├── src
 │   │   ├── CMakeFiles
 │   │   │   ├── CMakeDirectoryInformation.cmake
@@ -564,6 +565,8 @@
 │       │       ├── output_printer_test.cpp.o
 │       │       ├── output_printer_test.cpp.o.d
 │       │       ├── progress.make
+│       │       ├── sniper_algo_test.cpp.o
+│       │       ├── sniper_algo_test.cpp.o.d
 │       │       ├── tank_entity_test.cpp.o
 │       │       ├── tank_entity_test.cpp.o.d
 │       │       ├── test_json.cpp.o
@@ -644,7 +647,6 @@
 ├── src
 │   ├── CMakeLists.txt
 │   ├── MyPlayer.cpp
-│   ├── MyPlayerFactory.cpp
 │   ├── MySatelliteView.cpp
 │   ├── algorithms
 │   │   ├── ChaserTankAlgorithm.cpp
@@ -729,4 +731,4 @@
     ├── tank_entity_test.cpp
     └── test_json.cpp
 
-109 directories, 620 files
+109 directories, 622 files
