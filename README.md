@@ -7,7 +7,8 @@ Tal Weiss 323131268
 Lior Buchmeier 314711128
 
 
-This project is a C++ application (Tank Game) built using CMake.
+This project is a modern C++20 tank battle simulation game, featuring different AI-controlled tanks, real-time interaction, and a fully configurable battlefield. Built using CMake with a modular design, it includes a detailed logging system, automated testing with Google Test, and an interactive terminal-based visualizer powered by ncurses. The game supports up to 9 players and deterministic, turn-based gameplay for consistent and reproducible simulations.
+
 
 ## Prerequisites
 
