@@ -1,6 +1,5 @@
 #include "../../common/algorithms/SniperTankAlgorithm.h"
 #include "ActionRequest.h"
-#include "TankAlgorithm.h"
 #include <iostream>
 
 SniperTankAlgorithm::SniperTankAlgorithm(int player_index, int tank_index,
@@ -14,8 +13,8 @@ SniperTankAlgorithm::SniperTankAlgorithm(int player_index, int tank_index,
       0};
   this->currentTarget = {0, 0, false};
   this->waypoint = {0, 0, false};
-  this->ask_cooldown = 4;
-  this->stuck_cooldown = 2;
+  this->ask_cooldown = 10;
+  this->stuck_cooldown = 6;
   this->chooseAction = ActionRequest::GetBattleInfo;
 }
 
@@ -37,7 +36,7 @@ void SniperTankAlgorithm::set_target(std::vector<std::vector<char>> &grid)
   {
     if (!this->is_path_obstructed(
             grid, SniperStep{this->currentState.x, this->currentState.y},
-            candidate))
+            candidate) || this->stuck_cooldown <= 0)
     {
       this->currentTarget = {candidate.x, candidate.y, true};
       std::cout << "set_target to: " << candidate.x << ", " << candidate.y
@@ -252,7 +251,7 @@ void SniperTankAlgorithm::find_waypoint(std::vector<std::vector<char>> &grid)
         (dx_align == 0 || dy_align == 0 || abs(dx_align) == abs(dy_align));
 
     if (is_aligned_from_pos &&
-        !is_path_obstructed(grid, current_pos, target_step))
+        (!is_path_obstructed(grid, current_pos, target_step) || this->stuck_cooldown <= 0))
     {
       this->waypoint = {current_pos.x, current_pos.y, true};
       std::cout << "found waypoint: " << current_pos.x << ", " << current_pos.y
@@ -393,11 +392,12 @@ ActionRequest SniperTankAlgorithm::getAction()
 {
   if (this->dirty)
   {
-    this->ask_cooldown = 4;
+    this->ask_cooldown = 8;
     this->currentTarget.sync = false;
     this->dirty = false;
     this->waypoint.sync = false;
     return ActionRequest::GetBattleInfo;
+    
   }
 
   switch (this->currentState.phase)
@@ -456,6 +456,10 @@ ActionRequest SniperTankAlgorithm::getAction()
     else
     {
       this->chooseAction = ActionRequest::GetBattleInfo;
+      if (this->stuck_cooldown > 0)
+      {
+        this->stuck_cooldown -= 1;
+      }
     }
   }
   }
@@ -514,6 +518,10 @@ ActionRequest SniperTankAlgorithm::rotate_toward(Direction from, Direction to)
 void SniperTankAlgorithm::updateBattleInfo(BattleInfo &battle_info)
 {
   this->dirty = false;
+  if (this->stuck_cooldown > 0)
+  {
+    this->stuck_cooldown -= 1;
+  }
   if (this->currentState.ammo == 0)
   {
     this->chooseAction = ActionRequest::DoNothing;
@@ -531,12 +539,10 @@ void SniperTankAlgorithm::updateBattleInfo(BattleInfo &battle_info)
   if (!this->aligned())
   {
     this->currentState.phase = SCOUT;
-    std::cout << "set to scout for alignment *************" << std::endl;
   }
   else
   {
     this->currentState.phase = AIM;
-    std::cout << "set to aim" << std::endl;
   }
   if (!this->waypoint.sync)
   {
