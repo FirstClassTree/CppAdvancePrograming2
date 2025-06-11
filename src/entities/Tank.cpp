@@ -12,14 +12,14 @@ Tank::~Tank() {}
 
 
 
-int Tank::get_owner_id() { return player_owner; }
-int Tank::get_health() { return health; }
-int Tank::get_tank_id() { return tank_id; }
-int Tank::get_shell_num() { return this->shell_num; }
+int Tank::get_owner_id() const{ return player_owner; }
+int Tank::get_health()const { return health; }
+int Tank::get_tank_id() const{ return tank_id; }
+int Tank::get_shell_num()const { return this->shell_num; }
+int Tank::get_cooldown() const{return shoot_cooldown;} 
 
 
-
-TankAlgorithm& Tank::get_ai() { return *ai; }
+TankAlgorithm& Tank::get_ai() const { return *ai; }
 
 void Tank::set_shell_num(int shell_num) {this->shell_num = shell_num;}
 void Tank::set_tank_id(int tank_id) { this->tank_id = tank_id; }

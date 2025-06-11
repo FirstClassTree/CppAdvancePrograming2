@@ -22,14 +22,16 @@ public:
        std::unique_ptr<TankAlgorithm> ai);
   ~Tank();
 
-  int get_owner_id();
-  int get_health();
-  int get_tank_id();
-  int get_shell_num();
+  int get_owner_id() const;
+  int get_health() const;
+  int get_tank_id() const;
+  int get_shell_num() const ;
+int get_cooldown() const ;
+  TankAlgorithm& get_ai() const;
+
   void set_shell_num(int shell_num);
   void set_tank_id(int tank_id);
   void set_ai(std::unique_ptr<TankAlgorithm> ai);
-  TankAlgorithm& get_ai();
 
   std::string serialize() override;
 

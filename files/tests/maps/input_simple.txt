@@ -1,0 +1,13 @@
+input_simple battlefield
+MaxSteps=500
+NumShells=20
+Rows= 8
+Cols= 8
+####### 
+#   @@1 
+#      #
+#      #
+#      #
+#  @  @#
+ 2  @ @#
+     @@#
