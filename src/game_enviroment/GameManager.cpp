@@ -488,8 +488,10 @@ void GameManager::apply_tank_actions(
       break;
     }
     case ActionRequest::Shoot: {
-      if (in_backward_move_sequence)
+      if (in_backward_move_sequence) {
         break;
+      }
+        
       tank->cancel_backward_sequence();
       // Not allowed to shoot — cooldown or no ammo
       if (!tank->can_shoot()) {

@@ -35,7 +35,7 @@ if (ENABLE_ASAN)
     target_compile_options(runTests PRIVATE
         -fsanitize=address
         -g
-        -O1
+        -O0
         -fno-omit-frame-pointer  # for better stack traces
     )
     target_link_options(runTests PRIVATE
