@@ -3,7 +3,7 @@
 
 #include "../Direction.h"
 #include "../TankAlgorithm.h"
-#include "ActionRequest.h"
+#include "../ActionRequest.h"
 #include "TankBattleInfo.h"
 #include <limits>
 #include <queue>

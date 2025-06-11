@@ -86,6 +86,9 @@ To remove generated build files, object files, and executables:
     cd .. # Go up to the project root from the build directory
     rm -rf build
     ```
-
+3. **To debug with gdb**
+    gdb ./tank_s_game
+    run ../files/tests/maps/input_big_multiple_players.txt
+    bt
 ---
 *This README assumes a standard CMake workflow with Make. If you use a different generator (e.g., Ninja, Visual Studio), the build commands (`make`, `make clean`) will differ from those shown above.*
