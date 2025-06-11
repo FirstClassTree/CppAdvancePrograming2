@@ -613,16 +613,23 @@ void GameManager::apply_tank_actions(
     }
   }
   // Resolve Tank direct collisions (same tile)
-    for (auto &[pos, tanks_here] : end_positions) {
+for (auto &[pos, tanks_here] : end_positions) {
+    // Scan all tanks, find ones already at this position that didn't move
+    for (const auto& tank : game_tanks) {
+        if (tank && tank->get_health() > 0 &&
+            tank->get_x() == pos.first && tank->get_y() == pos.second &&
+            std::none_of(tanks_here.begin(), tanks_here.end(),
+                         [&](const auto &t) { return t == tank; })) {
+            tanks_here.push_back(tank);
+        }
+    }
+
     if (tanks_here.size() > 1) {
         for (auto &tank : tanks_here) {
             tank->damage();
-            if (tank->get_health() == 0) {
-                auto &tile = map->get_tile(tank->get_x(), tank->get_y());
-                printer.markTankKilled((*tank).get_tank_id());
-                tile.actor.reset();
-                
-            }
+            printer.markTankKilled(tank->get_tank_id());
+            auto &tile = map->get_tile(tank->get_x(), tank->get_y());
+            tile.actor.reset();
         }
     }
 }
