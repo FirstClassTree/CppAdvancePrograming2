@@ -20,6 +20,7 @@ SniperTankAlgorithm::SniperTankAlgorithm(int player_index, int tank_index,
 
 void SniperTankAlgorithm::set_target(std::vector<std::vector<char>> &grid)
 {
+  std::cout << "setting target" << std::endl;
 
   if (grid.empty() || grid[0].empty())
   {
@@ -82,8 +83,6 @@ Direction SniperTankAlgorithm::get_direction_from_step(SniperStep cur,
     return Direction::DL;
   if (ndx == -1 && ndy == -1)
     return Direction::UL;
-
-  std::cout << "no direction found" << std::endl;
   this->waypoint.sync = false;
   return Direction::U;
 }
@@ -201,21 +200,17 @@ bool SniperTankAlgorithm::is_path_obstructed(
 void SniperTankAlgorithm::find_waypoint(std::vector<std::vector<char>> &grid)
 {
   std::cout << "finding waypoint" << std::endl;
-  if (!this->currentTarget.sync)
-  {
-    this->waypoint.sync = false;
-    return;
-  }
-
   size_t num_rows = grid.size();
   if (num_rows == 0)
   {
+    std::cout << "num_rows is 0" << std::endl;
     this->waypoint.sync = false;
     return;
   }
   size_t num_cols = grid[0].size();
   if (num_cols == 0)
   {
+    std::cout << "num_cols is 0" << std::endl;
     this->waypoint.sync = false;
     return;
   }
@@ -225,6 +220,9 @@ void SniperTankAlgorithm::find_waypoint(std::vector<std::vector<char>> &grid)
 
   std::vector<std::vector<bool>> visited(num_rows,
                                          std::vector<bool>(num_cols, false));
+
+  std::cout << "visited size: " << visited.size() << std::endl;
+  
   if (this->currentState.x >= 0 &&
       this->currentState.x < static_cast<int>(num_rows) &&
       this->currentState.y >= 0 &&
@@ -300,64 +298,39 @@ void SniperTankAlgorithm::simulate_move()
   case ActionRequest::MoveForward:
   {
     int dir_idx = static_cast<int>(this->currentState.direction);
-    // Assuming DX and DY are accessible here (e.g., file-scope static const)
-    // and their order matches the Direction enum.
-
-    std::cout << "MoveForward from: " << this->currentState.x << ", "
-              << this->currentState.y << std::endl;
-
     this->currentState.x += DX[dir_idx];
     this->currentState.y += DY[dir_idx];
-    // Note: No boundary checks (e.g., map wrapping) are performed here.
-    // This simulation updates the tank's belief of its state.
-    // The actual state will be synchronized by the next call to
-    // updateBattleInfo.
     state_has_changed = true;
-    std::cout << "MoveForward to: " << this->currentState.x << ", "
-              << this->currentState.y << std::endl;
     break;
   }
   case ActionRequest::RotateRight45:
-    std::cout << "RotateRight45 simulated" << std::endl;
     this->currentState.direction = static_cast<Direction>(
         (static_cast<int>(this->currentState.direction) + 1) % 8);
     state_has_changed = true;
     break;
   case ActionRequest::RotateRight90:
-    std::cout << "RotateRight90 simulated" << std::endl;
     this->currentState.direction = static_cast<Direction>(
         (static_cast<int>(this->currentState.direction) + 2) % 8);
     state_has_changed = true;
     break;
   case ActionRequest::RotateLeft45:
-    std::cout << "RotateLeft45 simulated" << std::endl;
     this->currentState.direction = static_cast<Direction>(
         (static_cast<int>(this->currentState.direction) - 1 + 8) % 8);
     state_has_changed = true;
     break;
   case ActionRequest::RotateLeft90:
-    std::cout << "RotateLeft90 simulated" << std::endl;
     this->currentState.direction = static_cast<Direction>(
         (static_cast<int>(this->currentState.direction) - 2 + 8) % 8);
     state_has_changed = true;
     break;
   case ActionRequest::Shoot:
-    std::cout << "Shoot simulated" << std::endl;
-    // Shooting does not change position or direction.
-    // If ammo were part of State, it might be updated here.
     break;
   case ActionRequest::DoNothing:
-    std::cout << "DoNothing simulated" << std::endl;
-    // No change to state.
     break;
   case ActionRequest::GetBattleInfo:
-    std::cout << "GetBattleInfo simulated" << std::endl;
-    // This is a request for information, not a tank action that changes its
-    // state. The actual state update will happen in updateBattleInfo.
     break;
   default:
-    std::cout << "Unknown action simulated" << std::endl;
-    // Unknown action, do nothing. Or, consider logging an error.
+
     break;
   }
 }
@@ -411,7 +384,6 @@ ActionRequest SniperTankAlgorithm::getAction()
       this->currentState.cooldown = 4;
       this->currentState.ammo -= 1;
       this->currentState.phase = SCOUT;
-      std::cout << "shooting" << std::endl;
       break;
     }
     else
@@ -421,24 +393,16 @@ ActionRequest SniperTankAlgorithm::getAction()
           SniperStep{this->currentTarget.x, this->currentTarget.y});
       this->chooseAction =
           rotate_toward(this->currentState.direction, direction);
-      std::cout << "rotating to target" << std::endl;
       break;
     }
   }
   case SCOUT:
   {
-    std::cout << "in scout" << std::endl;
     if (this->currentState.x == this->waypoint.x &&
         this->currentState.y == this->waypoint.y)
     {
-      std::cout << "in scout, waypoint is reached" << std::endl;
-      std::cout << "waypoint: " << this->waypoint.x << ", " << this->waypoint.y
-                << std::endl;
-      std::cout << "state: " << this->currentState.x << ", "
-                << this->currentState.y << std::endl;
       if (this->currentState.cooldown == 0)
       {
-        std::cout << "in scout, cooldown is 0" << std::endl;
         this->currentState.phase = AIM;
       }
       this->chooseAction = ActionRequest::DoNothing;
@@ -485,7 +449,6 @@ ActionRequest SniperTankAlgorithm::rotate_toward(Direction from, Direction to)
 
   int fi = static_cast<int>(from);
   int ti = static_cast<int>(to);
-  std::cout << "rotate_toward from: " << fi << " to: " << ti << std::endl;
   int diff_pos = mod8(ti - fi);
   int diff_neg = mod8(fi - ti);
   if (diff_pos == 0)

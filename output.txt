@@ -1,0 +1,11 @@
+DoNothing, GetBattleInfo
+DoNothing, GetBattleInfo
+DoNothing, GetBattleInfo
+DoNothing, GetBattleInfo
+DoNothing, GetBattleInfo
+DoNothing, GetBattleInfo
+DoNothing, GetBattleInfo
+DoNothing, GetBattleInfo
+DoNothing, GetBattleInfo
+DoNothing, GetBattleInfo
+Tie, reached max steps = 10, player 1 has 0 tanks, player 2 has 0 tanks

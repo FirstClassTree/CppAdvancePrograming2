@@ -34,9 +34,9 @@ int GamePlayer::get_id() const { return id; }
 
 std::vector<std::vector<char>>
 GamePlayer::extract_view(SatelliteView &satellite_view) {
-  std::vector<std::vector<char>> view(map_height, std::vector<char>(map_width));
-  for (std::size_t r = 0; r < map_height; ++r)
-    for (std::size_t c = 0; c < map_width; ++c) {
+  std::vector<std::vector<char>> view(map_width, std::vector<char>(map_height));
+  for (std::size_t r = 0; r < map_width; ++r)
+    for (std::size_t c = 0; c < map_height; ++c) {
       view[r][c] = satellite_view.getObjectAt(r, c);
       //std::cout << "View at " << r << ", " << c << ": " << view[r][c] << std::endl;
     }

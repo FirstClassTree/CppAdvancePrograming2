@@ -121,7 +121,6 @@ void ChaserTankAlgorithm::set_target(std::vector<std::vector<char>> &grid) {
   for (size_t r = 0; r < num_rows; ++r) {
     for (size_t c = 0; c < num_cols; ++c) {
       char cell_content = grid[r][c];
-      // std::cout << "Cell content: " << cell_content << std::endl;
       //  Check if the cell contains a digit character, which we assume
       //  represents a tank
       if (std::isdigit(cell_content)) {
@@ -259,7 +258,6 @@ ActionRequest ChaserTankAlgorithm::rotate_toward(Direction from, Direction to) {
 
   int fi = static_cast<int>(from);
   int ti = static_cast<int>(to);
-  std::cout << "rotate_toward from: " << fi << " to: " << ti << std::endl;
   int diff_pos = mod8(ti - fi);
   int diff_neg = mod8(fi - ti);
   if (diff_pos == 0)
@@ -293,70 +291,43 @@ void ChaserTankAlgorithm::simulate_move() {
   switch (this->chooseAction) {
   case ActionRequest::MoveForward: {
     int dir_idx = static_cast<int>(this->currentState.direction);
-    // Assuming DX and DY are accessible here (e.g., file-scope static const)
-    // and their order matches the Direction enum.
-
-    std::cout << "MoveForward from: " << this->currentState.x << ", "
-              << this->currentState.y << std::endl;
-
     this->currentState.x += DX[dir_idx];
     this->currentState.y += DY[dir_idx];
-    // Note: No boundary checks (e.g., map wrapping) are performed here.
-    // This simulation updates the tank's belief of its state.
-    // The actual state will be synchronized by the next call to
-    // updateBattleInfo.
     state_has_changed = true;
-    std::cout << "MoveForward to: " << this->currentState.x << ", "
-              << this->currentState.y << std::endl;
+
     break;
   }
   case ActionRequest::RotateRight45:
-    std::cout << "RotateRight45 simulated" << std::endl;
     this->currentState.direction = static_cast<Direction>(
         (static_cast<int>(this->currentState.direction) + 1) % 8);
     state_has_changed = true;
     break;
   case ActionRequest::RotateRight90:
-    std::cout << "RotateRight90 simulated" << std::endl;
     this->currentState.direction = static_cast<Direction>(
         (static_cast<int>(this->currentState.direction) + 2) % 8);
     state_has_changed = true;
     break;
   case ActionRequest::RotateLeft45:
-    std::cout << "RotateLeft45 simulated" << std::endl;
     this->currentState.direction = static_cast<Direction>(
         (static_cast<int>(this->currentState.direction) - 1 + 8) % 8);
     state_has_changed = true;
     break;
   case ActionRequest::RotateLeft90:
-    std::cout << "RotateLeft90 simulated" << std::endl;
     this->currentState.direction = static_cast<Direction>(
         (static_cast<int>(this->currentState.direction) - 2 + 8) % 8);
     state_has_changed = true;
     break;
   case ActionRequest::Shoot:
-    std::cout << "Shoot simulated" << std::endl;
-    // Shooting does not change position or direction.
-    // If ammo were part of State, it might be updated here.
     break;
   case ActionRequest::DoNothing:
-    std::cout << "DoNothing simulated" << std::endl;
-    // No change to state.
     break;
   case ActionRequest::GetBattleInfo:
-    std::cout << "GetBattleInfo simulated" << std::endl;
-    // This is a request for information, not a tank action that changes its
-    // state. The actual state update will happen in updateBattleInfo.
+
     break;
   default:
     std::cout << "Unknown action simulated" << std::endl;
-    // Unknown action, do nothing. Or, consider logging an error.
     break;
   }
-
-  // if (state_has_changed) {
-  //   this->currentState.sync = false;
-  // }
 }
 
 std::vector<std::vector<bool>>

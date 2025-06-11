@@ -163,7 +163,6 @@ void GameManager::post_load_process() {
     } else {
       // Only increment tank_ids[owner_id] if owner_id is a valid index.
       int current_tank_id_for_owner = tank_ids[owner_id];
-      std::cout << "owner id gave the next tank id: " << current_tank_id_for_owner << std::endl;
       tank_sp->set_ai(
           tank_algorithm_factory.create(owner_id, current_tank_id_for_owner));
       tank_sp->set_tank_id(current_tank_id_for_owner);
