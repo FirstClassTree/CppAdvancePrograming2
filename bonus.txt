@@ -4,7 +4,10 @@ weve added logger as part of the bonus
 
 Automatic testing based on Gtest:
 - To run do:
-
+cd build
+cmake ..
+make
+ctest
 
 Visual Simualation:
 Written in C++ with ncurses libary, it offers unique diffrent colors for up to 9 diffrent player Tanks, along with all the directions
@@ -12,6 +15,7 @@ allowing running back and forward in the Simualation with the arrows keys.
 
 To Run with visualizaion add --visual, e.g.:
 cd build
+cmake ..
 make 
 ./tanks_game ../files/tests/maps/test_map_1.txt --visual 
 
