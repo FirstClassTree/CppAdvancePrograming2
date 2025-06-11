@@ -35,7 +35,7 @@ void Tank::mark_shot() {
     if (can_shoot()) {
         shell_num--;
         // +1 because each round removes cooldown including shooting round
-        shoot_cooldown = SHOOT_COOLDOWN_STEPS + 1;
+        shoot_cooldown = SHOOT_COOLDOWN_STEPS;
     }
 }
 

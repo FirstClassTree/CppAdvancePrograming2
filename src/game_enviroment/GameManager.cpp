@@ -263,11 +263,10 @@ void GameManager::run() {
 
 // Phase 2:
 void GameManager::move_shells_stepwise() {
-  constexpr int sub_steps = 2;
   int rows = map->get_rows();
   int cols = map->get_cols();
 
-  for (int step = 0; step < sub_steps; ++step) {
+  for (int step = 0; step < SHELL_SPEED; ++step) {
     // Track positions after this sub-step for shell to shell collisons
     std::unordered_map<std::pair<int, int>, std::vector<std::shared_ptr<Shell>>>
         position_map;
