@@ -306,10 +306,19 @@ void GameManager::move_shells_stepwise() {
       // Tank collision
       auto tank = tile.actor.lock();
       if (tank && tank->get_health() > 0) {
-        tank->damage();
-        shell->destroy();
-        continue;
+          tank->damage();
+
+          if (tank->get_health() == 0) {
+              auto &actual_tile = map->get_tile(tank->get_x(), tank->get_y());
+              if (actual_tile.actor.lock() == tank) {
+                  actual_tile.actor.reset();
+              }
+          }
+
+          shell->destroy();
+          continue;
       }
+
 
       auto &prev_tile = map->get_tile(shell->get_x(), shell->get_y());
       if (prev_tile.shell.lock() == shell) {
@@ -429,16 +438,22 @@ void GameManager::apply_tank_actions(
               tank->cancel_backward_sequence();
               break;
           }
-
           std::pair<int, int> start_pos = {tank->get_x(), tank->get_y()};
-          
-
           auto [dx, dy] = get_direction_offset(tank->get_direction());
           action_applied = try_move_tank(tank, map.get(), dx, dy);
           if (action_applied){
             std::pair<int, int> end_pos = {tank->get_x(), tank->get_y()};
             tank_moves.push_back({tank, start_pos, end_pos});
             end_positions[end_pos].push_back(tank);
+
+            // Update actor pointer on new tile
+            map->get_tile(end_pos.first, end_pos.second).actor = tank;
+
+            //  Optionally clear actor from old tile
+            auto &old_tile = map->get_tile(start_pos.first, start_pos.second);
+            if (old_tile.actor.lock() == tank) {
+                old_tile.actor.reset();
+            }
           }
           break;
       }
@@ -457,6 +472,16 @@ void GameManager::apply_tank_actions(
               std::pair<int, int> end_pos = {tank->get_x(), tank->get_y()};
               tank_moves.push_back({tank, start_pos, end_pos});
               end_positions[end_pos].push_back(tank);
+
+
+              // Update actor pointer on new tile
+              map->get_tile(end_pos.first, end_pos.second).actor = tank;
+
+              // Optionally clear actor from old tile
+              auto &old_tile = map->get_tile(start_pos.first, start_pos.second);
+              if (old_tile.actor.lock() == tank) {
+                  old_tile.actor.reset();
+              }
             }
         }
         break;
@@ -563,6 +588,9 @@ void GameManager::apply_tank_actions(
       auto ground = tile.ground.lock();
       if (ground && ground->get_type() == EntityType::MINE) {
         tank->damage();      // or tank->set_health(0);
+        if (tank->get_health() == 0) {
+          tile.actor.reset();
+        }
         tile.ground.reset(); // Remove the mine
                              // Optionally destroy the mine object if needed
       }
@@ -581,20 +609,46 @@ void GameManager::apply_tank_actions(
           if (tanks_here.size() > 1) {
               for (auto &tank : tanks_here) {
                   tank->damage();
+                  if (tank->get_health() == 0) {
+                    auto &tile = map->get_tile(tank->get_x(), tank->get_y());
+                    if (tile.actor.lock() == tank) {
+                        tile.actor.reset();
+                    }
+                }
+
               }
           }
       }
 
       // Resolve Tank cross-movement collisions (swapping)
       for (size_t i = 0; i < tank_moves.size(); ++i) {
-          for (size_t j = i + 1; j < tank_moves.size(); ++j) {
-              if (tank_moves[i].start == tank_moves[j].end &&
-                  tank_moves[i].end == tank_moves[j].start) {
-                  tank_moves[i].tank->damage();
-                  tank_moves[j].tank->damage();
-              }
-          }
-      }
+    for (size_t j = i + 1; j < tank_moves.size(); ++j) {
+        if (tank_moves[i].start == tank_moves[j].end &&
+            tank_moves[i].end == tank_moves[j].start) {
+            
+            tank_moves[i].tank->damage();
+            tank_moves[j].tank->damage();
+
+            // Clear actor tile if tank i died
+            if (tank_moves[i].tank->get_health() == 0) {
+                auto &tile = map->get_tile(
+                    tank_moves[i].tank->get_x(), tank_moves[i].tank->get_y());
+                if (tile.actor.lock() == tank_moves[i].tank) {
+                    tile.actor.reset();
+                }
+            }
+
+            // ✅ Also clear actor tile if tank j died
+            if (tank_moves[j].tank->get_health() == 0) {
+                auto &tile = map->get_tile(
+                    tank_moves[j].tank->get_x(), tank_moves[j].tank->get_y());
+                if (tile.actor.lock() == tank_moves[j].tank) {
+                    tile.actor.reset();
+                }
+            }
+        }
+    }
+}
 
 
 }
