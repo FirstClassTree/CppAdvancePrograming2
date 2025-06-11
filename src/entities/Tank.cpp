@@ -1,4 +1,5 @@
 #include "entities/Tank.h"
+#include <iostream>
 
 
 Tank::Tank(int x, int y, Direction direction, int player_owner,int tank_id, std::unique_ptr<TankAlgorithm> ai)
