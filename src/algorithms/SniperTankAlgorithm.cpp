@@ -14,6 +14,8 @@ SniperTankAlgorithm::SniperTankAlgorithm(int player_index, int tank_index,
       0};
   this->currentTarget = {0, 0, false};
   this->waypoint = {0, 0, false};
+  this->ask_cooldown = 4;
+  this->stuck_cooldown = 2;
   this->chooseAction = ActionRequest::GetBattleInfo;
 }
 
@@ -57,8 +59,6 @@ bool SniperTankAlgorithm::is_in_sight()
 Direction SniperTankAlgorithm::get_direction_from_step(SniperStep cur,
                                                        SniperStep prv)
 {
-  std::cout << "get_direction_from_step cur: " << cur.x << ", " << cur.y
-            << " prv: " << prv.x << ", " << prv.y << std::endl;
 
   int dx = prv.x - cur.x;
   int dy = prv.y - cur.y;
@@ -393,6 +393,10 @@ ActionRequest SniperTankAlgorithm::getAction()
 {
   if (this->dirty)
   {
+    this->ask_cooldown = 4;
+    this->currentTarget.sync = false;
+    this->dirty = false;
+    this->waypoint.sync = false;
     return ActionRequest::GetBattleInfo;
   }
 
@@ -459,6 +463,12 @@ ActionRequest SniperTankAlgorithm::getAction()
   {
     this->currentState.cooldown -= 1;
   }
+  if (this->ask_cooldown > 0)
+  {
+    this->ask_cooldown -= 1;
+  } else {
+    this->dirty = true;
+  }
 
   this->simulate_move();
   return this->chooseAction;
@@ -521,7 +531,7 @@ void SniperTankAlgorithm::updateBattleInfo(BattleInfo &battle_info)
   if (!this->aligned())
   {
     this->currentState.phase = SCOUT;
-    std::cout << "set to scout" << std::endl;
+    std::cout << "set to scout for alignment *************" << std::endl;
   }
   else
   {

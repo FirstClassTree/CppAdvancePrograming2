@@ -385,8 +385,6 @@ ActionRequest ChaserTankAlgorithm::getAction() {
 
 Direction ChaserTankAlgorithm::get_direction_from_step(ChaserStep cur,
                                                        ChaserStep prv) {
-  std::cout << "get_direction_from_step cur: " << cur.x << ", " << cur.y
-            << " prv: " << prv.x << ", " << prv.y << std::endl;
   if (cur.x == prv.x && cur.y == prv.y + 1)
     return Direction::R;
   if (cur.x == prv.x && cur.y == prv.y - 1)

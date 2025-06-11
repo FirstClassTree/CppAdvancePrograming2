@@ -521,7 +521,6 @@ void GameManager::apply_tank_actions(
       // Create and register shell
       auto shell =
           std::make_shared<Shell>(shell_x, shell_y, tank->get_direction());
-
           subscribe_shell(shell); // add to game_shells and game_entities
       map->get_tile(shell_x, shell_y).shell = shell;
 

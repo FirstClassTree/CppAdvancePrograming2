@@ -54,6 +54,8 @@ private:
   int player_index;
   int tank_index;
   bool dirty = true;
+  int ask_cooldown;
+  int stuck_cooldown;
   SniperState currentState;
   SniperTarget currentTarget;
   SniperTarget waypoint;
