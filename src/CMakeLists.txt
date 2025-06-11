@@ -1,7 +1,5 @@
 
 
-# This line enables debugging with gdb
-set(CMAKE_BUILD_TYPE Debug)
 
 
 
