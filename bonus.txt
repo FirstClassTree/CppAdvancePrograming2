@@ -1,31 +1,27 @@
-weve added logger as part of the bonus
-
-
-
-Automatic testing based on Gtest:
-- To run do:
+## ✅ Automatic Testing with Google Test (Gtest)
+We implemented over 26 comprehensive unit and integration tests using Google Test:
+How to Run:
+```bash
 cd build
 cmake ..
 make
 ctest
 
-Visual Simualation:
-Written in C++ with ncurses libary, it offers unique diffrent colors for up to 9 diffrent player Tanks, along with all the directions
+🕹️ Visual Simualation 🎨:
+Written in C++ with ncurses libary, it offers unique diffrent 🎨colors for up to 9 diffrent player Tanks, along with all the directions
 allowing running back and forward in the Simualation with the arrows keys.
 
-To Run with visualizaion add --visual, e.g.:
+▶️ To Run with Visualization, add the --visual flag. For example:
 cd build
 cmake ..
-make 
-./tanks_game ../files/tests/maps/test_map_1.txt --visual 
+make
+./tanks_game ../files/tests/maps/test_map_1.txt --visual
 
+📝 Logging Bonus:
+A logging system was implemented that writes to a log.txt file in the build directory.
+For each tank, the log records every action taken in each round, including the round number, step count, player ID, tank ID, AI algorithm name, action name, remaining ammunition, and cooldown status.
+This feature is especially useful for debugging and provides a clear, detailed view of the game's flow and the decision-making process of each tank.
 
-Logging Bonus
-Implement a logging system that writes to a log.txt file in the build directiory. 
-For each tank, log every action it takes in each round, including the round number, step count, player ID, tank ID, AI algorithm name, action name, remaining ammo, and cooldown. 
-This feature is valuable for debugging and provides a precise understanding of the game's flow and decision-making process.
-
-
-To test visualier:
-cd test
-g++ test_visualizer.cpp ./src/MySatelliteView.cpp ./src/utils/Visualizer.cpp -o test_visualizer -lncurses
+👥 Support for Up to 9 Players:
+The game engine supports battles with up to 9 players. A fourth input file demonstrating this feature is included:
+./files/tests/maps/input_big_multiple_players.txt

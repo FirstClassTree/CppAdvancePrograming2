@@ -1,13 +1,14 @@
 ![C/C++ CI](https://github.com/FirstClassTree/CppAdvancePrograming2/actions/workflows/test.yml/badge.svg)
 
 
-# C++AdvancePrograming 2
+# C++ Advance Programing 2
 ## Project submitted by 
 Tal Weiss 323131268
 Lior Buchmeier 314711128
 
 
-This project is a C++ application (Tank Game) built using CMake.
+This project is a modern C++20 tank battle simulation game, featuring different AI-controlled tanks, real-time interaction, and a fully configurable battlefield. Built using CMake with a modular design, it includes a detailed logging system, automated testing with Google Test, and an interactive terminal-based visualizer powered by ncurses. The game supports up to 9 players and deterministic, turn-based gameplay for consistent and reproducible simulations.
+
 
 ## Prerequisites
 
@@ -48,9 +49,13 @@ This project is a C++ application (Tank Game) built using CMake.
 
 ## Running the Application
 
-
+example:
 ```bash
-./build/tanks_game # Or path/to/your/executable
+./build/tanks_game ../files/tests/maps/test_map_1.txt 
+```
+With Visualiztion:
+```bash
+./build/tanks_game ../files/tests/maps/test_map_1.txt --visual
 ```
 
 ## Running Tests
@@ -78,9 +83,6 @@ Tests are managed with CTest and Google Test. After building the project:
     ```
 
 
-    ** to run without memory leak check -DENABLE_ASAN=OFF
-
-
 ## Cleaning the Build
 
 To remove generated build files, object files, and executables:
@@ -96,8 +98,17 @@ To remove generated build files, object files, and executables:
     rm -rf build
     ```
 3. **To debug with gdb**
-    gdb ./tank_s_game
+    gdb ./tanks_game
     run ../files/tests/maps/input_big_multiple_players.txt
     bt
 ---
 *This README assumes a standard CMake workflow with Make. If you use a different generator (e.g., Ninja, Visual Studio), the build commands (`make`, `make clean`) will differ from those shown above.*
+
+
+## Project Structure
+
+- `src/` – Main application source code
+- `tests/` – Unit and integration tests (Google Test)
+- `common/` – Shared interfaces and enums (as required by the assignment)
+- `files/` – Sample input and output files
+- `build/` – CMake build directory (created manually)
