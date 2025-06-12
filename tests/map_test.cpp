@@ -10,7 +10,7 @@ TEST(MapTest, TestMapInitialization) {
   std::filesystem::path project_root_path =
       current_test_file_path.parent_path().parent_path();
   std::filesystem::path map_file_path =
-      project_root_path / "files" / "tests" / "maps" / "test_map_1.txt";
+      project_root_path / "files" / "maps" / "test_map_1.txt";
 
   int result = game_manager.load_map(map_file_path.string());
   EXPECT_EQ(result, 0);
