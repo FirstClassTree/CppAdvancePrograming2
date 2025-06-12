@@ -71,7 +71,7 @@ private:
 
 
   
-  void move_shells_stepwise();
+  void move_shells_stepwise(OutputPrinter& printer);
 
 
   // Apply collected actions, update game state and log to OutputPrinter

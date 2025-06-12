@@ -259,7 +259,7 @@ void GameManager::run()
     apply_tank_actions(tank_actions, printer);
 
     // Phase 2: Move shells and resolve their collisons, walls, shell to shell,
-    move_shells_stepwise();
+    move_shells_stepwise(printer);
 
     // Optional visualization
     if (enable_visualizer)
@@ -311,7 +311,7 @@ end:
 }
 
 // Phase 2:
-void GameManager::move_shells_stepwise()
+void GameManager::move_shells_stepwise(OutputPrinter& printer)
 {
   int rows = map->get_rows();
   int cols = map->get_cols();
@@ -336,7 +336,9 @@ void GameManager::move_shells_stepwise()
         tank_here->damage();
         if (tank_here->get_health() == 0)
         {
+          printer.markTankKilled(tank_here->get_all_tank_index());
           current_tile.actor.reset();
+          
         }
         shell->destroy();
         continue;
@@ -382,6 +384,7 @@ void GameManager::move_shells_stepwise()
         {
           auto &actual_tile = map->get_tile(tank->get_x(), tank->get_y());
           auto &tile = map->get_tile(tank->get_x(), tank->get_y());
+          printer.markTankKilled(tank->get_all_tank_index());
           tile.actor.reset();
         }
 
@@ -511,12 +514,12 @@ void GameManager::apply_tank_actions(
   {
     const auto &[tank, action] = actions[i];
 
-    printer.setTankAction(i, action);
-    if (!tank || tank->get_health() == 0)
-    {
-      printer.markTankKilled(i);
-      continue;
-    }
+      if (!tank || tank->get_health() == 0) {
+      printer.markTankKilled(tank->get_all_tank_index());  // already dead or null, mark it
+      continue;                   // skip setting action
+        }
+    printer.setTankAction(i, action);  // only set if tank is alive
+   
     logger.logTankAction(*tank, actionRequestToString(action));
 
     bool action_applied = false;
@@ -700,6 +703,7 @@ void GameManager::apply_tank_actions(
         tank->damage(); // or tank->set_health(0);
         if (tank->get_health() == 0)
         {
+          printer.markTankKilled(tank->get_all_tank_index());
           tile.actor.reset();
         }
         tile.ground.reset(); // Remove the mine
@@ -716,11 +720,11 @@ void GameManager::apply_tank_actions(
 
     if (!action_applied)
     {
-      printer.markTankIgnored(i);
+      printer.markTankIgnored(tank->get_all_tank_index());
     }
-    if (tank->get_health() == 0 || tank == nullptr)
+    if (tank->get_health() == 0 && tank )
     {
-      printer.markTankKilled(i);
+      printer.markTankKilled(tank->get_all_tank_index());
     }
   }
   // Resolve Tank direct collisions (same tile)

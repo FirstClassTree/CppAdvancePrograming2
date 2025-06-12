@@ -11,7 +11,8 @@ OutputPrinter::OutputPrinter(size_t numTanks)
 // Set each tanks action in by tank index and ActionRequest
 void OutputPrinter::setTankAction(size_t tankIndex, ActionRequest action) {
     assert(tankIndex < tankStates_.size());
-    tankStates_[tankIndex] = std::make_tuple(action, false, false);
+    int prevKilled = std::get<2>(tankStates_[tankIndex]);  // preserve previous killed state
+    tankStates_[tankIndex] = std::make_tuple(action, false, prevKilled);
 }
 
 // If tank action was ignored 
@@ -44,7 +45,10 @@ namespace {
 void OutputPrinter::finalizeRound() {
     std::ostringstream line;
     for (size_t i = 0; i < tankStates_.size(); ++i) {
-        auto& [action, ignored, killed] = tankStates_[i];
+        auto& tuple = tankStates_[i];
+        auto& action = std::get<0>(tuple);
+        auto& ignored = std::get<1>(tuple);
+        auto& killed = std::get<2>(tuple);
         if (killed == 2) {
             line << "killed";
         } else {
