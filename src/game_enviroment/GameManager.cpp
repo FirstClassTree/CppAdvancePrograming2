@@ -164,7 +164,7 @@ void GameManager::post_load_process()
 
     int owner_id = tank_sp->get_owner_id();
 
-    tank_sp->set_direction(owner_id == 1 ? Direction::L : Direction::R);
+    // tank_sp->set_direction(owner_id == 1 ? Direction::L : Direction::R);
 
     // Basic bounds check for tank_ids array access. Player IDs from maps are
     // usually 1-9. If owner_id is outside 0-9, this logic needs more robust
@@ -245,6 +245,10 @@ void GameManager::run()
   {
     goto end;
   }
+  if (enable_visualizer)
+    {
+      visualizer.add_snapshot(create_satellite_view(-1, -1));
+    }
 
   for (int step = 0; step < max_steps; ++step)
   {
@@ -1092,7 +1096,7 @@ void GameManager::populate_map_row(
       // init tank_id to -1 temporarly
       auto tank =
           std::make_shared<Tank>(row_idx, col, dir, player_num, -1, nullptr);
-
+      tank->set_direction(dir);
       tank->set_shell_num(num_shells);
       std::cout << "[Tank Init] Tank for player " << player_num << " at ("
                 << row_idx << ", " << col << ") initialized with "

@@ -11,9 +11,9 @@ public:
   ~MoveableEntity();
   virtual std::string serialize() = 0;
 
-  Direction get_direction();
   void set_pos(int x, int y);
   void set_direction(Direction direction);
+  Direction get_direction() const;
 
 private:
   Direction direction;

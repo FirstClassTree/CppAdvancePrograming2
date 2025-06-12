@@ -4,7 +4,7 @@
 
 MoveableEntity::~MoveableEntity() {}
 
-Direction MoveableEntity::get_direction() { return this->direction; }
+Direction MoveableEntity::get_direction() const { return this->direction; }
 
 void MoveableEntity::set_direction(Direction direction) {
     this->direction = direction;
