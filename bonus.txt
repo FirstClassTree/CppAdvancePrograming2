@@ -1,11 +1,14 @@
-## ✅ Automatic Testing with Google Test (Gtest)
-We implemented over 26 comprehensive unit and integration tests using Google Test:
+✅ Automatic Testing with Google Test (Gtest)
+We implemented over 25 comprehensive unit and integration tests using Google Test:
 How to Run:
 ```bash
 cd build
 cmake ..
 make
 ctest
+
+🔄 CI/CD Support:
+Every push to the repository automatically triggers GitHub Actions to build the project and run all tests, ensuring continuous integration and early detection of issues.
 
 🕹️ Visual Simualation 🎨:
 Written in C++ with ncurses libary, it offers unique diffrent 🎨colors for up to 9 diffrent player Tanks, along with all the directions
