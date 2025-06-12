@@ -9,7 +9,7 @@ Tal Weiss 323131268
 Lior Buchmeier 314711128
 
 ## Overview:
-This project is a modern C++20 tank battle simulation game, featuring different AI-controlled tanks, real-time interaction, and a fully configurable battlefield. Built using CMake with a modular design, it includes a detailed logging system, automated testing with Google Test, and an interactive terminal-based visualizer powered by ncurses. The game supports up to 9 players and deterministic, turn-based gameplay for consistent and reproducible simulations.
+This project is a modern C++20 tank battle simulation game, featuring different AI-controlled tanks, real-time interaction, and a fully configurable battlefield. Built using CMake with a modular design, it includes a detailed logging system, automated testing with Google Test, and an interactive terminal-based visualizer powered by ncurses. The game supports up to 9 unique behavior players and deterministic, turn-based gameplay for consistent and reproducible simulations.
 
 ## GitHub Link:
 https://github.com/FirstClassTree/CppAdvancePrograming2
@@ -55,11 +55,11 @@ https://github.com/FirstClassTree/CppAdvancePrograming2
 
 example:
 ```bash
-./build/tanks_game ../files/tests/input_maps/test_map_1.txt 
+./build/tanks_game ../files/input_maps/test_map_1.txt 
 ```
 With Visualiztion:
 ```bash
-./build/tanks_game ../files/tests/input_maps/test_map_1.txt --visual
+./build/tanks_game ../files/input_maps/test_map_1.txt --visual
 ```
 
 Note that output.txt, input_error.txt, log.txt are being created to the build directory.
@@ -106,7 +106,7 @@ To remove generated build files, object files, and executables:
     ```
 3. **To debug with gdb**
     gdb ./tanks_game
-    run ../files/tests/input_maps/output_test_map_4_big_9_multiple_players.txt
+    run ../files/input_maps/output_test_map_4_big_9_multiple_players.txt
     bt
 ---
 *This README assumes a standard CMake workflow with Make. If you use a different generator (e.g., Ninja, Visual Studio), the build commands (`make`, `make clean`) will differ from those shown above.*
@@ -117,5 +117,5 @@ To remove generated build files, object files, and executables:
 - `src/` – Main application source code
 - `tests/` – Unit and integration tests (Google Test)
 - `common/` – Shared interfaces and enums (as required by the assignment)
-- `files/` – Sample input and output files in input_maps and output_maps
+- `files/` – Sample input and output files in input_maps and output_maps, along with conifg file
 - `build/` – CMake build directory (created manually)

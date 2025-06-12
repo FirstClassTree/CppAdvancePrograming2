@@ -21,7 +21,7 @@ allowing running back and forward in the Simualation with the arrows keys.
 cd build
 cmake ..
 make
-./tanks_game ../files/tests/input_maps/test_map_1.txt --visual
+./tanks_game ../files/input_maps/test_map_1.txt --visual
 
 📝 Logging Bonus:
 A logging system was implemented that writes to a log.txt file in the build directory.
@@ -30,7 +30,7 @@ This feature is especially useful for debugging and provides a clear, detailed v
 
 👥 Support for Up to 9 Players:
 The game engine supports battles with up to 9 players. A fourth input file demonstrating this feature is included:
-./files/tests/input_maps/test_map_4_big_9_multiple_players.txt
+./files/input_maps/test_map_4_big_9_multiple_players.txt
 
 
 🛠️ Config Bonus:
