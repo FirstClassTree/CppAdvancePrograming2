@@ -1,0 +1,12 @@
+RotateLeft90, RotateLeft90, RotateLeft90, GetBattleInfo
+RotateLeft45, RotateLeft90, MoveForward, GetBattleInfo
+MoveForward, MoveForward, RotateRight45, RotateLeft45
+RotateLeft45, MoveForward, MoveForward, Shoot
+MoveForward, MoveForward, MoveForward, DoNothing
+DoNothing, RotateRight45, MoveForward, DoNothing
+RotateRight90, MoveForward, DoNothing, DoNothing
+RotateRight45, MoveForward, DoNothing, RotateRight45
+Shoot, RotateLeft90, RotateRight45, MoveForward
+RotateRight45 (killed), MoveForward, MoveForward (killed), MoveForward
+killed, MoveForward, killed, MoveForward (killed)
+Player 1 won with 1 tanks still alive

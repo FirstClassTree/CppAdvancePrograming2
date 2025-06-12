@@ -1,0 +1,75 @@
+RotateRight90, RotateLeft90, MoveForward, RotateLeft90, RotateLeft90, MoveForward, MoveForward, RotateRight90, MoveForward, RotateRight90, MoveForward, MoveForward, RotateLeft90
+MoveForward, RotateLeft90, DoNothing, MoveForward, MoveForward, DoNothing, DoNothing, MoveForward, RotateLeft45, MoveForward, MoveForward, DoNothing, RotateLeft90
+MoveForward, MoveForward, RotateLeft90, RotateRight45, MoveForward, RotateLeft90, RotateLeft90, RotateRight45, MoveForward, MoveForward, MoveForward, RotateLeft90, MoveForward
+RotateRight45 (killed), MoveForward, RotateLeft45, MoveForward, MoveForward, Shoot, RotateLeft45, MoveForward, MoveForward, RotateRight45 (killed), DoNothing, Shoot, RotateRight45
+killed, Shoot, RotateLeft45, MoveForward, DoNothing, Shoot, RotateLeft45, RotateRight45, RotateLeft90, killed, RotateRight45, Shoot, RotateRight45
+killed, DoNothing, MoveForward, DoNothing, DoNothing, DoNothing, MoveForward (killed), MoveForward, RotateLeft45 (killed), killed, MoveForward, Shoot, RotateRight45
+killed, DoNothing, RotateRight45, RotateRight90, DoNothing, RotateLeft45, killed, DoNothing (killed), killed, killed, MoveForward, Shoot, RotateRight45
+killed, DoNothing, MoveForward, Shoot, DoNothing, DoNothing, killed, killed, killed, killed, MoveForward, Shoot, RotateRight45
+killed, DoNothing, RotateLeft90, DoNothing, Shoot, DoNothing, killed, killed, killed, killed, MoveForward, Shoot, RotateRight45
+killed, RotateRight45, MoveForward, RotateLeft90, RotateLeft90, RotateLeft45, killed, killed, killed, killed, MoveForward, Shoot, RotateRight45
+killed, MoveForward, MoveForward, RotateLeft45, MoveForward, MoveForward, killed, killed, killed, killed, MoveForward, Shoot, RotateRight45
+killed, MoveForward, MoveForward, MoveForward, DoNothing, DoNothing, killed, killed, killed, killed, MoveForward, Shoot, RotateRight45
+killed, MoveForward, RotateRight45, DoNothing, DoNothing, RotateRight45, killed, killed, killed, killed, MoveForward, Shoot, RotateRight45
+killed, MoveForward, MoveForward (killed), RotateRight90 (killed), RotateRight90, Shoot, killed, killed, killed, killed, MoveForward, Shoot, RotateRight45
+killed, Shoot, killed, killed, Shoot, RotateRight45, killed, killed, killed, killed, MoveForward, Shoot, RotateRight45
+killed, DoNothing, killed, killed, DoNothing, MoveForward (killed), killed, killed, killed, killed, MoveForward, Shoot, RotateRight45 (killed)
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateRight45, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, MoveForward, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateLeft45, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, Shoot, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateLeft90, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateLeft45, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, MoveForward, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateRight90, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateRight45, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, Shoot, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateRight45, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, MoveForward, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateLeft45, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, Shoot, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateLeft90, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, MoveForward, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateRight45, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, MoveForward, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, DoNothing, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateLeft90, killed, killed, DoNothing (killed), killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateLeft90, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateLeft45, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, MoveForward, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, MoveForward, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, MoveForward, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, DoNothing, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, RotateRight90 (killed), killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward (ignored), Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot, killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward (ignored), Shoot (ignored), killed
+killed, killed, killed, killed, killed, killed, killed, killed, killed, killed, MoveForward, Shoot (killed), killed
+Player 5 won with 1 tanks still alive
