@@ -3,7 +3,7 @@ project(TanksGame2)
 
 # Set C++ version
 # set(CMAKE_BUILD_TYPE Debug)
-
+ 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXHX_FLAGS} -fsanitize=address -g")
