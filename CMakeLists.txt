@@ -19,3 +19,5 @@ add_subdirectory(tests)
 
 add_executable(tanks_game src/main.cpp)
 target_link_libraries(tanks_game PRIVATE tanks_game_lib ncurses)
+target_include_directories(tanks_game PRIVATE ${CMAKE_SOURCE_DIR}/include)
+target_include_directories(tanks_game_lib PRIVATE ${CMAKE_SOURCE_DIR}/include)

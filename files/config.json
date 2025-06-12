@@ -1,0 +1,5 @@
+{
+  "zero_shells_grace_steps": 40,
+  "shoot_cooldown_steps": 4,
+  "shell_speed": 2
+}

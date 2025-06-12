@@ -1,6 +1,7 @@
 #include "../../common/algorithms/SniperTankAlgorithm.h"
 #include "ActionRequest.h"
 #include <iostream>
+#include "../common/Constants.h"
 
 SniperTankAlgorithm::SniperTankAlgorithm(int player_index, int tank_index,
                                          int tank_x, int tank_y)
@@ -381,7 +382,7 @@ ActionRequest SniperTankAlgorithm::getAction()
     if (this->is_in_sight())
     {
       this->chooseAction = ActionRequest::Shoot;
-      this->currentState.cooldown = 4;
+      this->currentState.cooldown = SHOOT_COOLDOWN_STEPS;
       this->currentState.ammo -= 1;
       this->currentState.phase = SCOUT;
       break;
