@@ -27,7 +27,7 @@ This feature is especially useful for debugging and provides a clear, detailed v
 
 👥 Support for Up to 9 Players:
 The game engine supports battles with up to 9 players. A fourth input file demonstrating this feature is included:
-./files/tests/maps/input_big_multiple_players.txt
+./files/tests/maps/test_map_4_big_9_multiple_players.txt
 
 
 🛠️ Config Bonus:
@@ -35,7 +35,6 @@ Added support for a config.json file to override gameplay constants (shell_speed
 at runtime without recompilation. Managed via ConfigManager.h / cpp and applied through Constants.h / cpp initialization. 
 The file is at ./files/config.json
 
-
 📦 Extra:
-- 🗺️Many additional test game maps beyond the required four
-- 🧾input_errors.txt provides detailed and descriptive error reports for invalid maps, exceeding assignment requirements
+- 🗺️Many additional extra game maps beyond the required four in ./files/maps/extra_maps
+- 🧾input_errors.txt provides detailed, descriptive and precise error reports for invalid maps, exceeding assignment requirements 
