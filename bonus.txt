@@ -31,9 +31,10 @@ The game engine supports battles with up to 9 players. A fourth input file demon
 
 
 🛠️ Config Bonus:
-Added support for a config.json file to override gameplay constants (shell_speed, shoot_cooldown ,round without shells till draw constant) 
+Added support for a config.json file to override gameplay constants (shell speed, shoot cooldown ,round without shells till draw constant) 
 at runtime without recompilation. Managed via ConfigManager.h / cpp and applied through Constants.h / cpp initialization. 
-The file is at ./files/config.json
+The file is at ./files/config.json 
+(Changing shell speed to 1 or 3 is pretty cool)
 
 📦 Extra:
 - 🗺️Many additional extra game maps beyond the required four in ./files/maps/extra_maps
