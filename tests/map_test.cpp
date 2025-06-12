@@ -10,7 +10,7 @@ TEST(MapTest, TestMapInitialization) {
   std::filesystem::path project_root_path =
       current_test_file_path.parent_path().parent_path();
   std::filesystem::path map_file_path =
-      project_root_path / "files" / "maps" / "test_map_1.txt";
+      project_root_path / "files" / "input_maps" / "test_map_1.txt";
 
   int result = game_manager.load_map(map_file_path.string());
   EXPECT_EQ(result, 0);
@@ -35,7 +35,7 @@ TEST(MapTest, TestSymbolDetection) {
   std::filesystem::path project_root_path =
       current_test_file_path.parent_path().parent_path();
   std::filesystem::path map_file_path =
-      project_root_path / "files" / "tests" / "maps" / "extra_maps" /"test_map_symbol.txt";
+      project_root_path / "files" / "input_maps" / "extra_maps" /"test_map_symbol.txt";
   int result = game_manager.load_map(map_file_path.string());
   EXPECT_EQ(result, 0);
   Map map = game_manager.get_map();
@@ -57,8 +57,7 @@ TEST(MapTest, ExtraRowsAndColsAreIgnored) {
   std::filesystem::path current_test_file_path = __FILE__;
   std::filesystem::path project_root_path =
       current_test_file_path.parent_path().parent_path();
-  std::filesystem::path map_file_path = project_root_path / "files" / "tests" /
-                                        "maps" /  "extra_maps"/  "test_map_cols_overflow.txt";
+  std::filesystem::path map_file_path = project_root_path / "files" / "input_maps" / "extra_maps" / "test_map_cols_overflow.txt";
 
   int result = game_manager.load_map(map_file_path.string());
   EXPECT_EQ(result, 0);
@@ -78,8 +77,7 @@ TEST(MapTest, MissingColumnsArePadded) {
   std::filesystem::path current_test_file_path = __FILE__;
   std::filesystem::path project_root_path =
       current_test_file_path.parent_path().parent_path();
-  std::filesystem::path map_file_path = project_root_path / "files" / "tests" /
-                                        "maps" / "extra_maps"/ "test_map_cols_underflow.txt";
+  std::filesystem::path map_file_path = project_root_path / "files" / "input_maps" / "extra_maps" / "test_map_cols_underflow.txt";
 
   int result = game_manager.load_map(map_file_path.string());
   EXPECT_EQ(result, 0);
@@ -102,8 +100,7 @@ TEST(MapTest, MissingColumnsArePadded) {
 // checks if spaces around equal sign are parsed correctly:
 TEST(MapTest, ValidWhitespaceMapParsesCorrectly) {
   GameManager game_manager;
-  auto path = std::filesystem::path(__FILE__).parent_path().parent_path() /
-              "files" / "tests" / "maps" / "extra_maps"/ "test_map_whitespace.txt";
+  auto path = std::filesystem::path(__FILE__).parent_path().parent_path() / "files" / "input_maps" / "extra_maps" / "test_map_whitespace.txt";
 
   int result = game_manager.load_map(path.string());
   EXPECT_EQ(result, 0);
@@ -128,7 +125,7 @@ TEST(MapTest, MissingMetadataLineFails) {
   std::filesystem::path project_root_path =
       current_test_file_path.parent_path().parent_path();
   std::filesystem::path map_file_path =
-      project_root_path / "files" / "tests" / "maps" / "extra_maps"/ "missing_rows_map.txt";
+      project_root_path / "files" / "input_maps" / "extra_maps" / "missing_rows_map.txt";
 
   int result = game_manager.load_map(map_file_path.string());
   EXPECT_EQ(result, -1); // assuming -1 on error
