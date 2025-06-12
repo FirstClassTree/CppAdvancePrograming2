@@ -240,8 +240,9 @@ void GameManager::run()
   Logger &logger = Logger::getInstance();
 
   // Allowing end before round 0
-  status = check_end_conditions(0,steps_without_shells);
-  if(status.finished){
+  status = check_end_conditions(0, steps_without_shells);
+  if (status.finished)
+  {
     goto end;
   }
 
@@ -324,17 +325,18 @@ void GameManager::move_shells_stepwise()
         continue;
 
       // Tank colliion before
-        auto &current_tile = map->get_tile(shell->get_x(), shell->get_y());
-        auto tank_here = current_tile.actor.lock();
-        if (tank_here && tank_here->get_health() > 0) {
-            tank_here->damage();
-            if (tank_here->get_health() == 0) {
-                current_tile.actor.reset();
-            }
-            shell->destroy();
-            continue;
+      auto &current_tile = map->get_tile(shell->get_x(), shell->get_y());
+      auto tank_here = current_tile.actor.lock();
+      if (tank_here && tank_here->get_health() > 0)
+      {
+        tank_here->damage();
+        if (tank_here->get_health() == 0)
+        {
+          current_tile.actor.reset();
         }
-
+        shell->destroy();
+        continue;
+      }
 
       auto [dx, dy] = get_direction_offset(shell->get_direction());
       int next_x = (shell->get_x() + dx + rows) % rows;
@@ -414,7 +416,6 @@ void GameManager::move_shells_stepwise()
       }
     }
   }
-  
 }
 
 bool try_move_tank(std::shared_ptr<Tank> tank, Map *map, int dx, int dy)
@@ -698,7 +699,14 @@ void GameManager::apply_tank_actions(
           tile.actor.reset();
         }
         tile.ground.reset(); // Remove the mine
-                             // Optionally destroy the mine object if needed
+        // Optionally destroy the mine object if needed
+        game_entities.erase(
+            std::remove_if(game_entities.begin(), game_entities.end(),
+                           [&ground](const std::shared_ptr<Entity> &e)
+                           {
+                             return e == ground;
+                           }),
+            game_entities.end());
       }
     }
 
@@ -1065,7 +1073,7 @@ void GameManager::populate_map_row(
     case '@':
     {
       auto mine = std::make_shared<Mine>(row_idx, col);
-      tile.shell = mine;
+      tile.ground = mine;
       entities_out.push_back(mine);
       break;
     }
