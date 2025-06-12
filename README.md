@@ -4,7 +4,6 @@
 # 🧠🎮 C++ Advanced Programming 2 – Tank Simulation Game 🪖🚀🗺️
 
 
-
 ## Project by: 
 Tal Weiss 323131268
 Lior Buchmeier 314711128
@@ -12,6 +11,8 @@ Lior Buchmeier 314711128
 ## Overview:
 This project is a modern C++20 tank battle simulation game, featuring different AI-controlled tanks, real-time interaction, and a fully configurable battlefield. Built using CMake with a modular design, it includes a detailed logging system, automated testing with Google Test, and an interactive terminal-based visualizer powered by ncurses. The game supports up to 9 players and deterministic, turn-based gameplay for consistent and reproducible simulations.
 
+## GitHub Link:
+https://github.com/FirstClassTree/CppAdvancePrograming2
 
 ## Prerequisites
 

@@ -28,3 +28,5 @@ This feature is especially useful for debugging and provides a clear, detailed v
 👥 Support for Up to 9 Players:
 The game engine supports battles with up to 9 players. A fourth input file demonstrating this feature is included:
 ./files/tests/maps/input_big_multiple_players.txt
+
+Extra Test Game Maps:

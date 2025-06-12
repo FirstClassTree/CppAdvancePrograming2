@@ -13,7 +13,7 @@ void Visualizer::add_snapshot(std::unique_ptr<SatelliteView> view) {
 
 void Visualizer::run() {
     if (snapshots_.empty()) {
-        std::cout << "No snapshots to visualize.\n";
+        std::cout << "No snapshots to visualize, likely because game ended in round 0, do to instant win condition as the assigment instructions asks for before round 0.\n";
         return;
     }
 

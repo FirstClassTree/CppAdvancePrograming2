@@ -239,6 +239,12 @@ void GameManager::run()
 
   Logger &logger = Logger::getInstance();
 
+  // Allowing end before round 0
+  status = check_end_conditions(0,steps_without_shells);
+  if(status.finished){
+    goto end;
+  }
+
   for (int step = 0; step < max_steps; ++step)
   {
     logger.setRound(step);
@@ -272,7 +278,7 @@ void GameManager::run()
       status.tie_due_to_steps = true;
     }
   }
-
+end:
   // Phase 6: Final result
   std::vector<int> tanks_per_player(num_players, 0);
   for (const auto &tank : game_tanks)
@@ -316,6 +322,19 @@ void GameManager::move_shells_stepwise()
     {
       if (!shell || shell->is_destroyed())
         continue;
+
+      // Tank colliion before
+        auto &current_tile = map->get_tile(shell->get_x(), shell->get_y());
+        auto tank_here = current_tile.actor.lock();
+        if (tank_here && tank_here->get_health() > 0) {
+            tank_here->damage();
+            if (tank_here->get_health() == 0) {
+                current_tile.actor.reset();
+            }
+            shell->destroy();
+            continue;
+        }
+
 
       auto [dx, dy] = get_direction_offset(shell->get_direction());
       int next_x = (shell->get_x() + dx + rows) % rows;
@@ -395,6 +414,7 @@ void GameManager::move_shells_stepwise()
       }
     }
   }
+  
 }
 
 bool try_move_tank(std::shared_ptr<Tank> tank, Map *map, int dx, int dy)
