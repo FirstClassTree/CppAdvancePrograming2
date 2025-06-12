@@ -61,6 +61,9 @@ With Visualiztion:
 ./build/tanks_game ../files/tests/maps/test_map_1.txt --visual
 ```
 
+Note that output.txt, input_error.txt, log.txt are being created to the build directory.
+
+
 ## Running Tests
 
 Tests are managed with CTest and Google Test. After building the project:

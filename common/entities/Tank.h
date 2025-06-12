@@ -48,6 +48,8 @@ int get_cooldown() const ;
   bool can_shoot() const;
   void mark_shot();
   void tick_cooldown();
+  int get_all_tank_index() const;
+
 
 
 
@@ -62,6 +64,9 @@ private:
   int tank_id;
   int shell_num;
   int shoot_cooldown = 0;
+  static int tank_count;
+  int all_tank_index;
+  
 };
 
 #endif

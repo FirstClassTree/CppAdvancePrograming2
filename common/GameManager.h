@@ -61,14 +61,13 @@ private:
   GamePlayerFactory player_factory;
   MyTankAlgorithmFactory tank_algorithm_factory;
 
+  std::vector<std::string> input_errors;
+
   // Collect actions from all living tanks
   std::vector<std::pair<std::shared_ptr<Tank>, ActionRequest>> collect_tank_actions();
 
   bool enable_visualizer = false;
   Visualizer visualizer;
-
-
-
 
 
   
@@ -91,19 +90,19 @@ private:
 
   void post_load_process();
 
-  static std::ifstream open_map_file(const std::string &map_path);
-  static bool parse_map_header(std::istream &in, std::string &name,
+  std::ifstream open_map_file(const std::string &map_path);
+  bool parse_map_header(std::istream &in, std::string &name,
                                int &max_steps, int &num_shells, int &rows,
                                int &cols);
-  static std::vector<std::vector<Tile>> create_empty_map(int rows, int cols);
-  static void populate_map_row(
+  std::vector<std::vector<Tile>> create_empty_map(int rows, int cols);
+  void populate_map_row(
       const std::string &line, int row_idx, int cols, int max_steps,
       int num_shells, std::vector<std::vector<Tile>> &map,
       std::vector<std::shared_ptr<Tank>> &tanks_out,
       std::vector<std::shared_ptr<Entity>> &entities_out,
       std::vector<std::pair<int, std::pair<int, int>>> &player_spawn_points_out,
       MyTankAlgorithmFactory &tank_algorithm_factory);
-  static void fill_remaining_rows(int start_row, int rows, int cols,
+  void fill_remaining_rows(int start_row, int rows, int cols,
                                   std::vector<std::vector<Tile>> &map);
 };
 

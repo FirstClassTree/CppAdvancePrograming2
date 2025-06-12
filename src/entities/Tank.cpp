@@ -1,10 +1,12 @@
 #include "entities/Tank.h"
 #include <iostream>
 
+int Tank::tank_count = 0;
 
 Tank::Tank(int x, int y, Direction direction, int player_owner,int tank_id, std::unique_ptr<TankAlgorithm> ai)
     : MoveableEntity(x, y, 1, EntityType::TANK, direction),
-      player_owner(player_owner), tank_id(tank_id),health(1),backward_state(BackwardState::None){
+      player_owner(player_owner), tank_id(tank_id),health(1),backward_state(BackwardState::None),all_tank_index(tank_count++)
+      {
         
       }
 
@@ -18,7 +20,7 @@ int Tank::get_tank_id() const{ return tank_id; }
 int Tank::get_shell_num()const { return this->shell_num; }
 int Tank::get_cooldown() const{return shoot_cooldown;} 
 
-
+int Tank::get_all_tank_index() const {return all_tank_index;}
 TankAlgorithm& Tank::get_ai() const { return *ai; }
 
 void Tank::set_shell_num(int shell_num) {this->shell_num = shell_num;}
