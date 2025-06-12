@@ -55,11 +55,11 @@ https://github.com/FirstClassTree/CppAdvancePrograming2
 
 example:
 ```bash
-./build/tanks_game ../files/tests/maps/test_map_1.txt 
+./build/tanks_game ../files/tests/input_maps/test_map_1.txt 
 ```
 With Visualiztion:
 ```bash
-./build/tanks_game ../files/tests/maps/test_map_1.txt --visual
+./build/tanks_game ../files/tests/input_maps/test_map_1.txt --visual
 ```
 
 Note that output.txt, input_error.txt, log.txt are being created to the build directory.
@@ -106,7 +106,7 @@ To remove generated build files, object files, and executables:
     ```
 3. **To debug with gdb**
     gdb ./tanks_game
-    run ../files/tests/maps/input_big_multiple_players.txt
+    run ../files/tests/input_maps/output_test_map_4_big_9_multiple_players.txt
     bt
 ---
 *This README assumes a standard CMake workflow with Make. If you use a different generator (e.g., Ninja, Visual Studio), the build commands (`make`, `make clean`) will differ from those shown above.*
@@ -117,5 +117,5 @@ To remove generated build files, object files, and executables:
 - `src/` – Main application source code
 - `tests/` – Unit and integration tests (Google Test)
 - `common/` – Shared interfaces and enums (as required by the assignment)
-- `files/` – Sample input and output files
+- `files/` – Sample input and output files in input_maps and output_maps
 - `build/` – CMake build directory (created manually)
